@@ -2,6 +2,7 @@ package turing.tmb.vanilla;
 
 import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCraftingShapeless;
 import turing.tmb.api.drawable.IIngredientList;
+import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.ILookupContext;
 import turing.tmb.api.recipe.IRecipeLayout;
 import turing.tmb.api.runtime.ITMBRuntime;
@@ -20,6 +21,7 @@ public class ShapelessCraftingRecipeCategory extends AbstractCraftingRecipeCateg
 				} else {
 					list = IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput().get(i));
 				}
+				list.getIngredients().forEach(ingredient -> ingredient.getItemStack().ifPresent((stack) -> stack.stackSize = 1));
 				ingredients.add(i + 1, list);
 			}
 		} else if (recipe.getOriginal().getInput().size() > 1) {
@@ -33,6 +35,7 @@ public class ShapelessCraftingRecipeCategory extends AbstractCraftingRecipeCateg
 				if (i == 2) {
 					ingredients.add(i + 1, new IngredientList());
 				}
+				list.getIngredients().forEach(ingredient -> ingredient.getItemStack().ifPresent((stack) -> stack.stackSize = 1));
 				ingredients.add(i + (i == 2 ? 2 : 1), list);
 			}
 		} else {
