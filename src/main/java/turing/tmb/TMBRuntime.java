@@ -37,6 +37,14 @@ public class TMBRuntime implements ITMBRuntime {
 
 	}
 
+	protected void clear() {
+		ingredientRegistries.clear();
+		ingredientTypeRegistry.clear();
+		recipeIndex.clear();
+		index.clear();
+		guiHelper.clear();
+	}
+
 	@Override
 	public void showRecipe(ILookupContext lookup) {
 		List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>> results = recipeIndex.searchRecipes(lookup);

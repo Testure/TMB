@@ -2,9 +2,12 @@ package turing.tmb;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.net.command.CommandManager;
+import net.minecraft.core.net.command.util.CommandHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turing.tmb.api.ITMBPlugin;
+import turing.tmb.api.TMBEntrypoint;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.util.ClientStartEntrypoint;
@@ -12,7 +15,7 @@ import turniplabs.halplibe.util.ClientStartEntrypoint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TMB implements ModInitializer, ClientStartEntrypoint {
+public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint {
     public static final String MOD_ID = "tmb";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static boolean shouldShowModName = true;
@@ -22,12 +25,18 @@ public class TMB implements ModInitializer, ClientStartEntrypoint {
 
     @Override
     public void onInitialize() {
-		registerPlugin(new BaseTMBPlugin());
-		registerPlugin(new VanillaPlugin());
+		CommandManager.registerCommand(new CommandReload());
+		gatherPlugins(false);
 		if (FabricLoader.getInstance().isModLoaded("modnametooltip")) {
 			shouldShowModName = false;
 		}
     }
+
+	@Override
+	public void onGatherPlugins(boolean isReload) {
+		registerPlugin(new BaseTMBPlugin());
+		registerPlugin(new VanillaPlugin());
+	}
 
 	@Override
 	public void beforeClientStart() {
@@ -36,8 +45,12 @@ public class TMB implements ModInitializer, ClientStartEntrypoint {
 
 	@Override
 	public void afterClientStart() {
+		loadTMB();
+	}
+
+	private static void loadTMB() {
 		long time = System.currentTimeMillis();
-		LOGGER.info("Loading plugins");
+		LOGGER.info("Loading TMB");
 		for (ITMBPlugin plugin : plugins) {
 			plugin.registerExtraScreens(runtime.getGuiHelper());
 			plugin.registerIngredientTypes(runtime);
@@ -50,8 +63,27 @@ public class TMB implements ModInitializer, ClientStartEntrypoint {
 			plugin.registerRecipes(runtime);
 		}
 		runtime.index.gatherIngredients();
-		LOGGER.info("TMB loaded in {}ms!", System.currentTimeMillis() - time);
+		long timeTook = System.currentTimeMillis() - time;
+		LOGGER.info("TMB loaded in {}ms!", timeTook);
 		runtime.isReady = true;
+	}
+
+	private static void clear() {
+		plugins.clear();
+		runtime.clear();
+	}
+
+	private static void gatherPlugins(boolean isReload) {
+		FabricLoader.getInstance().getEntrypoints("gatherTMBPlugins", TMBEntrypoint.class).forEach(tmbEntrypoint -> {
+			tmbEntrypoint.onGatherPlugins(isReload);
+		});
+	}
+
+	public static void reloadTMB() {
+		runtime.isReady = false;
+		clear();
+		gatherPlugins(true);
+		loadTMB();
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {

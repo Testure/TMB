@@ -3,7 +3,6 @@ package turing.tmb.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.render.tessellator.Tessellator;
-import net.minecraft.core.util.collection.Pair;
 import org.lwjgl.opengl.GL11;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.gui.IGuiHelper;
@@ -26,6 +25,11 @@ public class GuiHelper implements IGuiHelper {
 
 	public GuiHelper(ITMBRuntime runtime) {
 		this.runtime = runtime;
+	}
+
+	public void clear() {
+		extraScreens.clear();
+		screenBlacklist.clear();
 	}
 
 	@Override

@@ -15,6 +15,10 @@ public class IngredientTypeRegistry implements IIngredientTypeRegistry {
 		this.runtime = runtime;
 	}
 
+	protected void clear() {
+		INGREDIENT_TYPES.clear();
+	}
+
 	@Override
 	public <T> void registerIngredientType(IIngredientType<T> ingredientType, IIngredientRenderer<T> renderer) {
 		INGREDIENT_TYPES.add(ingredientType);

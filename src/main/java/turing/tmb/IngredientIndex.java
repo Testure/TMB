@@ -19,6 +19,13 @@ public class IngredientIndex implements IIngredientIndex {
 		this.runtime = runtime;
 	}
 
+	protected void clear() {
+		completeIngredientList.clear();
+		visibleIngredients.clear();
+		hidden.clear();
+		searchCache.clear();
+	}
+
 	protected void gatherIngredients() {
 		for (Map.Entry<IIngredientType<?>, IngredientRegistry<?>> entry : runtime.ingredientRegistries.entrySet()) {
 			for (ITypedIngredient<?> ingredient : entry.getValue().ingredients) {

@@ -23,6 +23,9 @@
     ],
 		"afterClientStart": [
 			"turing.tmb.TMB"
+		],
+		"gatherTMBPlugins": [
+			"turing.tmb.TMB"
 		]
 	},
   "mixins": [
