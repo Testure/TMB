@@ -22,10 +22,10 @@ public class ShapedCraftingRecipeCategory extends AbstractCraftingRecipeCategory
 				} else {
 					list = new IngredientList();
 				}
-				if (i == 2) {
+				if (recipe.getOriginal().getInput().length > 2 && recipe.getOriginal().getInput()[3] != null && i == 2) {
 					ingredients.add((slotX + slotY * recipe.getOriginal().recipeWidth) + 1, new IngredientList());
 				}
-				ingredients.add((slotX + slotY * recipe.getOriginal().recipeWidth) + (i == 2 ? 2 : 1), list);
+				ingredients.add((slotX + slotY * recipe.getOriginal().recipeWidth) + (recipe.getOriginal().getInput().length > 2 && recipe.getOriginal().getInput()[3] != null && i == 2 ? 2 : 1), list);
 			}
 		} else {
 			for (int i = 0; i < 9; i++) {
@@ -37,7 +37,7 @@ public class ShapedCraftingRecipeCategory extends AbstractCraftingRecipeCategory
 				} else {
 					list = new IngredientList();
 				}
-				ingredients.add((slotX + slotY * recipe.getOriginal().recipeWidth) + 1, list);
+				ingredients.add(i + 1, list);
 			}
 		}
 	}
