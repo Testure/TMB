@@ -7,6 +7,7 @@ import net.minecraft.client.gui.*;
 import net.minecraft.core.sound.SoundCategory;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 import turing.tmb.SearchQuery;
 import turing.tmb.TMB;
 import turing.tmb.TooltipBuilder;
@@ -16,6 +17,7 @@ import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.api.runtime.IIngredientIndex;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.util.RenderUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -144,6 +146,7 @@ public class TMBRenderer {
 				if (mouseX >= xOff && mouseX < xOff + 16 && mouseY >= yOff && mouseY < yOff + 16) {
 					hoveredItem = ingredient;
 					ingredient.getType().getRenderer(runtime).getTooltip(tooltipBuilder, hoveredItem.getIngredient(), isCtrl, isShift);
+					RenderUtil.renderItemSelected(runtime.getGuiHelper(), xOff, yOff);
 				}
 
 				i++;
@@ -159,7 +162,9 @@ public class TMBRenderer {
 			if (!tooltipBuilder.getLines().isEmpty()) {
 				StringBuilder builder = new StringBuilder();
 				tooltipBuilder.getLines().forEach(str -> builder.append(str).append("\n"));
+				GL11.glPushMatrix();
 				tooltip.render(builder.toString(), mouseX, mouseY, 8, -8);
+				GL11.glPopMatrix();
 			}
 
 			if (mc.gameSettings.keyShowRecipe.isPressed()) {
