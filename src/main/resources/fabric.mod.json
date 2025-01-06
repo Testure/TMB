@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "tmb",
+  "version": "${version}",
+
+  "name": "Too Many Blocks",
+  "description": "Shows a view of all items and blocks in the game.",
+  "authors": [
+    "Turing6"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+	"icon": "icon.png",
+  "license": "GPL-3.0",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+			"turing.tmb.TMB"
+    ],
+		"recipesReady": [
+			"turing.tmb.TMB"
+		]
+	},
+  "mixins": [
+      "tmb.mixins.json"
+  ],
+
+  "depends": {
+		"minecraft": "*",
+    "fabricloader": ">=0.15.5"
+  },
+  "suggests": {
+  }
+}

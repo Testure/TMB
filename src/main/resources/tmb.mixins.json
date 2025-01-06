@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "turing.tmb.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "client.ScreenContainerAbstractMixin",
+    "client.ScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
