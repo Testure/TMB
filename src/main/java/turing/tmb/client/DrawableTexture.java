@@ -33,7 +33,8 @@ public class DrawableTexture implements IDrawableStatic {
 
 	@Override
 	public void draw(IGuiHelper helper, int xOffset, int yOffset, int maskTop, int maskBottom, int maskLeft, int maskRight) {
-		helper.getMinecraft().textureManager.loadTexture(texture).bind();
+		int texture1 = helper.getMinecraft().renderEngine.getTexture(texture);
+		helper.getMinecraft().renderEngine.bindTexture(texture1);
 
 		int x = xOffset + this.paddingLeft + maskLeft;
 		int y = yOffset + this.paddingTop + maskTop;

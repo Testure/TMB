@@ -25,7 +25,7 @@ public class RenderUtil {
 		GL11.glTranslatef(x, y, 0);
 		GL11.glScaled(scaleX, scaleY, 1);
 		try {
-			model.renderItemIntoGui(Tessellator.instance, mc.font, mc.textureManager, stack, 0, 0, brightness, alpha);
+			model.renderItemIntoGui(Tessellator.instance, mc.fontRenderer, mc.renderEngine, stack, 0, 0, brightness, alpha);
 		} catch (Exception e) {
 			TMB.LOGGER.warn(e.getMessage());
 		}

@@ -3,9 +3,10 @@ package turing.tmb.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ButtonElement;
-import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.TooltipElement;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTooltip;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
@@ -13,7 +14,6 @@ import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.collection.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import turing.tmb.TMB;
 import turing.tmb.TooltipBuilder;
@@ -34,10 +34,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
-public class ScreenTMBRecipe extends Screen {
+public class ScreenTMBRecipe extends GuiScreen {
 	private int xSize = 180;
 	private int ySize = 180;
-	private final TooltipElement tooltipElement = new TooltipElement(Minecraft.getMinecraft());
+	private final GuiTooltip tooltipElement = new GuiTooltip(Minecraft.getMinecraft(this.getClass()));
 	private ILookupContext lookupContext = null;
 	private List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>> recipeList = null;
 	private int selectedTab = 0;
@@ -49,13 +49,13 @@ public class ScreenTMBRecipe extends Screen {
 	private int tabsPerPage = 7;
 	private final List<IRecipeCategory<?>> tabList = new ArrayList<>();
 	private final List<Pair<ITypedIngredient<?>, Pair<Integer, Integer>>> drawnIngredients = new ArrayList<>();
-	private final ButtonElement rightButton = new ButtonElement(0, 0, 0, ">");
-	private final ButtonElement leftButton = new ButtonElement(1, 0, 0, "<");
-	private final ButtonElement tabLeftButton = new ButtonElement(2, 0, 0, "<");
-	private final ButtonElement tabRightButton = new ButtonElement(3, 0, 0, ">");
+	private final GuiButton rightButton = new GuiButton(0, 0, 0, ">");
+	private final GuiButton leftButton = new GuiButton(1, 0, 0, "<");
+	private final GuiButton tabLeftButton = new GuiButton(2, 0, 0, "<");
+	private final GuiButton tabRightButton = new GuiButton(3, 0, 0, ">");
 	private String tooltip = "";
 
-	public ScreenTMBRecipe(Screen parent) {
+	public ScreenTMBRecipe(GuiScreen parent) {
 		super(parent);
 		rightButton.width = 12;
 		rightButton.height = 12;
@@ -71,10 +71,10 @@ public class ScreenTMBRecipe extends Screen {
 		tabRightButton.setListener(this::tabPageRight);
 	}
 
-	public static void show(List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>> recipeList, ILookupContext context, @Nullable Screen lastScreen) {
-		Minecraft mc = Minecraft.getMinecraft();
+	public static void show(List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>> recipeList, ILookupContext context, @Nullable GuiScreen lastScreen) {
+		Minecraft mc = Minecraft.getMinecraft(ScreenTMBRecipe.class);
 		ScreenTMBRecipe screen = new ScreenTMBRecipe(lastScreen != null ? lastScreen : mc.currentScreen);
-		mc.displayScreen(screen);
+		mc.displayGuiScreen(screen);
 		screen.showRecipes(recipeList, context);
 	}
 
@@ -99,13 +99,13 @@ public class ScreenTMBRecipe extends Screen {
 	}
 
 	@Override
-	public void removed() {
-		super.removed();
+	public void onClosed() {
+		super.onClosed();
 		Keyboard.enableRepeatEvents(false);
 	}
 
 	@Override
-	public boolean isPauseScreen() {
+	public boolean pausesGame() {
 		return false;
 	}
 
@@ -146,26 +146,26 @@ public class ScreenTMBRecipe extends Screen {
 		}
 	}
 
-	private void buttonClick(ButtonElement button, int mx, int my) {
+	private void buttonClick(GuiButton button, int mx, int my) {
 		if (button.mouseClicked(mc, mx, my)) {
 			button.listener.listen(button);
 			mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0F, 1.0F);
 		}
 	}
 
-	private void recipePageLeft(ButtonElement b) {
+	private void recipePageLeft(GuiButton b) {
 		currentRecipePage = Math.max(currentRecipePage - 1, 0);
 	}
 
-	private void recipePageRight(ButtonElement b) {
+	private void recipePageRight(GuiButton b) {
 		currentRecipePage = Math.min(currentRecipePage + 1, recipePages - 1);
 	}
 
-	private void tabPageLeft(ButtonElement b) {
+	private void tabPageLeft(GuiButton b) {
 		currentTabPage = Math.max(currentTabPage - 1, 0);
 	}
 
-	private void tabPageRight(ButtonElement b) {
+	private void tabPageRight(GuiButton b) {
 		currentTabPage = Math.min(currentTabPage + 1, tabPages - 1);
 	}
 
@@ -190,9 +190,8 @@ public class ScreenTMBRecipe extends Screen {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void render(int mx, int my, float partialTick) {
-		renderBackground();
+	public void drawScreen(int mx, int my, float partialTick) {
+		drawWorldBackground();
 		GL11.glEnable(3042);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -214,7 +213,8 @@ public class ScreenTMBRecipe extends Screen {
 		}
 		GL11.glPopMatrix();
 
-		this.mc.textureManager.loadTexture("/assets/minecraft/textures/gui/container/guidebook/guidebook.png").bind();
+		int texture = this.mc.renderEngine.getTexture("/assets/minecraft/textures/gui/guidebook/guidebook.png");
+		this.mc.renderEngine.bindTexture(texture);
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(x, (double) y, 0, 0, this.xSize, this.ySize, 158, 220);
@@ -286,9 +286,9 @@ public class ScreenTMBRecipe extends Screen {
 
 			GL11.glTranslatef(x, y + 4, 0);
 			String text = I18n.getInstance().translateKey(category.getName());
-			int textX = ((xSize / 2) - mc.font.getStringWidth(text) / 2);
-			mc.font.renderString(text, textX + 1, 1, 0xFFFFFF, true);
-			mc.font.renderString(text, textX, 0, 0xFFFFFF, false);
+			int textX = ((xSize / 2) - mc.fontRenderer.getStringWidth(text) / 2);
+			mc.fontRenderer.renderString(text, textX + 1, 1, 0xFFFFFF, true);
+			mc.fontRenderer.renderString(text, textX, 0, 0xFFFFFF, false);
 		}
 		GL11.glPopMatrix();
 
@@ -307,7 +307,7 @@ public class ScreenTMBRecipe extends Screen {
 			leftButton.drawButton(mc, mx, my);
 
 			String pageText = "Page " + (currentRecipePage + 1) + "/" + recipePages;
-			mc.font.renderString(pageText, (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.font.getStringWidth(pageText) / 2, ((this.height - this.ySize) / 2) + this.ySize - 16, 0xFFFFFF, false);
+			mc.fontRenderer.renderString(pageText, (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.fontRenderer.getStringWidth(pageText) / 2, ((this.height - this.ySize) / 2) + this.ySize - 16, 0xFFFFFF, false);
 		}
 
 		if (tabPages > 1) {
@@ -331,7 +331,8 @@ public class ScreenTMBRecipe extends Screen {
 
 		GL11.glEnable(3042);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/gui_vanilla.png").bind();
+		int texture = this.mc.renderEngine.getTexture("/assets/tmb/textures/gui/gui_vanilla.png");
+		this.mc.renderEngine.bindTexture(texture);
 
 		for (int i = 0; i < catalysts.size(); i++) {
 			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
@@ -352,7 +353,8 @@ public class ScreenTMBRecipe extends Screen {
 	private void renderTab(int x, int mx, int my, boolean selected, IRecipeCategory<?> category) {
 		GL11.glEnable(3042);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/tab_" + (!selected ? "un" : "") + "selected.png").bind();
+		int texture = this.mc.renderEngine.getTexture("/assets/tmb/textures/gui/tab_" + (!selected ? "un" : "") + "selected.png");
+		this.mc.renderEngine.bindTexture(texture);
 		int y = ((this.height - this.ySize) / 2) - 21;
 		if (!selected) y += 2;
 		x = ((this.width - this.xSize) / 2) + 24 * x;
@@ -366,15 +368,15 @@ public class ScreenTMBRecipe extends Screen {
 	}
 
 	@Override
-	public void keyPressed(char eventCharacter, int eventKey, int mx, int my) {
+	public void keyTyped(char eventCharacter, int eventKey, int mx, int my) {
 		if (eventKey == Keyboard.KEY_BACK) {
-			mc.displayScreen(getParentScreen());
+			mc.displayGuiScreen(getParentScreen());
 		} else if (eventKey == Keyboard.KEY_ESCAPE || eventKey == mc.gameSettings.keyInventory.getKeyCode()) {
-			Screen s = getParentScreen();
+			GuiScreen s = getParentScreen();
 			while (s instanceof ScreenTMBRecipe) {
 				s = s.getParentScreen();
 			}
-			mc.displayScreen(s);
+			mc.displayGuiScreen(s);
 		}
 		if (eventKey == mc.gameSettings.keyShowRecipe.getKeyCode() || eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
 			for (Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn : drawnIngredients) {

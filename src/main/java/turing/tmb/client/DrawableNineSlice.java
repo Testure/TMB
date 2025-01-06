@@ -1,7 +1,7 @@
 package turing.tmb.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.TextureManager;
+import net.minecraft.client.render.RenderEngine;
 import net.minecraft.client.render.tessellator.Tessellator;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 
@@ -13,8 +13,8 @@ public class DrawableNineSlice {
 	}
 
 	public void draw(Minecraft mc, IGuiHelper helper, int xOffset, int yOffset, int width, int height, int sliceTop, int sliceBottom, int sliceLeft, int sliceRight) {
-		TextureManager textureManager = mc.textureManager;
-		textureManager.bindTexture(textureManager.loadTexture(image));
+		RenderEngine textureManager = mc.renderEngine;
+		textureManager.bindTexture(textureManager.getTexture(image));
 
 		Tessellator tessellator = Tessellator.instance;
 

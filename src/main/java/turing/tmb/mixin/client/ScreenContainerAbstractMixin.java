@@ -1,8 +1,8 @@
 package turing.tmb.mixin.client;
 
-import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.container.ScreenContainerAbstract;
-import net.minecraft.core.player.inventory.menu.MenuAbstract;
+import net.minecraft.client.gui.GuiContainer;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.core.player.inventory.Container;
 import net.minecraft.core.player.inventory.slot.Slot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,19 +14,19 @@ import turing.tmb.TypedIngredient;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.client.TMBRenderer;
 
-@Mixin(value =  ScreenContainerAbstract.class, remap = false)
-public abstract class ScreenContainerAbstractMixin extends Screen {
+@Mixin(value =  GuiContainer.class, remap = false)
+public abstract class ScreenContainerAbstractMixin extends GuiScreen {
 	@Shadow
 	protected abstract int getSlotId(int x, int y);
 
 	@Shadow
-	public MenuAbstract inventorySlots;
+	public Container inventorySlots;
 
 	public ScreenContainerAbstractMixin() {
 		super();
 	}
 
-	@Inject(method = "render", at = @At("TAIL"))
+	@Inject(method = "drawScreen", at = @At("TAIL"))
 	public void render(int mouseX, int mouseY, float pt, CallbackInfo ci) {
 		TMBRenderer.renderHeader(mouseX, mouseY, width, height, mc, pt, null);
 		TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, pt, null);
@@ -42,7 +42,7 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 		TMBRenderer.mouseClicked(mouseX, mouseY, width, height, mc);
 	}
 
-	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "keyTyped", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(char eventCharacter, int eventKey, int mx, int my, CallbackInfo ci) {
 		TMBRenderer.keyTyped(eventCharacter, eventKey, mx, my);
 		if (TMBRenderer.search.isFocused) {
@@ -53,9 +53,9 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 				ci.cancel();
 				int slotId = getSlotId(mx, my);
 				if (slotId >= 0) {
-					Slot slot = this.inventorySlots.slots.get(slotId);
-					if (slot.hasItem()) {
-						TMB.getRuntime().showRecipe(TypedIngredient.itemStackIngredient(slot.getItemStack()), RecipeIngredientRole.INPUT);
+					Slot slot = this.inventorySlots.inventorySlots.get(slotId);
+					if (slot.hasStack()) {
+						TMB.getRuntime().showRecipe(TypedIngredient.itemStackIngredient(slot.getStack()), RecipeIngredientRole.INPUT);
 					}
 				}
 			}
@@ -63,9 +63,9 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 				ci.cancel();
 				int slotId = getSlotId(mx, my);
 				if (slotId >= 0) {
-					Slot slot = this.inventorySlots.slots.get(slotId);
-					if (slot.hasItem()) {
-						TMB.getRuntime().showRecipe(TypedIngredient.itemStackIngredient(slot.getItemStack()), RecipeIngredientRole.OUTPUT);
+					Slot slot = this.inventorySlots.inventorySlots.get(slotId);
+					if (slot.hasStack()) {
+						TMB.getRuntime().showRecipe(TypedIngredient.itemStackIngredient(slot.getStack()), RecipeIngredientRole.OUTPUT);
 					}
 				}
 			}

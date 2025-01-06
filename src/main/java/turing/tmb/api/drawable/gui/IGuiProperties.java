@@ -1,9 +1,9 @@
 package turing.tmb.api.drawable.gui;
 
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.GuiScreen;
 
 public interface IGuiProperties {
-	Class<? extends Screen> screenClass();
+	Class<? extends GuiScreen> screenClass();
 
 	int guiLeft();
 

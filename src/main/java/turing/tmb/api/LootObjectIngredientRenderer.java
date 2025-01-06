@@ -16,7 +16,7 @@ public class LootObjectIngredientRenderer implements IIngredientRenderer<Weighte
 		if (ingredient.isRandomYield()) {
 			String text = ingredient.getMinYield() + "-" + ingredient.getMaxYield();
 			GL11.glScalef(0.9F, 0.9F, 1F);
-			helper.getMinecraft().font.drawStringWithShadow(text, 0, 9, 0xFFFFFF);
+			helper.getMinecraft().fontRenderer.drawStringWithShadow(text, 0, 9, 0xFFFFFF);
 		}
 	}
 

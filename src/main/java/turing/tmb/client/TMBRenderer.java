@@ -3,11 +3,7 @@ package turing.tmb.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ButtonElement;
-import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.TextFieldElement;
-import net.minecraft.client.gui.TooltipElement;
-import net.minecraft.client.gui.container.ScreenContainerAbstract;
+import net.minecraft.client.gui.*;
 import net.minecraft.core.sound.SoundCategory;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
@@ -31,22 +27,22 @@ public class TMBRenderer {
 	public static int pages = 0;
 	public static boolean show = true;
 	protected static boolean initialized;
-	protected static final ButtonElement leftButton = new ButtonElement(0, 0, 0, 16, 16, "<");
-	protected static final ButtonElement rightButton = new ButtonElement(1, 0, 0, 16, 16, ">");
-	public static final TextFieldElement search = new TextFieldElement(null, Minecraft.getMinecraft().font, 0, 0, 120, 20, "", "Search...");
-	protected static TooltipElement tooltip;
+	protected static final GuiButton leftButton = new GuiButton(0, 0, 0, 16, 16, "<");
+	protected static final GuiButton rightButton = new GuiButton(1, 0, 0, 16, 16, ">");
+	public static final GuiTextField search = new GuiTextField(null, Minecraft.getMinecraft(TMBRenderer.class).fontRenderer, 0, 0, 120, 20, "", "Search...");
+	protected static GuiTooltip tooltip;
 
 	public static void init(Minecraft mc) {
 		initialized = true;
 
-		tooltip = new TooltipElement(mc);
+		tooltip = new GuiTooltip(mc);
 	}
 
 	public static void renderHeader(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
 		int w = (int) (width / 3.5F);
-		Screen currentScreen = mc.currentScreen;
-		if (currentScreen instanceof ScreenContainerAbstract) {
-			w = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - 16, w);
+		GuiScreen currentScreen = mc.currentScreen;
+		if (currentScreen instanceof GuiContainer) {
+			w = Math.min(((width / 2) - ((GuiContainer) (currentScreen)).xSize / 2) - 16, w);
 		} else if (properties != null) {
 			w = Math.min(((width / 2) - properties.guiXSize() / 2) - 16, w);
 		}
@@ -58,7 +54,7 @@ public class TMBRenderer {
 		leftButton.yPosition = startY;
 		rightButton.xPosition = Math.min(startX + (18 * (w / 18)), width - 18);
 		rightButton.yPosition = startY;
-		mc.font.renderString(str, ((((leftButton.xPosition + leftButton.width) + (rightButton.xPosition + rightButton.width)) / 2) - mc.font.getStringWidth(str) / 2) - 4, startY + 4, 0xFFFFFF, false);
+		mc.fontRenderer.renderString(str, ((((leftButton.xPosition + leftButton.width) + (rightButton.xPosition + rightButton.width)) / 2) - mc.fontRenderer.getStringWidth(str) / 2) - 4, startY + 4, 0xFFFFFF, false);
 		leftButton.drawButton(mc, mouseX, mouseY);
 		rightButton.drawButton(mc, mouseX, mouseY);
 
@@ -105,14 +101,14 @@ public class TMBRenderer {
 			return;
 		}
 
-		Screen currentScreen = mc.currentScreen;
+		GuiScreen currentScreen = mc.currentScreen;
 		ITMBRuntime runtime = TMB.getRuntime();
 		Collection<ITypedIngredient<?>> toDisplay = getToDisplay(runtime);
 
 		int startX = (int) (width / 3.5F);
 
-		if (currentScreen instanceof ScreenContainerAbstract) {
-			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - 18, startX);
+		if (currentScreen instanceof GuiContainer) {
+			startX = Math.min(((width / 2) - ((GuiContainer) (currentScreen)).xSize / 2) - 18, startX);
 		} else if (properties != null) {
 			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - 18, startX);
 		}

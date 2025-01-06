@@ -1,6 +1,7 @@
 package turing.tmb;
 
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.drawable.gui.IGuiProperties;
@@ -11,7 +12,7 @@ public class BaseTMBPlugin implements ITMBPlugin {
 	public void registerExtraScreens(IGuiHelper helper) {
 		helper.registerScreen(ScreenTMBRecipe.class, (s) -> new IGuiProperties() {
 			@Override
-			public Class<? extends Screen> screenClass() {
+			public Class<? extends GuiScreen> screenClass() {
 				return ScreenTMBRecipe.class;
 			}
 

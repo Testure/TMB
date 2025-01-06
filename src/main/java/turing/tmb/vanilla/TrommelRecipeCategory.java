@@ -1,7 +1,7 @@
 package turing.tmb.vanilla;
 
 import net.minecraft.core.WeightedRandomLootObject;
-import net.minecraft.core.block.Blocks;
+import net.minecraft.core.block.Block;
 import net.minecraft.core.net.command.TextFormatting;
 import org.jetbrains.annotations.Nullable;
 import turing.tmb.RecipeLayoutBuilder;
@@ -34,7 +34,7 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 
 	public TrommelRecipeCategory() {
 		this.background = new DrawableBlank(120, 60);
-		this.icon = new DrawableIngredient<>(Blocks.TROMMEL_ACTIVE.getDefaultStack(), ItemStackIngredientRenderer.INSTANCE);
+		this.icon = new DrawableIngredient<>(Block.trommelActive.getDefaultStack(), ItemStackIngredientRenderer.INSTANCE);
 		this.arrow = new DrawableAnimated(new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 82, 128, 24, 16, 0, 0, 0, 0, 24, 16), 12, IDrawableAnimated.StartDirection.LEFT, false);
 		this.arrowBack = new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 24, 133, 24, 16, 0, 0, 0, 0, 24, 16);
 	}

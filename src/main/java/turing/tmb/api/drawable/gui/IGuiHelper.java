@@ -1,7 +1,7 @@
 package turing.tmb.api.drawable.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.GuiScreen;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.runtime.ITMBRuntime;
@@ -20,9 +20,9 @@ public interface IGuiHelper {
 
 	void drawIngredients(IIngredientList ingredients);
 
-	<T extends Screen> void registerScreen(Class<? extends T> clazz, IScreenHandler<T> handler);
+	<T extends GuiScreen> void registerScreen(Class<? extends T> clazz, IScreenHandler<T> handler);
 
-	<T extends Screen> void blacklistScreen(Class<? extends T> clazz);
+	<T extends GuiScreen> void blacklistScreen(Class<? extends T> clazz);
 
 	Minecraft getMinecraft();
 }

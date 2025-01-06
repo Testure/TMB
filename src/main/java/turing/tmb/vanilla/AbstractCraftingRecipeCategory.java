@@ -1,7 +1,6 @@
 package turing.tmb.vanilla;
 
-import net.minecraft.core.block.Blocks;
-import net.minecraft.core.data.registry.recipe.RecipeEntryBase;
+import net.minecraft.core.block.Block;
 import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCrafting;
 import net.minecraft.core.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +30,7 @@ public abstract class AbstractCraftingRecipeCategory<R extends RecipeEntryCrafti
 
 	public AbstractCraftingRecipeCategory() {
 		this.background = new DrawableBlank(120, 60);
-		this.icon = new DrawableIngredient<>(Blocks.WORKBENCH.getDefaultStack(), ItemStackIngredientRenderer.INSTANCE);
+		this.icon = new DrawableIngredient<>(Block.workbench.getDefaultStack(), ItemStackIngredientRenderer.INSTANCE);
 		this.arrow = new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 24, 133, 24, 16, 0, 0, 0, 0, 24, 16);
 	}
 

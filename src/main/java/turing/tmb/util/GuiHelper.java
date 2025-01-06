@@ -1,7 +1,7 @@
 package turing.tmb.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.util.collection.Pair;
 import turing.tmb.api.drawable.IIngredientList;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GuiHelper implements IGuiHelper {
-	private final Minecraft mc = Minecraft.getMinecraft();
+	private final Minecraft mc = Minecraft.getMinecraft(this.getClass());
 	private final ITMBRuntime runtime;
 	private final CycleTimer cycleTimer = new CycleTimer(0);
 	public static final Map<String, IScreenHandler<?>> extraScreens = new HashMap<>();
@@ -77,12 +77,12 @@ public class GuiHelper implements IGuiHelper {
 	}
 
 	@Override
-	public <T extends Screen> void registerScreen(Class<? extends T> clazz, IScreenHandler<T> handler) {
+	public <T extends GuiScreen> void registerScreen(Class<? extends T> clazz, IScreenHandler<T> handler) {
 		extraScreens.put(clazz.getCanonicalName(), handler);
 	}
 
 	@Override
-	public <T extends Screen> void blacklistScreen(Class<? extends T> clazz) {
+	public <T extends GuiScreen> void blacklistScreen(Class<? extends T> clazz) {
 		screenBlacklist.add(clazz.getCanonicalName());
 	}
 

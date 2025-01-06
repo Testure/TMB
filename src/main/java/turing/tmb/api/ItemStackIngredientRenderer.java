@@ -20,7 +20,7 @@ public class ItemStackIngredientRenderer implements IIngredientRenderer<ItemStac
 		RenderUtil.renderItemInGui(helper.getMinecraft(), ingredient, 0, 0, 1, 1, 1, 1);
 		if (ingredient.stackSize > 1) {
 			String text = String.valueOf(ingredient.stackSize);
-			helper.getMinecraft().font.drawStringWithShadow(text, 16 - helper.getMinecraft().font.getStringWidth(text), 8, 0xFFFFFF);
+			helper.getMinecraft().fontRenderer.drawStringWithShadow(text, 16 - helper.getMinecraft().fontRenderer.getStringWidth(text), 8, 0xFFFFFF);
 		}
 	}
 

@@ -23,7 +23,8 @@ public interface IRecipeSlot<I, T extends IIngredientType<I>> extends IDrawable,
 	default void draw(IGuiHelper helper) {
 		GL11.glPushMatrix();
 		GL11.glColor4f(1F, 1F, 1F, 1F);
-		helper.getMinecraft().textureManager.loadTexture("/assets/minecraft/textures/gui/container/crafting.png").bind();
+		int texture = helper.getMinecraft().renderEngine.getTexture("/assets/minecraft/textures/gui/crafting.png");
+		helper.getMinecraft().renderEngine.bindTexture(texture);
 		helper.drawTexturedModalRect(0, 0, 7, 83, 18, 18);
 		GL11.glPopMatrix();
 	}

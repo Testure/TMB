@@ -1,10 +1,10 @@
 package turing.tmb.vanilla;
 
-import net.minecraft.core.block.Blocks;
+import net.minecraft.core.block.Block;
 import net.minecraft.core.data.registry.Registries;
 import net.minecraft.core.data.registry.recipe.entry.*;
 import net.minecraft.core.item.ItemStack;
-import net.minecraft.core.player.inventory.menu.MenuInventoryCreative;
+import net.minecraft.core.player.inventory.ContainerPlayerCreative;
 import turing.tmb.TypedIngredient;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.ItemStackIngredientRenderer;
@@ -30,7 +30,7 @@ public class VanillaPlugin implements ITMBPlugin {
 	@Override
 	public void registerIngredients(ITMBRuntime runtime) {
 		IIngredientRegistry<ItemStack> registry = runtime.getRegistryForIngredientType(VanillaTypes.ITEM_STACK);
-		for (ItemStack stack : MenuInventoryCreative.creativeItems) {
+		for (ItemStack stack : ContainerPlayerCreative.creativeItems) {
 			if (stack != null && stack.itemID > 0) {
 				registry.registerIngredient(ModIDHelper.getModIDForItem(stack), stack.getDisplayName(), stack);
 			}
@@ -56,17 +56,17 @@ public class VanillaPlugin implements ITMBPlugin {
 	public void registerRecipeCategories(ITMBRuntime runtime) {
 		shapedCraftingCategory = runtime.getRecipeIndex().registerCategory(new ShapedCraftingRecipeCategory());
 		shapelessCraftingCategory = runtime.getRecipeIndex().registerCategory(new ShapelessCraftingRecipeCategory());
-		furnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.furnace", Blocks.FURNACE_STONE_ACTIVE.getDefaultStack(), false));
-		blastFurnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.blast_furnace", Blocks.FURNACE_BLAST_ACTIVE.getDefaultStack(), true));
+		furnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.furnace", Block.furnaceStoneActive.getDefaultStack(), false));
+		blastFurnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.blast_furnace", Block.furnaceBlastActive.getDefaultStack(), true));
 		trommelCategory = runtime.getRecipeIndex().registerCategory(new TrommelRecipeCategory());
 	}
 
 	@Override
 	public void registerRecipeCatalysts(ITMBRuntime runtime) {
-		runtime.getRecipeIndex().registerCatalyst(shapedCraftingCategory, TypedIngredient.itemStackIngredient(Blocks.WORKBENCH.getDefaultStack()));
-		runtime.getRecipeIndex().registerCatalyst(shapelessCraftingCategory, TypedIngredient.itemStackIngredient(Blocks.WORKBENCH.getDefaultStack()));
-		runtime.getRecipeIndex().registerCatalyst(furnaceCategory, TypedIngredient.itemStackIngredient(Blocks.FURNACE_STONE_IDLE.getDefaultStack()));
-		runtime.getRecipeIndex().registerCatalyst(blastFurnaceCategory, TypedIngredient.itemStackIngredient(Blocks.FURNACE_BLAST_IDLE.getDefaultStack()));
-		runtime.getRecipeIndex().registerCatalyst(trommelCategory, TypedIngredient.itemStackIngredient(Blocks.TROMMEL_IDLE.getDefaultStack()));
+		runtime.getRecipeIndex().registerCatalyst(shapedCraftingCategory, TypedIngredient.itemStackIngredient(Block.workbench.getDefaultStack()));
+		runtime.getRecipeIndex().registerCatalyst(shapelessCraftingCategory, TypedIngredient.itemStackIngredient(Block.workbench.getDefaultStack()));
+		runtime.getRecipeIndex().registerCatalyst(furnaceCategory, TypedIngredient.itemStackIngredient(Block.furnaceStoneActive.getDefaultStack()));
+		runtime.getRecipeIndex().registerCatalyst(blastFurnaceCategory, TypedIngredient.itemStackIngredient(Block.furnaceBlastActive.getDefaultStack()));
+		runtime.getRecipeIndex().registerCatalyst(trommelCategory, TypedIngredient.itemStackIngredient(Block.trommelIdle.getDefaultStack()));
 	}
 }

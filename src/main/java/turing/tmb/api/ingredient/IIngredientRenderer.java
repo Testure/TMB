@@ -1,7 +1,7 @@
 package turing.tmb.api.ingredient;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.Font;
+import net.minecraft.client.render.FontRenderer;
 import org.lwjgl.opengl.GL11;
 import turing.tmb.TMB;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
@@ -27,8 +27,8 @@ public interface IIngredientRenderer<T> {
 		tooltipBuilder.addAll(list);
 	}
 
-	default Font getFontRenderer(Minecraft minecraft, T ingredient) {
-		return minecraft.font;
+	default FontRenderer getFontRenderer(Minecraft minecraft, T ingredient) {
+		return minecraft.fontRenderer;
 	}
 
 	default int getWidth() {

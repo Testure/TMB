@@ -1,7 +1,7 @@
 package turing.tmb;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.TooltipElement;
+import net.minecraft.client.gui.GuiTooltip;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.collection.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class TMBRuntime implements ITMBRuntime {
 	protected final Map<IIngredientType<?>, IngredientRegistry<?>> ingredientRegistries = new HashMap<>();
 	protected final IngredientIndex index = new IngredientIndex(this);
 	protected final RecipeIndex recipeIndex = new RecipeIndex(this);
-	protected static final TooltipElement tooltipElement = new TooltipElement(Minecraft.getMinecraft());
+	protected static final GuiTooltip tooltipElement = new GuiTooltip(Minecraft.getMinecraft(TMBRuntime.class));
 	protected final GuiHelper guiHelper = new GuiHelper(this);
 	protected boolean isReady;
 
