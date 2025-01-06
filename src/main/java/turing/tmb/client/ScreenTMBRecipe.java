@@ -28,6 +28,7 @@ import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.*;
 import turing.tmb.util.IngredientList;
 import turing.tmb.util.LookupContext;
+import turing.tmb.util.RenderUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -272,9 +273,9 @@ public class ScreenTMBRecipe extends Screen {
 								}
 							}
 						}
+						X--;
+						Y--;
 					}
-					X--;
-					Y--;
 					X -= slot.getX();
 					Y -= slot.getY();
 					GL11.glPopMatrix();
@@ -320,8 +321,16 @@ public class ScreenTMBRecipe extends Screen {
 			tabRightButton.drawButton(mc, mx, my);
 		}
 
+		for (Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn : drawnIngredients) {
+			if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
+				RenderUtil.renderItemSelected(TMB.getRuntime().getGuiHelper(), drawn.getRight().getLeft(), drawn.getRight().getRight());
+			}
+		}
+
 		if (!tooltip.isEmpty()) {
+			GL11.glPushMatrix();
 			tooltipElement.render(tooltip, mx, my, 8, -8);
+			GL11.glPopMatrix();
 		}
 	}
 

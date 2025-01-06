@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.util.collection.Pair;
+import org.lwjgl.opengl.GL11;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.drawable.gui.IScreenHandler;
@@ -60,6 +61,39 @@ public class GuiHelper implements IGuiHelper {
 		tessellator.addVertexWithUV(x + width, y, 0, (float)(u + width) * scale, (float)(v) * scale);
 		tessellator.addVertexWithUV(x, y, 0, (float)(u) * scale, (float)(v) * scale);
 		tessellator.draw();
+	}
+
+	@Override
+	public void drawRect(int minX, int minY, int maxX, int maxY, int color) {
+		if (minX < maxX) {
+			int temp = minX;
+			minX = maxX;
+			maxX = temp;
+		}
+
+		if (minY < maxY) {
+			int temp = minY;
+			minY = maxY;
+			maxY = temp;
+		}
+
+		float a = (float)(color >> 24 & 255) / 255.0F;
+		float r = (float)(color >> 16 & 255) / 255.0F;
+		float g = (float)(color >> 8 & 255) / 255.0F;
+		float b = (float)(color & 255) / 255.0F;
+		Tessellator tessellator = Tessellator.instance;
+		GL11.glEnable(3042);
+		GL11.glDisable(3553);
+		GL11.glBlendFunc(770, 771);
+		GL11.glColor4f(r, g, b, a);
+		tessellator.startDrawingQuads();
+		tessellator.addVertex(minX, maxY, 0);
+		tessellator.addVertex(maxX, maxY, 0);
+		tessellator.addVertex(maxX, minY, 0);
+		tessellator.addVertex(minX, minY, 0);
+		tessellator.draw();
+		GL11.glEnable(3553);
+		GL11.glDisable(3042);
 	}
 
 	@Override

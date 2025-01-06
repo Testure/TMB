@@ -16,6 +16,8 @@ public interface IGuiHelper {
 
 	void drawTexturedModalRect(int x, int y, int u, int v, int width, int height);
 
+	void drawRect(int minX, int minY, int maxX, int maxY, int color);
+
 	void drawIngredients(ITypedIngredient<?>... ingredients);
 
 	void drawIngredients(IIngredientList ingredients);

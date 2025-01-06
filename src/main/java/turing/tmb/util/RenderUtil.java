@@ -11,6 +11,7 @@ import net.minecraft.core.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import turing.tmb.TMB;
+import turing.tmb.api.drawable.gui.IGuiHelper;
 
 public class RenderUtil {
 	public static void renderItemInGui(Minecraft mc, ItemStack stack, int x, int y, int scaleX, int scaleY, float brightness, float alpha) {
@@ -33,6 +34,13 @@ public class RenderUtil {
 		Lighting.disable();
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glPopMatrix();
+	}
+
+	public static void renderItemSelected(IGuiHelper helper, int x, int y) {
+		GL11.glPushMatrix();
+		helper.drawRect(x, y, x + 16, y + 16, -2130706433);
+		GL11.glColor4f(1F, 1F, 1F, 1F);
 		GL11.glPopMatrix();
 	}
 }
