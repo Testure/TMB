@@ -1,21 +1,6 @@
 plugins {
-	id 'fabric-loom' version '1.7.bta'
+	id 'babric-loom' version '1.4.+'
 	id 'java'
-}
-
-import org.gradle.internal.os.OperatingSystem
-
-project.ext.lwjglVersion = "3.3.4"
-
-switch (OperatingSystem.current()) {
-	case OperatingSystem.LINUX:
-		project.ext.lwjglNatives = "natives-linux"
-		break
-	case OperatingSystem.WINDOWS:
-		project.ext.lwjglNatives = "natives-windows"
-		break
-	case OperatingSystem.MAC_OS:
-		project.ext.lwjglNatives = "natives-macos"
 }
 
 group = project.mod_group
@@ -23,8 +8,9 @@ archivesBaseName = project.mod_name
 version = project.mod_version
 
 loom {
+	gluedMinecraftJar()
 	noIntermediateMappings()
-	customMinecraftMetadata.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
+	customMinecraftManifest.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
 }
 
 repositories {
