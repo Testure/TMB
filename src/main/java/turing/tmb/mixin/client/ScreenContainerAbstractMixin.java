@@ -2,14 +2,26 @@ package turing.tmb.mixin.client;
 
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.container.ScreenContainerAbstract;
+import net.minecraft.core.player.inventory.menu.MenuAbstract;
+import net.minecraft.core.player.inventory.slot.Slot;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import turing.tmb.TMB;
+import turing.tmb.TypedIngredient;
+import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.client.TMBRenderer;
 
 @Mixin(value =  ScreenContainerAbstract.class, remap = false)
-public class ScreenContainerAbstractMixin extends Screen {
+public abstract class ScreenContainerAbstractMixin extends Screen {
+	@Shadow
+	protected abstract int getSlotId(int x, int y);
+
+	@Shadow
+	public MenuAbstract inventorySlots;
+
 	public ScreenContainerAbstractMixin() {
 		super();
 	}
@@ -35,6 +47,28 @@ public class ScreenContainerAbstractMixin extends Screen {
 		TMBRenderer.keyTyped(eventCharacter, eventKey, mx, my);
 		if (TMBRenderer.search.isFocused) {
 			ci.cancel();
+		}
+		if (TMB.shouldReplaceGuidebook) {
+			if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+				ci.cancel();
+				int slotId = getSlotId(mx, my);
+				if (slotId >= 0) {
+					Slot slot = this.inventorySlots.slots.get(slotId);
+					if (slot.hasItem()) {
+						TMB.getRuntime().showRecipe(TypedIngredient.itemStackIngredient(slot.getItemStack()), RecipeIngredientRole.INPUT);
+					}
+				}
+			}
+			if (eventKey == mc.gameSettings.keyShowRecipe.getKeyCode()) {
+				ci.cancel();
+				int slotId = getSlotId(mx, my);
+				if (slotId >= 0) {
+					Slot slot = this.inventorySlots.slots.get(slotId);
+					if (slot.hasItem()) {
+						TMB.getRuntime().showRecipe(TypedIngredient.itemStackIngredient(slot.getItemStack()), RecipeIngredientRole.OUTPUT);
+					}
+				}
+			}
 		}
 	}
 }

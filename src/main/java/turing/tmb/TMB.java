@@ -17,6 +17,7 @@ public class TMB implements ModInitializer, RecipeEntrypoint, ClientStartEntrypo
     public static final String MOD_ID = "tmb";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static boolean shouldShowModName = true;
+	public static boolean shouldReplaceGuidebook = true;
 	protected static final TMBRuntime runtime = new TMBRuntime();
 	protected static final List<ITMBPlugin> plugins = new ArrayList<>();
 
