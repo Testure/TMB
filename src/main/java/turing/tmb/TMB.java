@@ -8,12 +8,11 @@ import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.util.ClientStartEntrypoint;
-import turniplabs.halplibe.util.RecipeEntrypoint;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TMB implements ModInitializer, RecipeEntrypoint, ClientStartEntrypoint {
+public class TMB implements ModInitializer, ClientStartEntrypoint {
     public static final String MOD_ID = "tmb";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static boolean shouldShowModName = true;
@@ -31,7 +30,12 @@ public class TMB implements ModInitializer, RecipeEntrypoint, ClientStartEntrypo
     }
 
 	@Override
-	public void onRecipesReady() {
+	public void beforeClientStart() {
+
+	}
+
+	@Override
+	public void afterClientStart() {
 		long time = System.currentTimeMillis();
 		LOGGER.info("Loading plugins");
 		for (ITMBPlugin plugin : plugins) {
@@ -48,21 +52,6 @@ public class TMB implements ModInitializer, RecipeEntrypoint, ClientStartEntrypo
 		runtime.index.gatherIngredients();
 		LOGGER.info("TMB loaded in {}ms!", System.currentTimeMillis() - time);
 		runtime.isReady = true;
-	}
-
-	@Override
-	public void initNamespaces() {
-
-	}
-
-	@Override
-	public void beforeClientStart() {
-
-	}
-
-	@Override
-	public void afterClientStart() {
-
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {
