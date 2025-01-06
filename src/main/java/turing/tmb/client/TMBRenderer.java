@@ -9,8 +9,10 @@ import net.minecraft.client.gui.TextFieldElement;
 import net.minecraft.client.gui.TooltipElement;
 import net.minecraft.client.gui.container.ScreenContainerAbstract;
 import net.minecraft.core.sound.SoundCategory;
+import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import turing.tmb.SearchQuery;
 import turing.tmb.TMB;
@@ -73,6 +75,7 @@ public class TMBRenderer {
 		if (search.isFocused) {
 			search.updateCursorCounter();
 		}
+		scroll(Mouse.getDWheel());
 	}
 
 	public static void mouseClicked(int mouseX, int mouseY, int width, int height, Minecraft mc) {
@@ -95,6 +98,13 @@ public class TMBRenderer {
 		if (search.isFocused) {
 			search.textboxKeyTyped(c, key);
 		}
+	}
+
+	private static void scroll(int direction) {
+		int change = MathHelper.clamp(-direction, -1, 1);
+		currentPage += change;
+		if (currentPage < 0) currentPage = pages;
+		if (currentPage > pages) currentPage = 0;
 	}
 
 	@SuppressWarnings("unchecked")

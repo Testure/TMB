@@ -11,8 +11,10 @@ import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.collection.Pair;
+import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import turing.tmb.TMB;
@@ -190,6 +192,24 @@ public class ScreenTMBRecipe extends Screen {
 		return (ySize - 18) / (category.getBackground().getHeight() + 4);
 	}
 
+	private void scroll(int direction) {
+		int change = MathHelper.clamp(-direction, -1, 1);
+		int mul = 1;
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+			mul += 10;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+			mul += 100;
+		}
+
+		change *= mul;
+
+		currentRecipePage += change;
+		if (currentRecipePage < 0) currentRecipePage = 0;
+		if (currentRecipePage >= recipePages) currentRecipePage = recipePages - 1;
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public void render(int mx, int my, float partialTick) {
@@ -221,6 +241,10 @@ public class ScreenTMBRecipe extends Screen {
 		this.drawTexturedModalRect(x, (double) y, 0, 0, this.xSize, this.ySize, 158, 220);
 
 		GL11.glPushMatrix();
+
+		if (mx >= x && my >= y && mx < x + this.xSize && my < y + this.ySize) {
+			scroll(Mouse.getDWheel());
+		}
 
 		int in = this.currentTabPage * this.tabsPerPage + selectedTab;
 		if (tabList.size() > in) {
