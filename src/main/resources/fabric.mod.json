@@ -24,7 +24,7 @@
 		"afterClientStart": [
 			"turing.tmb.TMB"
 		],
-		"afterClientStart": [
+		"gatherTMBPlugins": [
 			"turing.tmb.TMB"
 		]
 	},

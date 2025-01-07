@@ -5,9 +5,12 @@ import net.minecraft.client.gui.GuiScreen;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.drawable.gui.IGuiProperties;
+import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.client.ScreenTMBRecipe;
 
 public class BaseTMBPlugin implements ITMBPlugin {
+	public static InfoRecipeCategory infoCategory;
+
 	@Override
 	public void registerExtraScreens(IGuiHelper helper) {
 		helper.registerScreen(ScreenTMBRecipe.class, (s) -> new IGuiProperties() {
@@ -46,5 +49,10 @@ public class BaseTMBPlugin implements ITMBPlugin {
 				return 180;
 			}
 		});
+	}
+
+	@Override
+	public void registerRecipeCategories(ITMBRuntime runtime) {
+		infoCategory = runtime.getRecipeIndex().registerCategory(new InfoRecipeCategory());
 	}
 }

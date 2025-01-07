@@ -26,8 +26,7 @@ import turing.tmb.api.recipe.*;
 import turing.tmb.util.IngredientList;
 import turing.tmb.util.RenderUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
@@ -79,12 +78,18 @@ public class ScreenTMBRecipe extends GuiScreen {
 		this.recipeList = recipeList;
 		this.lookupContext = context;
 		this.tabList.clear();
+		Map<Integer, IRecipeCategory<?>> temp = new HashMap<>();
 
 		for (Pair<IRecipeCategory<?>, IRecipeTranslator<?>> pair : recipeList) {
-			if (!tabList.contains(pair.getLeft())) {
-				tabList.add(pair.getLeft());
+			if (!temp.containsValue(pair.getLeft())) {
+				temp.put(TMB.getRuntime().getRecipeIndex().getAllCategories().indexOf(pair.getLeft()), pair.getLeft());
 			}
 		}
+		this.tabList.addAll(temp.values());
+
+		temp.clear();
+
+		tabPages = (int) Math.ceil((double) tabList.size() / tabsPerPage);
 
 		tabPages = (int) Math.ceil((double) tabList.size() / tabsPerPage);
 
@@ -277,9 +282,10 @@ public class ScreenTMBRecipe extends GuiScreen {
 						Y++;
 						IIngredientList list = ingredients.get(I);
 						ITypedIngredient<?> ingredient = TMB.getRuntime().getGuiHelper().getCycleTimer().getCycledItem(list.getIngredients());
-						if (lookupContext != null && lookupContext.getRole() != RecipeIngredientRole.OUTPUT) {
-							if (list.getIngredients().stream().anyMatch((ing) -> ing.hashCode() == lookupContext.getIngredient().hashCode())) {
-								ingredient = lookupContext.getIngredient();
+						if (lookupContext != null) {
+							Optional<ITypedIngredient<?>> found = list.getIngredients().stream().filter((t) -> t.hashCode() == lookupContext.getIngredient().hashCode()).findFirst();
+							if (found.isPresent()) {
+								ingredient = found.get();
 							}
 						}
 						if (ingredient != null) {
@@ -333,7 +339,10 @@ public class ScreenTMBRecipe extends GuiScreen {
 			leftButton.drawButton(mc, mx, my);
 
 			String pageText = "Page " + (currentRecipePage + 1) + "/" + recipePages;
-			mc.fontRenderer.renderString(pageText, (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.fontRenderer.getStringWidth(pageText) / 2, ((this.height - this.ySize) / 2) + this.ySize - 16, 0xFFFFFF, false);
+			int textX = (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.fontRenderer.getStringWidth(pageText) / 2;
+			int textY = ((this.height - this.ySize) / 2) + this.ySize - 16;
+			mc.fontRenderer.renderString(pageText, textX + 1, textY + 1, 0xFFFFFF, true);
+			mc.fontRenderer.renderString(pageText, textX, textY, 0xFFFFFF, false);
 		}
 
 		if (tabPages > 1) {
@@ -372,7 +381,7 @@ public class ScreenTMBRecipe extends GuiScreen {
 
 			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
 			int x = ((this.width - this.xSize) / 2) - 20;
-			int y = ((this.height - this.ySize) / 2) + (4 + (26 * i));
+			int y = ((this.height - this.ySize) / 2) + (4 + (22 * i));
 
 			this.drawTexturedModalRect(x, y, 0, 0, 22, 22);
 

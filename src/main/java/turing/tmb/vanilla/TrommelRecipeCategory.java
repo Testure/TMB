@@ -63,9 +63,13 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 	public void drawRecipe(ITMBRuntime runtime, TrommelRecipeTranslator recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
 		ingredients.add(0, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()));
 
-		for (int i = 1; i <= recipe.getOriginal().getOutput().getEntries().size(); i++) {
-			WeightedRandomLootObject lootObject = recipe.getOriginal().getOutput().getEntries().get(i - 1);
-			ingredients.add(i, new IngredientList(new TypedIngredient<>(ModIDHelper.getModIDForItem(lootObject.getDefinedItemStack()), lootObject.getDefinedItemStack().getDisplayName(), VanillaTypes.LOOT_OBJECT, lootObject)));
+		for (int i = 0; i < 9; i++) {
+			if (recipe.getOriginal().getOutput().getEntries().size() > i) {
+				WeightedRandomLootObject lootObject = recipe.getOriginal().getOutput().getEntries().get(i);
+				ingredients.add(i + 1, new IngredientList(new TypedIngredient<>(ModIDHelper.getModIDForItem(lootObject.getDefinedItemStack()), lootObject.getDefinedItemStack().getDisplayName(), VanillaTypes.LOOT_OBJECT, lootObject)));
+			} else {
+				ingredients.add(i + 1, new IngredientList());
+			}
 		}
 
 		arrowBack.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) + 7);
@@ -75,19 +79,19 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 	@Override
 	public List<String> getTooltips(TrommelRecipeTranslator recipe, int mouseX, int mouseY) {
 		List<String> tooltips = new ArrayList<>();
-		/*for (int i = 0; i < recipe.getOriginal().getOutput().getEntries().size(); i++) {
-			WeightedRandomLootObject lootObject = recipe.getOriginal().getOutput().getEntries().get(i);
-			int x = 100 + (18 * (i / 3));
-			int y = (background.getHeight() / 2) + 24;
-			if (i > 3) y -= 18;
-			if (i > 6) y -= 18;
+		for (int i = 0; i < 9; i++) {
+			if (recipe.getOriginal().getOutput().getEntries().size() > i) {
+				WeightedRandomLootObject lootObject = recipe.getOriginal().getOutput().getEntries().get(i);
+				int x = 100 + (18 * (i % 3));
+				int y = (background.getHeight() / 2) + (24 - (18 * (i / 3)));
 
-			if (mouseX >= x && mouseY >= y && mouseX < x + 18 && mouseY < y + 18) {
-				String percentage = String.valueOf(recipe.getOriginal().getOutput().getAsPercentage(lootObject.getDefinedItemStack()));
-				tooltips.add(TextFormatting.formatted(percentage.substring(0, Math.min(5, percentage.length())) + "%", TextFormatting.LIGHT_GRAY));
-				break;
+				if (mouseX >= x && mouseY >= y && mouseX < x + 18 && mouseY < y + 18) {
+					String percentage = String.valueOf(recipe.getOriginal().getOutput().getAsPercentage(lootObject.getDefinedItemStack()));
+					tooltips.add(TextFormatting.formatted(percentage.substring(0, Math.min(5, percentage.length())) + "%", TextFormatting.LIGHT_GRAY));
+					break;
+				}
 			}
-		}*/
+		}
 		return tooltips;
 	}
 

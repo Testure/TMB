@@ -19,6 +19,13 @@ public class RecipeIndex implements IRecipeIndex {
 		this.runtime = runtime;
 	}
 
+	protected void clear() {
+		catalysts.clear();
+		categories.clear();
+		recipeLists.clear();
+		recipeLookupCache.clear();
+	}
+
 	protected void loadLists() {
 		for (IRecipeCategory<?> category : categories) {
 			catalysts.computeIfAbsent(category, k -> new ArrayList<>());

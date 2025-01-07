@@ -31,6 +31,18 @@ public class DrawableTexture implements IDrawableStatic {
 		this.paddingRight = paddingRight;
 	}
 
+	public DrawableTexture(String texture, int u, int v, int width, int height, int paddingTop, int paddingBottom, int paddingLeft, int paddingRight) {
+		this(texture, u, v, width, height, paddingTop, paddingBottom, paddingLeft, paddingRight, width, height);
+	}
+
+	public DrawableTexture(String texture, int u, int v, int width, int height) {
+		this(texture, u, v, width, height, 0, 0, 0, 0);
+	}
+
+	public DrawableTexture(String texture, int u, int v, int width, int height, int textureWidth, int textureHeight) {
+		this(texture, u, v, width, height, 0, 0, 0, 0, textureWidth, textureHeight);
+	}
+
 	@Override
 	public void draw(IGuiHelper helper, int xOffset, int yOffset, int maskTop, int maskBottom, int maskLeft, int maskRight) {
 		int texture1 = helper.getMinecraft().renderEngine.getTexture(texture);
