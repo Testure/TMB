@@ -15,11 +15,11 @@ import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.util.ModIDHelper;
 
 public class VanillaPlugin implements ITMBPlugin {
-	private ShapedCraftingRecipeCategory shapedCraftingCategory;
-	private ShapelessCraftingRecipeCategory shapelessCraftingCategory;
-	private FurnaceRecipeCategory<RecipeEntryFurnace, FurnaceRecipeTranslator<RecipeEntryFurnace>> furnaceCategory;
-	private FurnaceRecipeCategory<RecipeEntryBlastFurnace, FurnaceRecipeTranslator<RecipeEntryBlastFurnace>> blastFurnaceCategory;
-	private TrommelRecipeCategory trommelCategory;
+	public static ShapedCraftingRecipeCategory shapedCraftingCategory;
+	public static ShapelessCraftingRecipeCategory shapelessCraftingCategory;
+	public static FurnaceRecipeCategory<RecipeEntryFurnace, FurnaceRecipeTranslator<RecipeEntryFurnace>> furnaceCategory;
+	public static FurnaceRecipeCategory<RecipeEntryBlastFurnace, FurnaceRecipeTranslator<RecipeEntryBlastFurnace>> blastFurnaceCategory;
+	public static TrommelRecipeCategory trommelCategory;
 
 	@Override
 	public void registerIngredientTypes(ITMBRuntime runtime) {
