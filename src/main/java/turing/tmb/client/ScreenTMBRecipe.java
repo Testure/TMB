@@ -86,6 +86,8 @@ public class ScreenTMBRecipe extends GuiScreen {
 			}
 		}
 
+		tabPages = (int) Math.ceil((double) tabList.size() / tabsPerPage);
+
 		changeTab(0);
 	}
 
@@ -121,7 +123,7 @@ public class ScreenTMBRecipe extends GuiScreen {
 				buttonClick(leftButton, mx, my);
 				buttonClick(rightButton, mx, my);
 			}
-			if (tabList.size() > 1) {
+			if (tabPages > 1) {
 				buttonClick(tabLeftButton, mx, my);
 				buttonClick(tabRightButton, mx, my);
 			}
@@ -160,26 +162,31 @@ public class ScreenTMBRecipe extends GuiScreen {
 
 	private void tabPageLeft(GuiButton b) {
 		currentTabPage = Math.max(currentTabPage - 1, 0);
+		changeTab(selectedTab);
 	}
 
 	private void tabPageRight(GuiButton b) {
 		currentTabPage = Math.min(currentTabPage + 1, tabPages - 1);
+		changeTab(selectedTab);
 	}
 
 	private void changeTab(int tab) {
 		this.selectedTab = tab;
 		this.currentRecipePage = 0;
-		if (tabList.size() > tab) {
-			this.recipesPerPage = howManyRecipesCanIFit(tabList.get(selectedTab));
-
-			int recipeCount = 0;
-			for (Pair<IRecipeCategory<?>, IRecipeTranslator<?>> pair : recipeList) {
-				if (pair.getLeft().hashCode() == tabList.get(selectedTab).hashCode()) {
-					recipeCount++;
-				}
-			}
-			this.recipePages = (int) Math.ceil((double) recipeCount / this.recipesPerPage);
+		int actualIndex = this.currentTabPage * this.tabsPerPage + tab;
+		if (actualIndex >= tabList.size()) {
+			actualIndex = tabList.size() - 1;
+			selectedTab = actualIndex - (this.currentTabPage * this.tabsPerPage);
 		}
+		this.recipesPerPage = howManyRecipesCanIFit(tabList.get(actualIndex));
+
+		int recipeCount = 0;
+		for (Pair<IRecipeCategory<?>, IRecipeTranslator<?>> pair : recipeList) {
+			if (pair.getLeft().hashCode() == tabList.get(actualIndex).hashCode()) {
+				recipeCount++;
+			}
+		}
+		this.recipePages = (int) Math.ceil((double) recipeCount / this.recipesPerPage);
 	}
 
 	private int howManyRecipesCanIFit(IRecipeCategory<?> category) {
