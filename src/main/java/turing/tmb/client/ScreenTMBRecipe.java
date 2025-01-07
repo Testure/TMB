@@ -32,9 +32,7 @@ import turing.tmb.util.IngredientList;
 import turing.tmb.util.LookupContext;
 import turing.tmb.util.RenderUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
@@ -86,12 +84,16 @@ public class ScreenTMBRecipe extends Screen {
 		this.recipeList = recipeList;
 		this.lookupContext = context;
 		this.tabList.clear();
+		Map<Integer, IRecipeCategory<?>> temp = new HashMap<>();
 
 		for (Pair<IRecipeCategory<?>, IRecipeTranslator<?>> pair : recipeList) {
-			if (!tabList.contains(pair.getLeft())) {
-				tabList.add(pair.getLeft());
+			if (!temp.containsValue(pair.getLeft())) {
+				temp.put(TMB.getRuntime().getRecipeIndex().getAllCategories().indexOf(pair.getLeft()), pair.getLeft());
 			}
 		}
+		this.tabList.addAll(temp.values());
+
+		temp.clear();
 
 		tabPages = (int) Math.ceil((double) tabList.size() / tabsPerPage);
 

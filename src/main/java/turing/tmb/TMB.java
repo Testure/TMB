@@ -34,8 +34,8 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 
 	@Override
 	public void onGatherPlugins(boolean isReload) {
-		registerPlugin(new BaseTMBPlugin());
 		registerPlugin(new VanillaPlugin());
+		registerPlugin(new BaseTMBPlugin());
 	}
 
 	@Override
