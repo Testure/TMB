@@ -3,6 +3,7 @@ package turing.tmb.api.recipe;
 import org.jetbrains.annotations.Nullable;
 import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.IIngredientList;
+import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.runtime.ITMBRuntime;
 
 import java.util.Collections;
@@ -24,7 +25,7 @@ public interface IRecipeCategory<R extends IRecipeTranslator<?>> {
 
 	IRecipeLayout getRecipeLayout();
 
-	default List<String> getTooltips(R recipe, int mouseX, int mouseY) {
+	default <I, T extends IIngredientType<I>> List<String>  getTooltips(R recipe, IRecipeSlot<I, T> slot, int mouseX, int mouseY) {
 		return Collections.emptyList();
 	}
 }

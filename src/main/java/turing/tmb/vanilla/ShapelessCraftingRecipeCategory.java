@@ -2,7 +2,6 @@ package turing.tmb.vanilla;
 
 import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCraftingShapeless;
 import turing.tmb.api.drawable.IIngredientList;
-import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.ILookupContext;
 import turing.tmb.api.recipe.IRecipeLayout;
 import turing.tmb.api.runtime.ITMBRuntime;

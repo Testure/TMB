@@ -298,7 +298,7 @@ public class ScreenTMBRecipe extends GuiScreen {
 								int mouseY = my - ((this.height - this.ySize) / 2) - 14 - ((category.getBackground().getHeight() + 4) * i);
 								renderer.getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
 								slot.getTooltips(tooltipBuilder, ingredient.getIngredient(), mouseX, mouseY, isCtrl, isShift);
-								tooltipBuilder.addAll(category.getTooltips(recipe, mouseX, mouseY));
+								tooltipBuilder.addAll(category.getTooltips(recipe, slot, mouseX, mouseY));
 								if (list instanceof IngredientList && ((IngredientList) list).itemGroup != null) {
 									tooltipBuilder.add(TextFormatting.formatted(I18n.getInstance().translateKeyAndFormat("tmb.tooltip.itemGroup", ((IngredientList) list).itemGroup), TextFormatting.LIGHT_GRAY));
 								}

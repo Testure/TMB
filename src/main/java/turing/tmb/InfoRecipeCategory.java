@@ -48,8 +48,8 @@ public class InfoRecipeCategory implements IRecipeCategory<InfoRecipeTranslator>
 		ingredients.add(0, new IngredientList(recipe.getOriginal().getIngredient()));
 
 		String text = recipe.getOriginal().getInfoTranslated();
-		runtime.getGuiHelper().getMinecraft().font.drawStringIntoConstrainedBlock(text, 3, 21, background.getWidth() - 5, 0xFFFFFF, true);
-		runtime.getGuiHelper().getMinecraft().font.drawStringIntoConstrainedBlock(text, 2, 20, background.getWidth() - 4, 0xFFFFFF);
+		runtime.getGuiHelper().getMinecraft().fontRenderer.func_40609_a/*drawStringIntoConstrainedBlock*/(text, 3, 21, background.getWidth() - 5, 0xFFFFFF, true);
+		runtime.getGuiHelper().getMinecraft().fontRenderer.func_27278_a/*drawStringIntoConstrainedBlock*/(text, 2, 20, background.getWidth() - 4, 0xFFFFFF);
 	}
 
 	@Override

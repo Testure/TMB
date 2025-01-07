@@ -2,14 +2,13 @@ package turing.tmb;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.net.command.CommandManager;
-import net.minecraft.core.net.command.util.CommandHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.TMBEntrypoint;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.vanilla.VanillaPlugin;
+import turniplabs.halplibe.helper.CommandHelper;
 import turniplabs.halplibe.util.ClientStartEntrypoint;
 
 import java.util.ArrayList;
@@ -25,12 +24,12 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 
     @Override
     public void onInitialize() {
-		CommandManager.registerCommand(new CommandReload());
+		CommandHelper.createCommand(new CommandReload("tmb"));
 		gatherPlugins(false);
 		if (FabricLoader.getInstance().isModLoaded("modnametooltip")) {
 			shouldShowModName = false;
 		}
-    }
+	}
 
 	@Override
 	public void onGatherPlugins(boolean isReload) {

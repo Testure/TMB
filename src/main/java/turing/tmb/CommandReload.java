@@ -1,17 +1,36 @@
 package turing.tmb;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.core.net.command.CommandManager;
-import net.minecraft.core.net.command.CommandSource;
+import net.minecraft.core.net.command.Command;
+import net.minecraft.core.net.command.CommandHandler;
+import net.minecraft.core.net.command.CommandSender;
 
-public class CommandReload implements CommandManager.CommandRegistry {
+import java.util.Objects;
+
+public class CommandReload extends Command {
+	public CommandReload(String name, String... alts) {
+		super(name, alts);
+	}
+
 	@Override
-	@SuppressWarnings("unchecked")
-	public void register(CommandDispatcher<CommandSource> commandDispatcher) {
-		commandDispatcher.register((LiteralArgumentBuilder) LiteralArgumentBuilder.literal("reload").executes((c) -> {
+	public boolean execute(CommandHandler commandHandler, CommandSender commandSender, String[] strings) {
+		if(strings.length < 1) {
+			return false;
+		}
+		if(strings.length == 1 && Objects.equals(strings[0], "reload")){
+			commandSender.sendMessage("TMB reloaded!");
 			TMB.reloadTMB();
-			return 1;
-		}));
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean opRequired(String[] strings) {
+		return true;
+	}
+
+	@Override
+	public void sendCommandSyntax(CommandHandler commandHandler, CommandSender commandSender) {
+		commandSender.sendMessage("/tmb reload");
 	}
 }

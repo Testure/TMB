@@ -2,4 +2,4 @@ tmb.category.shapedCrafting=Shaped Crafting
 tmb.category.shapelessCrafting=Shapeless Crafting
 tmb.category.info=Info
 
-tmb.tooltip.itemGroup=Accepts Any %s
+tmb.tooltip.itemGroup=Accepts any: %s
