@@ -34,6 +34,7 @@ import turing.tmb.util.RenderUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
@@ -283,9 +284,10 @@ public class ScreenTMBRecipe extends Screen {
 						Y++;
 						IIngredientList list = ingredients.get(I);
 						ITypedIngredient<?> ingredient = TMB.getRuntime().getGuiHelper().getCycleTimer().getCycledItem(list.getIngredients());
-						if (lookupContext != null && lookupContext.getRole() != RecipeIngredientRole.OUTPUT) {
-							if (list.getIngredients().stream().anyMatch((ing) -> ing.hashCode() == lookupContext.getIngredient().hashCode())) {
-								ingredient = lookupContext.getIngredient();
+						if (lookupContext != null) {
+							Optional<ITypedIngredient<?>> found = list.getIngredients().stream().filter((t) -> t.hashCode() == lookupContext.getIngredient().hashCode()).findFirst();
+							if (found.isPresent()) {
+								ingredient = found.get();
 							}
 						}
 						if (ingredient != null) {
