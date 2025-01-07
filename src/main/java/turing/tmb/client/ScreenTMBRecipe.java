@@ -3,11 +3,9 @@ package turing.tmb.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTooltip;
-import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.SoundCategory;
@@ -19,9 +17,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import turing.tmb.TMB;
 import turing.tmb.TooltipBuilder;
-import turing.tmb.api.ItemStackIngredientRenderer;
-import turing.tmb.api.VanillaTypes;
-import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.ingredient.IIngredientRenderer;
@@ -29,7 +24,6 @@ import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.*;
 import turing.tmb.util.IngredientList;
-import turing.tmb.util.LookupContext;
 import turing.tmb.util.RenderUtil;
 
 import java.util.ArrayList;
@@ -364,10 +358,11 @@ public class ScreenTMBRecipe extends GuiScreen {
 
 		GL11.glEnable(3042);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		int texture = this.mc.renderEngine.getTexture("/assets/tmb/textures/gui/gui_vanilla.png");
-		this.mc.renderEngine.bindTexture(texture);
 
 		for (int i = 0; i < catalysts.size(); i++) {
+			int texture = this.mc.renderEngine.getTexture("/assets/tmb/textures/gui/gui_vanilla.png");
+			this.mc.renderEngine.bindTexture(texture);
+
 			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
 			int x = ((this.width - this.xSize) / 2) - 20;
 			int y = ((this.height - this.ySize) / 2) + (4 + (26 * i));
