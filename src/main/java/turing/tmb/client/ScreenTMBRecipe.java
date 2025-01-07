@@ -343,7 +343,10 @@ public class ScreenTMBRecipe extends Screen {
 			leftButton.drawButton(mc, mx, my);
 
 			String pageText = "Page " + (currentRecipePage + 1) + "/" + recipePages;
-			mc.font.renderString(pageText, (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.font.getStringWidth(pageText) / 2, ((this.height - this.ySize) / 2) + this.ySize - 16, 0xFFFFFF, false);
+			int textX = (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.font.getStringWidth(pageText) / 2;
+			int textY = ((this.height - this.ySize) / 2) + this.ySize - 16;
+			mc.font.renderString(pageText, textX + 1, textY + 1, 0xFFFFFF, true);
+			mc.font.renderString(pageText, textX, textY, 0xFFFFFF, false);
 		}
 
 		if (tabPages > 1) {
@@ -380,7 +383,7 @@ public class ScreenTMBRecipe extends Screen {
 		for (int i = 0; i < catalysts.size(); i++) {
 			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
 			int x = ((this.width - this.xSize) / 2) - 20;
-			int y = ((this.height - this.ySize) / 2) + (4 + (26 * i));
+			int y = ((this.height - this.ySize) / 2) + (4 + (22 * i));
 
 			this.drawTexturedModalRect(x, y, 0, 0, 22, 22);
 
