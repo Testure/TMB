@@ -6,6 +6,8 @@
   "mixins": [
   ],
   "client": [
+    "client.GameSettingsMixin",
+    "client.PlayerInputMixin",
     "client.ScreenContainerAbstractMixin",
     "client.ScreenInventoryCreativeMixin",
     "client.ScreenMixin"
