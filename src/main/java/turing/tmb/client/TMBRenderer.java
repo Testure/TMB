@@ -19,6 +19,7 @@ import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.api.runtime.IIngredientIndex;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.util.IKeybinds;
 import turing.tmb.util.RenderUtil;
 
 import java.util.Collection;
@@ -31,18 +32,21 @@ public class TMBRenderer {
 	public static int pages = 0;
 	public static boolean show = true;
 	protected static boolean initialized;
-	protected static final GuiButton leftButton = new GuiButton(0, 0, 0, 16, 16, "<");
-	protected static final GuiButton rightButton = new GuiButton(1, 0, 0, 16, 16, ">");
-	public static final GuiTextField search = new GuiTextField(null, Minecraft.getMinecraft(TMBRenderer.class).fontRenderer, 0, 0, 120, 20, "", "Search...");
+	protected static final GuiButton leftButton = new ButtonElement(0, 0, 0, 16, 16, "<");
+	protected static final GuiButton rightButton = new ButtonElement(1, 0, 0, 16, 16, ">");
+	public static GuiTextField search;
 	protected static GuiTooltip tooltip;
 
 	public static void init(Minecraft mc) {
 		initialized = true;
 
 		tooltip = new GuiTooltip(mc);
+		search = new GuiTextField(null, Minecraft.getMinecraft(TMBRenderer.class).fontRenderer, 0, 0, 120, 20, ((IKeybinds) Minecraft.getMinecraft(TMBRenderer.class).gameSettings).toomanyblocks$getLastTMBSearch().value, "Search...");
+		show = !((IKeybinds) Minecraft.getMinecraft(TMBRenderer.class).gameSettings).toomanyblocks$getIsTMBHidden().value;
 	}
 
 	public static void renderHeader(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
+		if (!show || !initialized) return;
 		int w = (int) (width / 3.5F);
 		GuiScreen currentScreen = mc.currentScreen;
 		if (currentScreen instanceof GuiContainer) {
@@ -68,6 +72,7 @@ public class TMBRenderer {
 	}
 
 	public static void onTick() {
+		if (!show) return;
 		if (search.isFocused) {
 			search.updateCursorCounter();
 		}
@@ -75,6 +80,7 @@ public class TMBRenderer {
 	}
 
 	public static void mouseClicked(int mouseX, int mouseY, int width, int height, Minecraft mc) {
+		if (!show) return;
 		boolean left = leftButton.mouseClicked(mc, mouseX, mouseY);
 		boolean right = rightButton.mouseClicked(mc, mouseX, mouseY);
 		if (left || right) {
@@ -91,7 +97,7 @@ public class TMBRenderer {
 	}
 
 	public static void keyTyped(char c, int key, int mouseX, int mouseY) {
-		if (search.isFocused) {
+		if (search.isFocused && show) {
 			search.textboxKeyTyped(c, key);
 		}
 	}

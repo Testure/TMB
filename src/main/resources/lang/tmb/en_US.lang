@@ -3,3 +3,6 @@ tmb.category.shapelessCrafting=Shapeless Crafting
 tmb.category.info=Info
 
 tmb.tooltip.itemGroup=Accepts any: %s
+
+gui.options.page.controls.category.tmb=Too Many Blocks
+key.tmb.hide=Hide TMB

@@ -2,11 +2,17 @@ package turing.tmb;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.options.components.KeyBindingComponent;
+import net.minecraft.client.gui.options.components.OptionsCategory;
+import net.minecraft.client.gui.options.data.OptionsPages;
+import net.minecraft.client.option.GameSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.TMBEntrypoint;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.util.IKeybinds;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.helper.CommandHelper;
 import turniplabs.halplibe.util.ClientStartEntrypoint;
@@ -44,6 +50,12 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 
 	@Override
 	public void afterClientStart() {
+		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
+		category.withComponent(new KeyBindingComponent(((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getKeyHideTMB()));
+		OptionsPages.CONTROLS.withComponent(category);
+		GameSettings settings = Minecraft.getMinecraft().gameSettings;
+		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsTMBHidden());
+		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getLastTMBSearch());
 		loadTMB();
 	}
 
