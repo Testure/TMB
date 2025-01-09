@@ -1,13 +1,13 @@
 package turing.tmb.util;
 
+import net.minecraft.client.option.BooleanOption;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.option.OptionBoolean;
-import net.minecraft.client.option.OptionString;
+import net.minecraft.client.option.StringOption;
 
 public interface IKeybinds {
 	KeyBinding toomanyblocks$getKeyHideTMB();
 
-	OptionBoolean toomanyblocks$getIsTMBHidden();
+	BooleanOption toomanyblocks$getIsTMBHidden();
 
-	OptionString toomanyblocks$getLastTMBSearch();
+	StringOption toomanyblocks$getLastTMBSearch();
 }

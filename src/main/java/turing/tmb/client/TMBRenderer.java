@@ -32,8 +32,8 @@ public class TMBRenderer {
 	public static int pages = 0;
 	public static boolean show = true;
 	protected static boolean initialized;
-	protected static final GuiButton leftButton = new ButtonElement(0, 0, 0, 16, 16, "<");
-	protected static final GuiButton rightButton = new ButtonElement(1, 0, 0, 16, 16, ">");
+	protected static final GuiButton leftButton = new GuiButton(0, 0, 0, 16, 16, "<");
+	protected static final GuiButton rightButton = new GuiButton(1, 0, 0, 16, 16, ">");
 	public static GuiTextField search;
 	protected static GuiTooltip tooltip;
 

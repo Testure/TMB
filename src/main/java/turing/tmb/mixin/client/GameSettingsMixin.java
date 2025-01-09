@@ -1,10 +1,10 @@
 package turing.tmb.mixin.client;
 
 import net.minecraft.client.input.InputDevice;
+import net.minecraft.client.option.BooleanOption;
 import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.option.OptionBoolean;
-import net.minecraft.client.option.OptionString;
+import net.minecraft.client.option.StringOption;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,10 +20,10 @@ public class GameSettingsMixin implements IKeybinds {
 	public KeyBinding keyHideTMB = new KeyBinding("key.tmb.hide").bind(InputDevice.keyboard, Keyboard.KEY_O);
 
 	@Unique
-	public OptionBoolean isTMBHidden = new OptionBoolean((GameSettings) ((Object) this), "isTMBHidden", false);
+	public BooleanOption isTMBHidden = new BooleanOption((GameSettings) ((Object) this), "isTMBHidden", false);
 
 	@Unique
-	public OptionString lastTMBSearch = new OptionString((GameSettings) ((Object) this), "lastTMBSearch", "");
+	public StringOption lastTMBSearch = new StringOption((GameSettings) ((Object) this), "lastTMBSearch", "");
 
 	@Override
 	public KeyBinding toomanyblocks$getKeyHideTMB() {
@@ -31,12 +31,12 @@ public class GameSettingsMixin implements IKeybinds {
 	}
 
 	@Override
-	public OptionBoolean toomanyblocks$getIsTMBHidden() {
+	public BooleanOption toomanyblocks$getIsTMBHidden() {
 		return isTMBHidden;
 	}
 
 	@Override
-	public OptionString toomanyblocks$getLastTMBSearch() {
+	public StringOption toomanyblocks$getLastTMBSearch() {
 		return lastTMBSearch;
 	}
 
