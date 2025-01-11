@@ -43,13 +43,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		registerPlugin(new BaseTMBPlugin());
 	}
 
-	@Override
-	public void beforeClientStart() {
-
-	}
-
-	@Override
-	public void afterClientStart() {
+	public static void onClientStart() {
 		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
 		category.withComponent(new KeyBindingComponent(((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getKeyHideTMB()));
 		OptionsPages.CONTROLS.withComponent(category);
@@ -57,6 +51,16 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsTMBHidden());
 		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getLastTMBSearch());
 		loadTMB();
+	}
+
+	@Override
+	public void beforeClientStart() {
+
+	}
+
+	@Override
+	public void afterClientStart() {
+		runtime.index.gatherIngredients();
 	}
 
 	private static void loadTMB() {
@@ -73,7 +77,6 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 			plugin.registerRecipeCatalysts(runtime);
 			plugin.registerRecipes(runtime);
 		}
-		runtime.index.gatherIngredients();
 		long timeTook = System.currentTimeMillis() - time;
 		LOGGER.info("TMB loaded in {}ms!", timeTook);
 		runtime.isReady = true;

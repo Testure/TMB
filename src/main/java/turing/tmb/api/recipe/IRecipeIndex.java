@@ -12,6 +12,8 @@ public interface IRecipeIndex {
 
 	void registerCatalyst(IRecipeCategory<?> category, ITypedIngredient<?> catalyst);
 
+	void hideCategory(String name);
+
 	<T extends IRecipeCategory<?>> T registerCategory(T category);
 
 	<R, T extends IRecipeTranslator<R>> void registerRecipes(IRecipeCategory<T> category, Collection<R> recipes, Function<R, T> conv);

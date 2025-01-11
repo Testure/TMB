@@ -30,7 +30,7 @@ public class IngredientIndex implements IIngredientIndex {
 		for (Map.Entry<IIngredientType<?>, IngredientRegistry<?>> entry : runtime.ingredientRegistries.entrySet()) {
 			for (ITypedIngredient<?> ingredient : entry.getValue().ingredients) {
 				completeIngredientList.add(ingredient);
-				if (!hidden.contains(ingredient)) {
+				if (hidden.stream().noneMatch((o) -> o.hashCode() == ingredient.hashCode())) {
 					visibleIngredients.add(ingredient);
 				}
 			}

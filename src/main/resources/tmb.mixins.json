@@ -7,6 +7,7 @@
   ],
   "client": [
     "client.GameSettingsMixin",
+    "client.MinecraftMixin",
     "client.PlayerInputMixin",
     "client.ScreenContainerAbstractMixin",
     "client.ScreenInventoryCreativeMixin",
