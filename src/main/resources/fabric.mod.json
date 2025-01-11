@@ -26,6 +26,9 @@
 		],
 		"gatherTMBPlugins": [
 			"turing.tmb.TMB"
+		],
+		"btatweakerPlugin": [
+			"turing.tmb.plugin.BTATweaker"
 		]
 	},
   "mixins": [

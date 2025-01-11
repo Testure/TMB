@@ -11,6 +11,7 @@ import java.util.function.Function;
 public class RecipeIndex implements IRecipeIndex {
 	private final TMBRuntime runtime;
 	protected final List<IRecipeCategory<?>> categories = new ArrayList<>();
+	protected final List<String> hiddenCategories = new ArrayList<>();
 	protected final Map<IRecipeCategory<?>, List<ITypedIngredient<?>>> catalysts = new HashMap<>();
 	protected final Map<IRecipeCategory<?>, List<IRecipeTranslator<?>>> recipeLists = new HashMap<>();
 	protected final Map<ILookupContext, List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>>> recipeLookupCache = new HashMap<>();
@@ -24,6 +25,7 @@ public class RecipeIndex implements IRecipeIndex {
 		categories.clear();
 		recipeLists.clear();
 		recipeLookupCache.clear();
+		hiddenCategories.clear();
 	}
 
 	protected void loadLists() {
@@ -42,23 +44,26 @@ public class RecipeIndex implements IRecipeIndex {
 
 		List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>> list = context.getRole() == RecipeIngredientRole.INPUT ? getRecipesCatalyst(context.getIngredient(), false) : new ArrayList<>();
 		for (Map.Entry<IRecipeCategory<?>, List<IRecipeTranslator<?>>> entry : recipeLists.entrySet()) {
-			for (IRecipeTranslator<?> translator : entry.getValue()) {
-				boolean isIn = false;
-				switch (context.getRole()) {
-					case INPUT:
-						if (translator.isValidInput(context.getIngredient())) {
-							isIn = true;
-						}
-						break;
-					case OUTPUT:
-						if (translator.isOutput(context.getIngredient())) {
-							isIn = true;
-						}
-						break;
-					default: break;
-				}
-				if (isIn) {
-					list.add(Pair.of(entry.getKey(), translator));
+			if (!hiddenCategories.contains(entry.getKey().getName())) {
+				for (IRecipeTranslator<?> translator : entry.getValue()) {
+					boolean isIn = false;
+					switch (context.getRole()) {
+						case INPUT:
+							if (translator.isValidInput(context.getIngredient())) {
+								isIn = true;
+							}
+							break;
+						case OUTPUT:
+							if (translator.isOutput(context.getIngredient())) {
+								isIn = true;
+							}
+							break;
+						default:
+							break;
+					}
+					if (isIn) {
+						list.add(Pair.of(entry.getKey(), translator));
+					}
 				}
 			}
 		}
@@ -95,8 +100,10 @@ public class RecipeIndex implements IRecipeIndex {
 		List<IRecipeCategory<?>> categoryList = getCategoriesForCatalyst(ingredient);
 
 		for (IRecipeCategory<?> category : categoryList) {
-			for (IRecipeTranslator<?> translator : recipeLists.get(category)) {
-				pairList.add(Pair.of(category, translator));
+			if (!hiddenCategories.contains(category.getName())) {
+				for (IRecipeTranslator<?> translator : recipeLists.get(category)) {
+					pairList.add(Pair.of(category, translator));
+				}
 			}
 		}
 
@@ -112,6 +119,11 @@ public class RecipeIndex implements IRecipeIndex {
 	@Override
 	public void registerCatalyst(IRecipeCategory<?> category, ITypedIngredient<?> catalyst) {
 		catalysts.get(category).add(catalyst);
+	}
+
+	@Override
+	public void hideCategory(String name) {
+		hiddenCategories.add(name);
 	}
 
 	@Override

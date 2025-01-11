@@ -10,7 +10,8 @@
     "client.PlayerInputMixin",
     "client.ScreenContainerAbstractMixin",
     "client.ScreenInventoryCreativeMixin",
-    "client.ScreenMixin"
+    "client.ScreenMixin",
+    "client.MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1
