@@ -56,9 +56,6 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
 		category.withComponent(new KeyBindingComponent(((IKeybinds) Minecraft.getMinecraft(TMB.class).gameSettings).toomanyblocks$getKeyHideTMB()));
 		OptionsPages.CONTROLS.withComponent(category);
-		/*GameSettings settings = Minecraft.getMinecraft(this).gameSettings;
-		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsTMBHidden());
-		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getLastTMBSearch());*/
 		loadTMB();
 	}
 
