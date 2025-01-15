@@ -132,7 +132,7 @@ public class TMBRenderer {
 		}
 
 		int itemsX = (startX / 18);
-		int itemsY = (height / 18) - 1;
+		int itemsY = Math.min((height / 18) - 1, ((height - 28) / 18));
 		int xOffset = 0;
 		int yOffset = 1;
 
