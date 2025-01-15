@@ -9,6 +9,7 @@
     "client.GameSettingsMixin",
     "client.MinecraftMixin",
     "client.ScreenContainerAbstractMixin",
+    "client.ScreenInventoryCreativeAccessor",
     "client.ScreenInventoryCreativeMixin",
     "client.ScreenMixin"
   ],

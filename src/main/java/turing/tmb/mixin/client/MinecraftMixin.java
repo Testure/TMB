@@ -1,7 +1,10 @@
 package turing.tmb.mixin.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.container.ScreenInventoryCreative;
 import net.minecraft.client.option.GameSettings;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -13,9 +16,13 @@ import turing.tmb.client.TMBRenderer;
 import turing.tmb.util.IKeybinds;
 
 @Mixin(value = Minecraft.class, remap = false)
-public class MinecraftMixin {
+public abstract class MinecraftMixin {
 	@Shadow
 	public GameSettings gameSettings;
+
+	@Shadow
+	@Nullable
+	public Screen currentScreen;
 
 	@Unique
 	private static int debounce = 0;
@@ -30,8 +37,15 @@ public class MinecraftMixin {
 		if (debounce > 0) debounce--;
 		if (debounce <= 0) {
 			if (((IKeybinds) gameSettings).toomanyblocks$getKeyHideTMB().isPressed()) {
-				debounce = 10;
-				TMBRenderer.show = !TMBRenderer.show;
+				if (!TMBRenderer.search.isFocused) {
+					if (currentScreen instanceof ScreenInventoryCreative) {
+						if (((ScreenInventoryCreativeAccessor) currentScreen).getSearchField().isFocused) {
+							return;
+						}
+					}
+					debounce = 10;
+					TMBRenderer.show = !TMBRenderer.show;
+				}
 			}
 		}
 	}
