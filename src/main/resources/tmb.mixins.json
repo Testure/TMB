@@ -4,13 +4,14 @@
   "package": "turing.tmb.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "client.ScreenInventoryCreativeAccessor"
   ],
   "client": [
     "client.GameSettingsMixin",
+    "client.MinecraftMixin",
     "client.ScreenContainerAbstractMixin",
     "client.ScreenInventoryCreativeMixin",
-    "client.ScreenMixin",
-    "client.MinecraftMixin"
+    "client.ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
