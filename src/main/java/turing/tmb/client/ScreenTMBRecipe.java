@@ -321,6 +321,9 @@ public class ScreenTMBRecipe extends GuiScreen {
 			int textX = ((xSize / 2) - mc.fontRenderer.getStringWidth(text) / 2);
 			mc.fontRenderer.renderString(text, textX + 1, 1, 0xFFFFFF, true);
 			mc.fontRenderer.renderString(text, textX, 0, 0xFFFFFF, false);
+			if (mx >= x && mx < x + xSize && my >= y && my < y + mc.fontRenderer.fontHeight) {
+				tooltip = I18n.getInstance().translateKey("tmb.tooltip.allCategories");
+			}
 		}
 		GL11.glPopMatrix();
 
