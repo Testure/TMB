@@ -17,7 +17,7 @@
 	"icon": "icon.png",
   "license": "GPL-3.0",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
 			"turing.tmb.TMB"
