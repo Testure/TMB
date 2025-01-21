@@ -98,6 +98,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		clear();
 		gatherPlugins(true);
 		loadTMB();
+		runtime.index.gatherIngredients();
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {
