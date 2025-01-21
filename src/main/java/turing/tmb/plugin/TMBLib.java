@@ -6,12 +6,17 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import turing.btatweaker.api.ModLibrary;
+import turing.docs.Argument;
+import turing.docs.Function;
+import turing.docs.FunctionExample;
+import turing.docs.Library;
 import turing.tmb.TMB;
 import turing.tmb.TypedIngredient;
 
 import java.util.Collections;
 import java.util.List;
 
+@Library(value = "mods.tmb", className = "Too Many Blocks")
 public class TMBLib extends ModLibrary {
 	@Override
 	public void setupLib(LuaTable t, LuaValue env) {
@@ -20,10 +25,11 @@ public class TMBLib extends ModLibrary {
 	}
 
 	@Override
-	public List<String> getValidNames() {
+	public List<String> getAliases() {
 		return Collections.singletonList(TMB.MOD_ID);
 	}
 
+	@Function(value = "hideCategory", arguments = @Argument(value = "string", name = "categoryName"), examples = @FunctionExample("guidebook.section.furnace"))
 	protected static final class HideCategory extends OneArgFunction {
 		@Override
 		public LuaValue call(LuaValue arg) {
@@ -33,6 +39,7 @@ public class TMBLib extends ModLibrary {
 		}
 	}
 
+	@Function(value = "hideIngredient", arguments = {@Argument(value = "string", name = "namespace"), @Argument(value = "string", name = "name")})
 	protected static final class HideIngredient extends TwoArgFunction {
 		@Override
 		public LuaValue call(LuaValue arg, LuaValue arg2) {
