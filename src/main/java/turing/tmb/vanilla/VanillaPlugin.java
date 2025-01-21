@@ -39,9 +39,9 @@ public class VanillaPlugin implements ITMBPlugin {
 
 	@Override
 	public void registerRecipes(ITMBRuntime runtime) {
-		runtime.getRecipeIndex().registerRecipes(furnaceCategory, Registries.RECIPES.FURNACE.getAllRecipes(), FurnaceRecipeTranslator::new);
-		runtime.getRecipeIndex().registerRecipes(blastFurnaceCategory, Registries.RECIPES.BLAST_FURNACE.getAllRecipes(), FurnaceRecipeTranslator::new);
-		runtime.getRecipeIndex().registerRecipes(trommelCategory, Registries.RECIPES.TROMMEL.getAllRecipes(), TrommelRecipeTranslator::new);
+		runtime.getRecipeIndex().registerRecipes(furnaceCategory, Registries.RECIPES.getAllFurnaceRecipes(), FurnaceRecipeTranslator::new);
+		runtime.getRecipeIndex().registerRecipes(blastFurnaceCategory, Registries.RECIPES.getAllBlastFurnaceRecipes(), FurnaceRecipeTranslator::new);
+		runtime.getRecipeIndex().registerRecipes(trommelCategory, Registries.RECIPES.getAllTrommelRecipes(), TrommelRecipeTranslator::new);
 
 		for (RecipeEntryCrafting<?, ?> entryCrafting : Registries.RECIPES.getAllCraftingRecipes()) {
 			if (entryCrafting instanceof RecipeEntryCraftingShaped) {
