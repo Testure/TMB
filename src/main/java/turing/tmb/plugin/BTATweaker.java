@@ -1,17 +1,11 @@
 package turing.tmb.plugin;
 
 import turing.btatweaker.BTATweakerEntrypoint;
-import turing.btatweaker.IScriptPropertyHolder;
-import turing.btatweaker.lua.LibGatherer;
+import turing.btatweaker.IBTATweaker;
 
 public class BTATweaker implements BTATweakerEntrypoint {
 	@Override
-	public void addLibs(LibGatherer gatherer) {
-
-	}
-
-	@Override
-	public void init(IScriptPropertyHolder registry) {
+	public void initPlugin(IBTATweaker registry) {
 		registry.addModLibrary(new TMBLib());
 	}
 }
