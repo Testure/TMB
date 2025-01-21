@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.TMBEntrypoint;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.plugin.BTATweaker;
 import turing.tmb.util.IKeybinds;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.helper.CommandHelper;
@@ -34,12 +35,20 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		if (FabricLoader.getInstance().isModLoaded("modnametooltip")) {
 			shouldShowModName = false;
 		}
-	}
+    }
 
 	@Override
 	public void onGatherPlugins(boolean isReload) {
 		registerPlugin(new VanillaPlugin());
 		registerPlugin(new BaseTMBPlugin());
+	}
+
+	public static void onClientStart() {
+		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
+		category.withComponent(new KeyBindingComponent(((IKeybinds) Minecraft.getMinecraft(TMB.class).gameSettings).toomanyblocks$getKeyHideTMB()));
+		OptionsPages.CONTROLS.withComponent(category);
+		loadTMB();
+		runtime.index.gatherIngredients();
 	}
 
 	@Override
@@ -49,14 +58,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 
 	@Override
 	public void afterClientStart() {
-		runtime.index.gatherIngredients();
-	}
 
-	public static void onClientStart() {
-		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
-		category.withComponent(new KeyBindingComponent(((IKeybinds) Minecraft.getMinecraft(TMB.class).gameSettings).toomanyblocks$getKeyHideTMB()));
-		OptionsPages.CONTROLS.withComponent(category);
-		loadTMB();
 	}
 
 	private static void loadTMB() {
@@ -95,6 +97,9 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		gatherPlugins(true);
 		loadTMB();
 		runtime.index.gatherIngredients();
+		if (FabricLoader.getInstance().isModLoaded("btatweaker")) {
+			BTATweaker.onReload();
+		}
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {
