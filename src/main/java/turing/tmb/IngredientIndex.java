@@ -62,6 +62,14 @@ public class IngredientIndex implements IIngredientIndex {
 		hidden.remove(ingredient);
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> Optional<ITypedIngredient<T>> getIngredient(String namespace, String name) {
+		return completeIngredientList.stream().filter(ingredient ->
+			ingredient.getNamespace().equals(namespace) && ingredient.getUid().equals(name)
+		).map(ingredient -> (ITypedIngredient<T>) ingredient).findFirst();
+	}
+
 	private Collection<ITypedIngredient<?>> cacheSearch(ISearchQuery query) {
 		Collection<ITypedIngredient<?>> existing = searchCache.get(query);
 		if (existing == null) {

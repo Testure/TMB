@@ -4,17 +4,19 @@ import net.minecraft.core.lang.I18n;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
+import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import turing.btatweaker.api.ModLibrary;
 import turing.docs.Argument;
 import turing.docs.Function;
 import turing.docs.FunctionExample;
 import turing.docs.Library;
-import turing.tmb.TMB;
-import turing.tmb.TypedIngredient;
+import turing.tmb.*;
+import turing.tmb.api.ingredient.ITypedIngredient;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Library(value = "mods.tmb", className = "Too Many Blocks")
 public class TMBLib extends ModLibrary {
@@ -22,6 +24,7 @@ public class TMBLib extends ModLibrary {
 	public void setupLib(LuaTable t, LuaValue env) {
 		t.set("hideIngredient", new HideIngredient());
 		t.set("hideCategory", new HideCategory());
+		t.set("addInfo", new AddInfo());
 	}
 
 	@Override
@@ -49,6 +52,25 @@ public class TMBLib extends ModLibrary {
 			if (name.contains(".")) {
 				TMB.getRuntime().getIngredientIndex().hideIngredient(new TypedIngredient<>(namespace, I18n.getInstance().translateKey(name), null, null));
 			}
+			return NIL;
+		}
+	}
+
+	@Function(value = "addInfo", arguments = {
+		@Argument(value = "string", name = "namespace"),
+		@Argument(value = "string", name = "name"),
+		@Argument(value = "string", name = "infoText")
+	}, examples = @FunctionExample({"\"minecraft\"", "\"Iron Ingot\"", "This is a cool item!!!"}))
+	protected static final class AddInfo extends ThreeArgFunction {
+		@Override
+		public LuaValue call(LuaValue arg, LuaValue arg2, LuaValue arg3) {
+			String namespace = arg.checkjstring();
+			String name = arg2.checkjstring();
+			String text = arg3.checkjstring();
+			Optional<ITypedIngredient<Object>> ingredient = TMB.getRuntime().getIngredientIndex().getIngredient(namespace, name);
+			ingredient.ifPresent(i ->
+				TMB.getRuntime().getRecipeIndex().registerRecipe(BaseTMBPlugin.infoCategory, new IngredientInfo(i, text, false), InfoRecipeTranslator::new)
+			);
 			return NIL;
 		}
 	}
