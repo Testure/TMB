@@ -1,8 +1,10 @@
 package turing.tmb.plugin;
 
 import net.minecraft.core.lang.I18n;
+import net.minecraft.core.util.collection.Pair;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.LibFunction;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
@@ -14,12 +16,16 @@ import turing.docs.Library;
 import turing.tmb.*;
 import turing.tmb.api.ingredient.ITypedIngredient;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Library(value = "mods.tmb", className = "Too Many Blocks")
 public class TMBLib extends ModLibrary {
+	public static final List<Pair<LibFunction, Consumer<LibFunction>>> scriptActions = new ArrayList<>();
+
 	@Override
 	public void setupLib(LuaTable t, LuaValue env) {
 		t.set("hideIngredient", new HideIngredient());
@@ -38,6 +44,7 @@ public class TMBLib extends ModLibrary {
 		public LuaValue call(LuaValue arg) {
 			String name = arg.checkjstring();
 			TMB.getRuntime().getRecipeIndex().hideCategory(name);
+			scriptActions.add(Pair.of(this, f -> f.call(arg)));
 			return NIL;
 		}
 	}
@@ -51,6 +58,7 @@ public class TMBLib extends ModLibrary {
 			TMB.getRuntime().getIngredientIndex().hideIngredient(new TypedIngredient<>(namespace, name, null, null));
 			if (name.contains(".")) {
 				TMB.getRuntime().getIngredientIndex().hideIngredient(new TypedIngredient<>(namespace, I18n.getInstance().translateKey(name), null, null));
+				scriptActions.add(Pair.of(this, f -> f.call(arg, arg2)));
 			}
 			return NIL;
 		}
@@ -68,9 +76,10 @@ public class TMBLib extends ModLibrary {
 			String name = arg2.checkjstring();
 			String text = arg3.checkjstring();
 			Optional<ITypedIngredient<Object>> ingredient = TMB.getRuntime().getIngredientIndex().getIngredient(namespace, name);
-			ingredient.ifPresent(i ->
-				TMB.getRuntime().getRecipeIndex().registerRecipe(BaseTMBPlugin.infoCategory, new IngredientInfo(i, text, false), InfoRecipeTranslator::new)
-			);
+			ingredient.ifPresent(i -> {
+				TMB.getRuntime().getRecipeIndex().registerRecipe(BaseTMBPlugin.infoCategory, new IngredientInfo(i, text, false), InfoRecipeTranslator::new);
+				scriptActions.add(Pair.of(this, f -> f.call(arg, arg2, arg3)));
+			});
 			return NIL;
 		}
 	}

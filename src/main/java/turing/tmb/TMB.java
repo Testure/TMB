@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import turing.tmb.api.ITMBPlugin;
 import turing.tmb.api.TMBEntrypoint;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.plugin.BTATweaker;
 import turing.tmb.util.IKeybinds;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.util.ClientStartEntrypoint;
@@ -51,6 +52,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsTMBHidden());
 		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getLastTMBSearch());
 		loadTMB();
+		runtime.index.gatherIngredients();
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 
 	@Override
 	public void afterClientStart() {
-		runtime.index.gatherIngredients();
+
 	}
 
 	private static void loadTMB() {
@@ -99,6 +101,9 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		gatherPlugins(true);
 		loadTMB();
 		runtime.index.gatherIngredients();
+		if (FabricLoader.getInstance().isModLoaded("btatweaker")) {
+			BTATweaker.onReload();
+		}
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {
