@@ -2,6 +2,8 @@ package turing.tmb.api.drawable.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.render.FontRenderer;
+import net.minecraft.client.render.stitcher.IconCoordinate;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.runtime.ITMBRuntime;
@@ -38,5 +40,5 @@ public interface IGuiHelper {
 
 	Minecraft getMinecraft();
 
-	Font getFont();
+	FontRenderer getFont();
 }

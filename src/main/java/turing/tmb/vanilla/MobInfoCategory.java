@@ -4,11 +4,10 @@ import net.minecraft.client.gui.guidebook.mobs.MobInfoRegistry;
 import net.minecraft.client.render.EntityRenderDispatcher;
 import net.minecraft.client.render.Lighting;
 import net.minecraft.client.render.Scissor;
+import net.minecraft.client.render.stitcher.TextureRegistry;
 import net.minecraft.client.render.tessellator.Tessellator;
-import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.entity.Entity;
-import net.minecraft.core.entity.Mob;
-import net.minecraft.core.item.Items;
+import net.minecraft.core.item.Item;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.world.World;
@@ -38,12 +37,12 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 	private final IDrawable icon;
 	private final IDrawable background;
 	private final int xOffset = 8;
-	private Mob mob;
+	private Entity mob;
 	private boolean giveUp = false;
 
 	public MobInfoCategory() {
 		this.background = new DrawableBlank(180, 180);
-		this.icon = new DrawableIngredient<>(Items.FOOD_PORKCHOP_RAW.getDefaultStack(), ItemStackIngredientRenderer.INSTANCE);
+		this.icon = new DrawableIngredient<>(Item.foodPorkchopRaw.getDefaultStack(), ItemStackIngredientRenderer.INSTANCE);
 	}
 
 	@Override
@@ -67,15 +66,16 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 	}
 
 	private void drawHeart(ITMBRuntime runtime, int x, int y, boolean half) {
-		runtime.getGuiHelper().drawGuiIcon(x, y, 9, 9, TextureRegistry.getTexture("minecraft:gui/hud/heart/container"));
-		runtime.getGuiHelper().drawGuiIcon(x, y, 9, 9, TextureRegistry.getTexture("minecraft:gui/hud/heart/" + (half ? "half" : "full")));
+		GL11.glBindTexture(3553, runtime.getGuiHelper().getMinecraft().renderEngine.getTexture("/assets/minecraft/textures/gui/icons.png"));
+		runtime.getGuiHelper().drawTexturedModalRect(x, y, 16, 0, 9, 9);
+		runtime.getGuiHelper().drawTexturedModalRect(x, y, half ? 61 : 52, 0, 9, 9);
 	}
 
 	private void drawHeart(ITMBRuntime runtime, int x, int y) {
 		drawHeart(runtime, x, y, false);
 	}
 
-	private void drawMob(Mob mob, int x, int y) {
+	private void drawMob(Entity mob, int x, int y) {
 		float heightFactor = 27.777779F;
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		Scissor.enable(x + 9, y + 9, 52, 70);
@@ -93,7 +93,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 		Lighting.enableLight();
 		GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(-((float)Math.atan(f6 / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
-		mob.yBodyRot = (float)Math.atan(f5 / 40.0F) * 20.0F;
+		//mob.yBodyRot = (float)Math.atan(f5 / 40.0F) * 20.0F;
 		mob.yRot = (float)Math.atan(f5 / 40.0F) * 40.0F;
 		mob.xRot = -((float)Math.atan(f6 / 40.0F)) * 20.0F;
 		mob.entityBrightness = 1.0F;
@@ -157,10 +157,9 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 		}
 
 		if (mob == null && !giveUp) {
-			Class<? extends Entity> mobClass = recipe.getOriginal().getEntityClass();
+			Class<?> mobClass = recipe.getOriginal().getEntityClass();
 			try {
-				mob = (Mob)mobClass.getConstructor(World.class).newInstance(runtime.getGuiHelper().getMinecraft().currentWorld);
-				mob.setSkinVariant(0);
+				mob = (Entity) mobClass.getConstructor(World.class).newInstance(runtime.getGuiHelper().getMinecraft().theWorld);
 			} catch (Exception e) {
 				giveUp = true;
 				TMB.LOGGER.error("Failed to create example instance of mob '{}'!", mobClass.getSimpleName(), e);

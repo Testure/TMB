@@ -26,6 +26,10 @@ public interface IRecipeCategory<R extends IRecipeTranslator<?>> {
 	IRecipeLayout getRecipeLayout();
 
 	default <I, T extends IIngredientType<I>> List<String>  getTooltips(R recipe, IRecipeSlot<I, T> slot, int mouseX, int mouseY) {
+		return getTooltips(recipe, mouseX, mouseY);
+	}
+
+	default List<String> getTooltips(R recipe, int mouseX, int mouseY) {
 		return Collections.emptyList();
 	}
 }
