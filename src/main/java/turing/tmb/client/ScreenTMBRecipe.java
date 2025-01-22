@@ -183,7 +183,7 @@ public class ScreenTMBRecipe extends GuiScreen {
 			actualIndex = tabList.size() - 1;
 			selectedTab = actualIndex - (this.currentTabPage * this.tabsPerPage);
 		}
-		this.recipesPerPage = howManyRecipesCanIFit(tabList.get(actualIndex));
+		this.recipesPerPage = Math.max(howManyRecipesCanIFit(tabList.get(actualIndex)), 1);
 
 		int recipeCount = 0;
 		for (Pair<IRecipeCategory<?>, IRecipeTranslator<?>> pair : recipeList) {

@@ -12,6 +12,7 @@ import turing.tmb.api.LootObjectIngredientRenderer;
 import turing.tmb.api.VanillaTypes;
 import turing.tmb.api.ingredient.IIngredientRegistry;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.mixin.client.MobInfoRegistryAccessor;
 import turing.tmb.util.ModIDHelper;
 
 public class VanillaPlugin implements ITMBPlugin {
@@ -20,6 +21,7 @@ public class VanillaPlugin implements ITMBPlugin {
 	public static FurnaceRecipeCategory<RecipeEntryFurnace, FurnaceRecipeTranslator<RecipeEntryFurnace>> furnaceCategory;
 	public static FurnaceRecipeCategory<RecipeEntryBlastFurnace, FurnaceRecipeTranslator<RecipeEntryBlastFurnace>> blastFurnaceCategory;
 	public static TrommelRecipeCategory trommelCategory;
+	public static MobInfoCategory mobInfoCategory;
 
 	@Override
 	public void registerIngredientTypes(ITMBRuntime runtime) {
@@ -42,6 +44,7 @@ public class VanillaPlugin implements ITMBPlugin {
 		runtime.getRecipeIndex().registerRecipes(furnaceCategory, Registries.RECIPES.getAllFurnaceRecipes(), FurnaceRecipeTranslator::new);
 		runtime.getRecipeIndex().registerRecipes(blastFurnaceCategory, Registries.RECIPES.getAllBlastFurnaceRecipes(), FurnaceRecipeTranslator::new);
 		runtime.getRecipeIndex().registerRecipes(trommelCategory, Registries.RECIPES.getAllTrommelRecipes(), TrommelRecipeTranslator::new);
+		runtime.getRecipeIndex().registerRecipes(mobInfoCategory, MobInfoRegistryAccessor.getMobInfoMap().values(), MobInfoRecipeTranslator::new);
 
 		for (RecipeEntryCrafting<?, ?> entryCrafting : Registries.RECIPES.getAllCraftingRecipes()) {
 			if (entryCrafting instanceof RecipeEntryCraftingShaped) {
@@ -59,6 +62,7 @@ public class VanillaPlugin implements ITMBPlugin {
 		furnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.furnace", Block.furnaceStoneActive.getDefaultStack(), false));
 		blastFurnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.blast_furnace", Block.furnaceBlastActive.getDefaultStack(), true));
 		trommelCategory = runtime.getRecipeIndex().registerCategory(new TrommelRecipeCategory());
+		mobInfoCategory = runtime.getRecipeIndex().registerCategory(new MobInfoCategory());
 	}
 
 	@Override
