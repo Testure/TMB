@@ -4,6 +4,7 @@
   "package": "turing.tmb.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "client.ContainerWorkbenchMixin",
     "client.ScreenInventoryCreativeAccessor"
   ],
   "client": [
