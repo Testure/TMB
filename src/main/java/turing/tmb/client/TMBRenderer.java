@@ -77,6 +77,7 @@ public class TMBRenderer {
 
 	public static void onTick() {
 		if (!show) return;
+		if(search == null) return;
 		if (search.isFocused) {
 			search.updateCursorCounter();
 		}

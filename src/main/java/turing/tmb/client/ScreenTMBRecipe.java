@@ -302,7 +302,7 @@ public class ScreenTMBRecipe extends Screen {
 								int mouseY = my - ((this.height - this.ySize) / 2) - 14 - ((category.getBackground().getHeight() + 4) * i);
 								renderer.getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
 								slot.getTooltips(tooltipBuilder, ingredient.getIngredient(), mouseX, mouseY, isCtrl, isShift);
-								tooltipBuilder.addAll(category.getTooltips(recipe, mouseX, mouseY));
+								tooltipBuilder.addAll(category.getTooltips(recipe, slot, mouseX, mouseY));
 								if (list instanceof IngredientList && ((IngredientList) list).itemGroup != null) {
 									tooltipBuilder.add(TextFormatting.formatted(I18n.getInstance().translateKeyAndFormat("tmb.tooltip.itemGroup", ((IngredientList) list).itemGroup), TextFormatting.LIGHT_GRAY));
 								}
@@ -381,9 +381,10 @@ public class ScreenTMBRecipe extends Screen {
 
 		GL11.glEnable(3042);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/gui_vanilla.png").bind();
 
 		for (int i = 0; i < catalysts.size(); i++) {
+			this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/gui_vanilla.png").bind();
+
 			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
 			int x = ((this.width - this.xSize) / 2) - 20;
 			int y = ((this.height - this.ySize) / 2) + (4 + (22 * i));

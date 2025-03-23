@@ -37,7 +37,7 @@ public abstract class MinecraftMixin {
 		if (debounce > 0) debounce--;
 		if (debounce <= 0) {
 			if (((IKeybinds) gameSettings).toomanyblocks$getKeyHideTMB().isPressed()) {
-				if (!TMBRenderer.search.isFocused) {
+				if (TMBRenderer.search != null && !TMBRenderer.search.isFocused) {
 					if (currentScreen instanceof ScreenInventoryCreative) {
 						if (((ScreenInventoryCreativeAccessor) currentScreen).getSearchField().isFocused) {
 							return;

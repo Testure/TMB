@@ -21,9 +21,11 @@ import turing.tmb.api.ItemStackIngredientRenderer;
 import turing.tmb.api.VanillaTypes;
 import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.IIngredientList;
+import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.recipe.ILookupContext;
 import turing.tmb.api.recipe.IRecipeCategory;
 import turing.tmb.api.recipe.IRecipeLayout;
+import turing.tmb.api.recipe.IRecipeSlot;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.client.DrawableBlank;
 import turing.tmb.client.DrawableIngredient;
@@ -173,7 +175,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 	}
 
 	@Override
-	public List<String> getTooltips(MobInfoRecipeTranslator recipe, int mouseX, int mouseY) {
+	public <I, T extends IIngredientType<I>> List<String> getTooltips(MobInfoRecipeTranslator recipe, IRecipeSlot<I, T> slot, int mouseX, int mouseY) {
 		if (recipe.getOriginal().getDrops() != null && recipe.getOriginal().getDrops().length > 0) {
 			List<String> tooltips = new ArrayList<>();
 
@@ -198,6 +200,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 		}
 		return Collections.emptyList();
 	}
+
 
 	@Override
 	public IRecipeLayout getRecipeLayout() {

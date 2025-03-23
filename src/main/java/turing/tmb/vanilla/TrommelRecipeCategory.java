@@ -11,9 +11,11 @@ import turing.tmb.api.VanillaTypes;
 import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.IDrawableAnimated;
 import turing.tmb.api.drawable.IIngredientList;
+import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.recipe.ILookupContext;
 import turing.tmb.api.recipe.IRecipeCategory;
 import turing.tmb.api.recipe.IRecipeLayout;
+import turing.tmb.api.recipe.IRecipeSlot;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.client.DrawableAnimated;
 import turing.tmb.client.DrawableBlank;
@@ -77,7 +79,7 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 	}
 
 	@Override
-	public List<String> getTooltips(TrommelRecipeTranslator recipe, int mouseX, int mouseY) {
+	public <I, T extends IIngredientType<I>> List<String> getTooltips(TrommelRecipeTranslator recipe, IRecipeSlot<I, T> slot, int mouseX, int mouseY) {
 		List<String> tooltips = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
 			if (recipe.getOriginal().getOutput().getEntries().size() > i) {
