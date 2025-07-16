@@ -48,7 +48,7 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 		if (TMBRenderer.search.isFocused) {
 			ci.cancel();
 		}
-		if (TMB.shouldReplaceGuidebook) {
+		if (TMB.shouldReplaceGuidebook && TMBRenderer.enabledRecipes) {
 			if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
 				ci.cancel();
 				int slotId = getSlotId(mx, my);

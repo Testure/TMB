@@ -35,6 +35,7 @@ public class TMBRenderer {
 	public static int currentPage = 0;
 	public static int pages = 0;
 	public static boolean show = true;
+	public static boolean enabledRecipes = true;
 	protected static boolean initialized;
 	protected static final ButtonElement leftButton = new ButtonElement(0, 0, 0, 16, 16, "<");
 	protected static final ButtonElement rightButton = new ButtonElement(1, 0, 0, 16, 16, ">");
@@ -47,6 +48,7 @@ public class TMBRenderer {
 		tooltip = new TooltipElement(mc);
 		search = new TextFieldElement(null, Minecraft.getMinecraft().font, 0, 0, 120, 20, ((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getLastTMBSearch().value, "Search...");
 		show = !((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsTMBHidden().value;
+		enabledRecipes = ((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsRecipeViewEnabled().value;
 	}
 
 	public static void renderHeader(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
@@ -188,10 +190,12 @@ public class TMBRenderer {
 				GL11.glPopMatrix();
 			}
 
-			if (mc.gameSettings.keyShowRecipe.isPressed()) {
-				runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
-			} else if (mc.gameSettings.keyShowUsage.isPressed()) {
-				runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
+			if (enabledRecipes) {
+				if (mc.gameSettings.keyShowRecipe.isPressed()) {
+					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
+				} else if (mc.gameSettings.keyShowUsage.isPressed()) {
+					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
+				}
 			}
 		}
 	}

@@ -23,6 +23,9 @@ public class GameSettingsMixin implements IKeybinds {
 	public OptionBoolean isTMBHidden = new OptionBoolean((GameSettings) ((Object) this), "isTMBHidden", false);
 
 	@Unique
+	public OptionBoolean isRecipeViewEnabled = new OptionBoolean((GameSettings) ((Object) this), "isRecipeViewEnabled", true);
+
+	@Unique
 	public OptionString lastTMBSearch = new OptionString((GameSettings) ((Object) this), "lastTMBSearch", "");
 
 	@Override
@@ -33,6 +36,11 @@ public class GameSettingsMixin implements IKeybinds {
 	@Override
 	public OptionBoolean toomanyblocks$getIsTMBHidden() {
 		return isTMBHidden;
+	}
+
+	@Override
+	public OptionBoolean toomanyblocks$getIsRecipeViewEnabled() {
+		return isRecipeViewEnabled;
 	}
 
 	@Override

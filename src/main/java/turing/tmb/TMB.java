@@ -3,6 +3,7 @@ package turing.tmb;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.options.components.BooleanOptionComponent;
 import net.minecraft.client.gui.options.components.KeyBindingComponent;
 import net.minecraft.client.gui.options.components.OptionsCategory;
 import net.minecraft.client.gui.options.data.OptionsPages;
@@ -45,12 +46,16 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 	}
 
 	public static void onClientStart() {
-		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
-		category.withComponent(new KeyBindingComponent(((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getKeyHideTMB()));
-		OptionsPages.CONTROLS.withComponent(category);
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
+		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
+		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyHideTMB()));
+		OptionsPages.CONTROLS.withComponent(category);
+		OptionsCategory category1 = new OptionsCategory("gui.options.page.general.category.tmb");
+		category1.withComponent(new BooleanOptionComponent(((IKeybinds) settings).toomanyblocks$getIsRecipeViewEnabled()));
+		OptionsPages.GENERAL.withComponent(category1);
 		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsTMBHidden());
 		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getLastTMBSearch());
+		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsRecipeViewEnabled());
 		loadTMB();
 		runtime.index.gatherIngredients();
 	}

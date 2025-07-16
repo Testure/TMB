@@ -6,4 +6,7 @@ tmb.tooltip.itemGroup=Accepts Any %s
 tmb.tooltip.allCategories=Click to see all categories
 
 gui.options.page.controls.category.tmb=Too Many Blocks
+gui.options.page.general.category.tmb=Too Many Blocks
 key.tmb.hide=Hide TMB
+options.isRecipeViewEnabled=Enable Recipe Viewing
+options.isTMBHidden=Hide TMB

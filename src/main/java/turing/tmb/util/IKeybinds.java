@@ -9,5 +9,7 @@ public interface IKeybinds {
 
 	OptionBoolean toomanyblocks$getIsTMBHidden();
 
+	OptionBoolean toomanyblocks$getIsRecipeViewEnabled();
+
 	OptionString toomanyblocks$getLastTMBSearch();
 }
