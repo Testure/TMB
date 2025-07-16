@@ -13,7 +13,7 @@ import java.util.List;
 public class ShapedCraftingRecipeCategory extends AbstractCraftingRecipeCategory<RecipeEntryCraftingShaped, ShapedCraftingRecipeTranslator> {
 	@Override
 	void addInputs(ITMBRuntime runtime, ShapedCraftingRecipeTranslator recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
-		if (recipe.getOriginal().recipeHeight <= 2 && recipe.getOriginal().recipeWidth <= 2) {
+		if (recipe.getOriginal().recipeHeight < 2 && recipe.getOriginal().recipeWidth < 2) {
 			for (int i = 0; i < 4; i++) {
 				int slotX = i % 2;
 				int slotY = i / 2;
