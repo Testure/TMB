@@ -143,11 +143,6 @@ public class TMBRenderer {
 			if (currentFavouritePage > favouritePages) currentFavouritePage = 0;
 		}
 
-
-		if(hoveredItem != null && hoveredItem.getIngredient() instanceof ItemStack && mc.thePlayer.inventory.getHeldItemStack() == null) {
-			//mc.thePlayer.sendChatMessage("/give @p "+((ItemStack) hoveredItem.getIngredient()).getItem().namespaceID.toString()+" 64");
-		}
-
 		search.mouseClicked(mouseX, mouseY, 1);
 	}
 
