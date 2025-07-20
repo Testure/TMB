@@ -45,11 +45,16 @@ public class InfoRecipeCategory implements IRecipeCategory<InfoRecipeTranslator>
 
 	@Override
 	public void drawRecipe(ITMBRuntime runtime, InfoRecipeTranslator recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
-		ingredients.add(0, new IngredientList(recipe.getOriginal().getIngredient()));
+		getIngredients(recipe, layout, context, ingredients);
 
 		String text = recipe.getOriginal().getInfoTranslated();
 		runtime.getGuiHelper().getMinecraft().font.drawStringIntoConstrainedBlock(text, 3, 21, background.getWidth() - 5, 0xFFFFFF, true);
 		runtime.getGuiHelper().getMinecraft().font.drawStringIntoConstrainedBlock(text, 2, 20, background.getWidth() - 4, 0xFFFFFF);
+	}
+
+	@Override
+	public void getIngredients(InfoRecipeTranslator recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients) {
+		ingredients.add(0, new IngredientList(recipe.getOriginal().getIngredient()));
 	}
 
 	@Override

@@ -23,6 +23,8 @@ public interface IRecipeCategory<R extends IRecipeTranslator<?>> {
 
 	void drawRecipe(ITMBRuntime runtime, R recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context);
 
+	void getIngredients(R recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients);
+
 	IRecipeLayout getRecipeLayout();
 
 	default <I, T extends IIngredientType<I>> List<String>  getTooltips(R recipe, IRecipeSlot<I, T> slot, int mouseX, int mouseY) {

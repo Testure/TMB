@@ -152,11 +152,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 			yOffset += 10;
 		}
 
-		if (recipe.getOriginal().getDrops() != null && recipe.getOriginal().getDrops().length > 0) {
-			for (int i = 0; i < recipe.getOriginal().getDrops().length; i++) {
-				ingredients.add(new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getDrops()[i].getStack())));
-			}
-		}
+		getIngredients(recipe, layout, context, ingredients);
 
 		if (mob == null && !giveUp) {
 			Class<? extends Entity> mobClass = recipe.getOriginal().getEntityClass();
@@ -171,6 +167,15 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 
 		if (mob != null) {
 			drawMob(mob, 2, 2);
+		}
+	}
+
+	@Override
+	public void getIngredients(MobInfoRecipeTranslator recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients) {
+		if (recipe.getOriginal().getDrops() != null && recipe.getOriginal().getDrops().length > 0) {
+			for (int i = 0; i < recipe.getOriginal().getDrops().length; i++) {
+				ingredients.add(new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getDrops()[i].getStack())));
+			}
 		}
 	}
 

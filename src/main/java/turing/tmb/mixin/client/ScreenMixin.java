@@ -30,6 +30,8 @@ public class ScreenMixin {
 			IGuiProperties properties = GuiHelper.extraScreens.get(t.getClass().getCanonicalName()).apply(t);
 			TMBRenderer.renderHeader(mouseX, mouseY, width, height, mc, partialTick, properties);
 			TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, partialTick, properties);
+			TMBRenderer.renderHeader2(mouseX, mouseY, width, height, mc, partialTick, properties);
+			TMBRenderer.renderItems2(mouseX, mouseY, width, height, mc, partialTick, properties);
 		}
 	}
 

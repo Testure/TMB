@@ -17,6 +17,14 @@ public interface ITypedIngredient<T> {
 
 	String getUid();
 
+	String getName();
+
+	void addAmount(int amount);
+
+	int getAmount();
+
+	boolean matches(Object ingredient);
+
 	default <V> Optional<V> getIngredient(IIngredientType<V> ingredientType) {
 		return ingredientType.castIngredient(getIngredient());
 	}

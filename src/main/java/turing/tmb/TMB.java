@@ -8,6 +8,7 @@ import net.minecraft.client.gui.options.components.KeyBindingComponent;
 import net.minecraft.client.gui.options.components.OptionsCategory;
 import net.minecraft.client.gui.options.data.OptionsPages;
 import net.minecraft.client.option.GameSettings;
+import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.net.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,9 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
 		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyHideTMB()));
+		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyAddFavourite()));
+		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeySetDefaultRecipe()));
+		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyShowRecipeTree()));
 		OptionsPages.CONTROLS.withComponent(category);
 		OptionsCategory category1 = new OptionsCategory("gui.options.page.general.category.tmb");
 		category1.withComponent(new BooleanOptionComponent(((IKeybinds) settings).toomanyblocks$getIsRecipeViewEnabled()));

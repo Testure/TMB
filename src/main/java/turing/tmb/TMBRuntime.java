@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.TooltipElement;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.collection.Pair;
-import org.jetbrains.annotations.Nullable;
 import turing.tmb.api.ingredient.IIngredientRegistry;
 import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.ingredient.IIngredientTypeRegistry;
@@ -31,6 +30,8 @@ public class TMBRuntime implements ITMBRuntime {
 	protected final RecipeIndex recipeIndex = new RecipeIndex(this);
 	protected static final TooltipElement tooltipElement = new TooltipElement(Minecraft.getMinecraft());
 	protected final GuiHelper guiHelper = new GuiHelper(this);
+	public final List<ITypedIngredient<?>> favourites = new ArrayList<>();
+	protected final Map<RecipeIngredient, IRecipeTranslator<?>> defaultRecipes = new HashMap<>();
 	protected boolean isReady;
 
 	protected TMBRuntime() {
@@ -55,6 +56,10 @@ public class TMBRuntime implements ITMBRuntime {
 					results.add(Pair.of(category, null));
 				}
 			}
+		}
+		if(results.size() == 1 && lookup.getRole() == RecipeIngredientRole.OUTPUT){
+			Pair<IRecipeCategory<?>, IRecipeTranslator<?>> pair = results.get(0);
+			defaultRecipes.put(new RecipeIngredient(lookup.getIngredient(),pair.getRight(),pair.getLeft(),RecipeIngredientRole.OUTPUT),pair.getRight());
 		}
 		if (!results.isEmpty()) {
 			ScreenTMBRecipe.show(results, lookup, null);
@@ -105,6 +110,16 @@ public class TMBRuntime implements ITMBRuntime {
 	@Override
 	public RecipeIndex getRecipeIndex() {
 		return recipeIndex;
+	}
+
+	@Override
+	public Map<RecipeIngredient, IRecipeTranslator<?>> getDefaultRecipes() {
+		return defaultRecipes;
+	}
+
+	@Override
+	public List<ITypedIngredient<?>> getFavourites() {
+		return favourites;
 	}
 
 	public static String getTooltipText(ItemStack stack, boolean showDescription) {

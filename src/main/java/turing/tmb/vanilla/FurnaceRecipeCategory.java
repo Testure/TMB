@@ -65,13 +65,18 @@ public class FurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol, ItemS
 
 	@Override
 	public void drawRecipe(ITMBRuntime runtime, T recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
-		ingredients.add(0, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()));
-		ingredients.add(1, new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getOutput())));
+		getIngredients(recipe, layout, context, ingredients);
 
 		arrowBack.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) - 5);
 		arrow.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) - 5);
 		flameBack.draw(runtime.getGuiHelper(), x + 2, (background.getHeight() / 2) + 13);
 		flame.draw(runtime.getGuiHelper(), x + 2, (background.getHeight() / 2) + 13);
+	}
+
+	@Override
+	public void getIngredients(T recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients) {
+		ingredients.add(0, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()));
+		ingredients.add(1, new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getOutput())));
 	}
 
 	@Override
