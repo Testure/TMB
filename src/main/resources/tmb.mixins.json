@@ -4,7 +4,6 @@
   "package": "turing.tmb.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "LevelDataMixin"
   ],
   "client": [
     "client.GameSettingsMixin",
@@ -14,7 +13,8 @@
     "client.ScreenContainerAbstractMixin",
     "client.ScreenInventoryCreativeAccessor",
     "client.ScreenInventoryCreativeMixin",
-    "client.ScreenMixin"
+    "client.ScreenMixin",
+    "client.ScreenPauseMixin"
   ],
   "injectors": {
     "defaultRequire": 1
