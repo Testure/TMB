@@ -185,9 +185,6 @@ public class RecipeTreePage {
 			uniqueIngredients++;
 		}
 		usedRecipes.remove(currentRecipe.get().getOriginal().toString());
-		//if(ingredients.size() > 1){
-
-		//}
 	}
 
     public void addIngredient(@NotNull RecipeIngredient ingredient, int x, int y) {
@@ -195,29 +192,6 @@ public class RecipeTreePage {
 		ingredientList.add(entry);
         entryMap.put(ingredient, entry);
     }
-
-	/*public void loadQuests(List<Quest> quests){
-		questList.clear();
-		entryMap.clear();
-		for (Quest quest : quests) {
-			if(quest.getPage() == this){
-				questList.add(quest);
-				entryMap.put(quest.getTemplate(), quest);
-			}
-		}
-	}
-
-	public void reset(){
-		Set<QuestTemplate> quests = new HashSet<>(entryMap.keySet());
-		questList.clear();
-		entryMap.clear();
-		for (QuestTemplate quest : quests) {
-			addQuest(quest);
-		}
-		for (Quest quest : getQuests()) {
-			quest.setupPrerequisites();
-		}
-	}*/
 
     public @Nullable IconCoordinate getBackgroundTile(ScreenRecipeTree screen, int layer, Random random, int tileX, int tileY) {
 		return getTextureFromBlock(Blocks.DIRT);
@@ -244,14 +218,7 @@ public class RecipeTreePage {
     }
 
     public double getCompletionFraction() {
-        /*int completed = 0;
-        for (Quest q : questList) {
-            if (q.isCompleted()) {
-                completed++;
-            }
-        }
-        return completed / (double) questList.size();*/
-		return 0;
+		return 1;
     }
 
 	public int backgroundLayers() {

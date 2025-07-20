@@ -190,7 +190,6 @@ public class ScreenRecipeTree extends Screen
 	protected void buttonClicked(ButtonElement button) {
         if(button.id == 1) {
             mc.displayScreen(parent);
-            //mc.setIngameFocus();
         }
         super.buttonClicked(button);
     }
@@ -222,26 +221,8 @@ public class ScreenRecipeTree extends Screen
             if (pagesListHeight < bottom - top) {
                 pagesListY = top + (bottom - top - pagesListHeight) / 2;
             }
-            /*for(QuestChapterPage page : VintageQuesting.CHAPTERS) {
-                if (mx >= pageListLeft && mx <= (pageListRight - 6) && my >= pagesListY && my <= pagesListY + PAGE_BUTTON_HEIGHT) {
-                    currentPage = page;
-                    mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0F, 1.0F);
-
-                    layers = new BGLayer[currentPage.backgroundLayers()];
-                    for (int i = 0; i < layers.length; i++) {
-                        layers[i] = new BGLayer(i);
-                    }
-
-                    init();
-                    break;
-                }
-                pagesListY += PAGE_BUTTON_HEIGHT;
-            }*/
         }
 
-        /*if(hoveredQuest != null){
-            mc.displayScreen(new ScreenQuestInfo(this,hoveredQuest));
-        }*/
 
         super.mouseClicked(mx, my, buttonNum);
 
@@ -288,14 +269,7 @@ public class ScreenRecipeTree extends Screen
             draggingViewport = false;
         }
 
-        /*if (drawSidebar() && mx >= pageListLeft && mx <= pageListRight) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
-                scrollPagesList(Mouse.getDWheel() / -0.01f);
-            } else {
-                scrollPagesList(Mouse.getDWheel() / -0.05f);
-            }
-            onScrollPagesList();
-        } else*/ if (mx >= viewportLeft && mx <= viewportRight && my >= viewportTop && my <= viewportBottom){
+		if (mx >= viewportLeft && mx <= viewportRight && my >= viewportTop && my <= viewportBottom){
             final double change = (Mouse.getDWheel()/10d);
             viewportZoom = MathHelper.clamp(viewportZoom + change, 0.5d, 2);
 
@@ -314,15 +288,10 @@ public class ScreenRecipeTree extends Screen
 
         renderBackground();
 
-        /*if (drawSidebar()){
-            overlayBackground(0, pageListRight, top, bottom, 0x202020);
-        }*/
-
         renderAchievementsPanel(mx, my, partialTick);
 
         overlayBackground(0, width, 0, top, 0x404040);
         overlayBackground(0, width, bottom, height, 0x404040);
-        //overlayBackground(pageListRight, viewportLeft, top, bottom, 0x404040);
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -341,21 +310,6 @@ public class ScreenRecipeTree extends Screen
         GL11.glShadeModel(GL11.GL_FLAT);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
 
-       /* if (drawSidebar()){
-            Scissor.enable(pageListLeft, top, pageListRight - pageListLeft, bottom - top);
-            int pagesListHeight = getTotalPagesListHeight();
-            int pagesListY = top - (int) pageListScrollAmount;
-            if (pagesListHeight < bottom - top) {
-                pagesListY = top + (bottom - top - pagesListHeight) / 2;
-            }
-            if (my >= top && my <= bottom) {
-                hoveredPage = drawPagesListItems(pageListLeft + PADDING - 4, pagesListY, pageListRight - PADDING, mx, my);
-            } else {
-                hoveredPage = drawPagesListItems(pageListLeft + PADDING - 4, pagesListY, pageListRight - PADDING, -1, -1);
-            }
-            Scissor.disable();
-        }*/
-
         {
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_BLEND);
@@ -365,61 +319,23 @@ public class ScreenRecipeTree extends Screen
 
             byte fadeDist = 4;
             Tessellator tessellator = Tessellator.instance;
-            /*if (drawSidebar()) {
-                tessellator.startDrawingQuads();
-                tessellator.setColorRGBA_I(0, 0);
-                tessellator.addVertexWithUV(pageListLeft, top + fadeDist, 0.0D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(pageListRight, top + fadeDist, 0.0D, 1.0D, 1.0D);
-                tessellator.setColorRGBA_I(0, 255);
-                tessellator.addVertexWithUV(pageListRight, top, 0.0D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(pageListLeft, top, 0.0D, 0.0D, 0.0D);
-                tessellator.draw();
+			tessellator.startDrawingQuads();
+			tessellator.setColorRGBA_I(0, 0);
+			tessellator.addVertexWithUV(0, top + fadeDist, 0.0D, 0.0D, 1.0D);
+			tessellator.addVertexWithUV(width, top + fadeDist, 0.0D, 1.0D, 1.0D);
+			tessellator.setColorRGBA_I(0, 255);
+			tessellator.addVertexWithUV(width, top, 0.0D, 1.0D, 0.0D);
+			tessellator.addVertexWithUV(0, top, 0.0D, 0.0D, 0.0D);
+			tessellator.draw();
 
-                tessellator.startDrawingQuads();
-                tessellator.setColorRGBA_I(0, 255);
-                tessellator.addVertexWithUV(pageListLeft, bottom, 0.0D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(pageListRight, bottom, 0.0D, 1.0D, 1.0D);
-                tessellator.setColorRGBA_I(0, 0);
-                tessellator.addVertexWithUV(pageListRight, bottom - fadeDist, 0.0D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(pageListLeft, bottom - fadeDist, 0.0D, 0.0D, 0.0D);
-                tessellator.draw();
-
-                tessellator.startDrawingQuads();
-                tessellator.setColorRGBA_I(0, 0);
-                tessellator.addVertexWithUV(viewportLeft, top + fadeDist, 0.0D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(viewportRight, top + fadeDist, 0.0D, 1.0D, 1.0D);
-                tessellator.setColorRGBA_I(0, 255);
-                tessellator.addVertexWithUV(viewportRight, top, 0.0D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(viewportLeft, top, 0.0D, 0.0D, 0.0D);
-                tessellator.draw();
-
-                tessellator.startDrawingQuads();
-                tessellator.setColorRGBA_I(0, 255);
-                tessellator.addVertexWithUV(viewportLeft, bottom, 0.0D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(viewportRight, bottom, 0.0D, 1.0D, 1.0D);
-                tessellator.setColorRGBA_I(0, 0);
-                tessellator.addVertexWithUV(viewportRight, bottom - fadeDist, 0.0D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(viewportLeft, bottom - fadeDist, 0.0D, 0.0D, 0.0D);
-                tessellator.draw();
-            } else {*/
-                tessellator.startDrawingQuads();
-                tessellator.setColorRGBA_I(0, 0);
-                tessellator.addVertexWithUV(0, top + fadeDist, 0.0D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(width, top + fadeDist, 0.0D, 1.0D, 1.0D);
-                tessellator.setColorRGBA_I(0, 255);
-                tessellator.addVertexWithUV(width, top, 0.0D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(0, top, 0.0D, 0.0D, 0.0D);
-                tessellator.draw();
-
-                tessellator.startDrawingQuads();
-                tessellator.setColorRGBA_I(0, 255);
-                tessellator.addVertexWithUV(0, bottom, 0.0D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(width, bottom, 0.0D, 1.0D, 1.0D);
-                tessellator.setColorRGBA_I(0, 0);
-                tessellator.addVertexWithUV(width, bottom - fadeDist, 0.0D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(0, bottom - fadeDist, 0.0D, 0.0D, 0.0D);
-                tessellator.draw();
-            //}
+			tessellator.startDrawingQuads();
+			tessellator.setColorRGBA_I(0, 255);
+			tessellator.addVertexWithUV(0, bottom, 0.0D, 0.0D, 1.0D);
+			tessellator.addVertexWithUV(width, bottom, 0.0D, 1.0D, 1.0D);
+			tessellator.setColorRGBA_I(0, 0);
+			tessellator.addVertexWithUV(width, bottom - fadeDist, 0.0D, 1.0D, 0.0D);
+			tessellator.addVertexWithUV(0, bottom - fadeDist, 0.0D, 0.0D, 0.0D);
+			tessellator.draw();
             GL11.glEnable(GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
         }
@@ -427,16 +343,6 @@ public class ScreenRecipeTree extends Screen
         if (hoveredTreeIngredient != null){
             drawAchievementToolTip(hoveredTreeIngredient, mx, my);
         }
-
-        /*if (drawSidebar()) {
-            drawPagesListScrollBar(mx, my);
-
-            if (hoveredPage != null){
-                String msg = font.wrapFormattedStringToWidth(hoveredPage.getDescription(), TOOLTIP_BOX_WIDTH_MIN);
-                msg += "\n" + TextFormatting.LIGHT_GRAY + I18n.getInstance().translateKeyAndFormat("gui.achievements.label.completion",  Math.round(hoveredPage.getCompletionFraction() * 100) + "%");
-                tooltip.render(msg, mx, my, TOOLTIP_OFF_X, TOOLTIP_OFF_Y);
-            }
-        }*/
 
         renderLabels();
         GL11.glEnable(GL11.GL_LIGHTING);
@@ -576,16 +482,6 @@ public class ScreenRecipeTree extends Screen
                 }
             }
 
-
-//            long l1 = random.nextLong();
-//            random.setSeed(viewTileX);
-//            long l2 = random.nextLong();
-//            random.setSeed(viewTileY);
-//            long l3 = random.nextLong();
-//
-//            long seed = Objects.hash(l1, l2, ~l3);
-//            random.setSeed(seed);
-
             for (BGLayer layer : layers) {
                 random.setSeed(worldSeed);
                 currentPage.postProcessBackground(this, random, layer, orgX + viewTileX, orgY + viewTileY);
@@ -647,94 +543,6 @@ public class ScreenRecipeTree extends Screen
                         final double epsilon = 0.05;
                         drawGuiIconDouble(iconLeft - epsilon, iconTop - epsilon, iconWidth + epsilon * 2, iconHeight + epsilon * 2, fore);
                     }
-
-                    /*GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    GL11.glEnable(GL11.GL_BLEND);
-                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                    GL11.glDisable(GL11.GL_ALPHA_TEST);
-                    GL11.glShadeModel(GL11.GL_SMOOTH);
-                    Tessellator t = Tessellator.instance;
-                    final double off = 0.05d;
-                    double fadeDist = 6 * zoom;
-                    short shadowDarkness = 128;
-                    if (top) {
-                        t.startDrawingQuads();
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft - off, iconTop + fadeDist + off, 0.0D, 0.0D, 1.0D);
-                        t.addVertexWithUV(iconLeft + iconWidth + off, iconTop + fadeDist + off, 0.0D, 1.0D, 1.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft + iconWidth + off, iconTop - off, 0.0D, 1.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft - off, iconTop - off, 0.0D, 0.0D, 0.0D);
-                        t.draw();
-                    }
-                    if (left) {
-                        t.startDrawingQuads();
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft + fadeDist + off, iconTop + iconHeight + off, 0.0D, 1.0D, 1.0D);
-                        t.addVertexWithUV(iconLeft + fadeDist + off, iconTop - off, 0.0D, 0.0D, 1.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft - off, iconTop - off, 0.0D, 0.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft - off, iconTop + iconHeight + off, 0.0D, 1.0D, 0.0D);
-                        t.draw();
-                    }
-                    if (bottom) {
-                        t.startDrawingQuads();
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft + iconWidth + off, iconTop + iconHeight - fadeDist + off, 0.0D, 1.0D, 1.0D);
-                        t.addVertexWithUV(iconLeft - off, iconTop + iconHeight - fadeDist + off, 0.0D, 0.0D, 1.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft - off, iconTop + iconHeight - off, 0.0D, 0.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft + iconWidth + off, iconTop + iconHeight - off, 0.0D, 1.0D, 0.0D);
-                        t.draw();
-                    }
-                    if (right) {
-                        t.startDrawingQuads();
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft + iconWidth - fadeDist + off, iconTop - off, 0.0D, 0.0D, 1.0D);
-                        t.addVertexWithUV(iconLeft + iconWidth - fadeDist + off, iconTop + iconHeight + off, 0.0D, 1.0D, 1.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft + iconWidth - off, iconTop + iconHeight + off, 0.0D, 1.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft + iconWidth - off, iconTop - off, 0.0D, 0.0D, 0.0D);
-                        t.draw();
-                    }
-                    if (topLeft && !(left || top)) {
-                        t.startDrawing(GL11.GL_TRIANGLES);
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft - off, iconTop + fadeDist + off, 0.0D, 1.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft + fadeDist + off, iconTop - off, 0.0D, 0.0D, 0.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft - off, iconTop - off, 0.0D, 0.0D, 1.0D);
-                        t.draw();
-                    }
-                    if (topRight && !(right || top)) {
-                        t.startDrawing(GL11.GL_TRIANGLES);
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft + iconWidth - fadeDist + off, iconTop - off, 0.0D, 0.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft + iconWidth - off, iconTop + fadeDist + off, 0.0D, 1.0D, 0.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft + iconWidth - off, iconTop - off, 0.0D, 0.0D, 1.0D);
-                        t.draw();
-                    }
-                    if (bottomLeft && !(left || bottom)) {
-                        t.startDrawing(GL11.GL_TRIANGLES);
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft + fadeDist + off, iconTop + iconHeight - off, 0.0D, 0.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft - off, iconTop + iconHeight - fadeDist + off, 0.0D, 1.0D, 0.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft - off, iconTop + iconHeight - off, 0.0D, 0.0D, 1.0D);
-                        t.draw();
-                    }
-                    if (bottomRight && !(right || bottom)) {
-                        t.startDrawing(GL11.GL_TRIANGLES);
-                        t.setColorRGBA_I(0, 0);
-                        t.addVertexWithUV(iconLeft + iconWidth - off, iconTop + iconHeight - fadeDist + off, 0.0D, 1.0D, 0.0D);
-                        t.addVertexWithUV(iconLeft + iconWidth - fadeDist + off, iconTop + iconHeight - off, 0.0D, 0.0D, 0.0D);
-                        t.setColorRGBA_I(0, shadowDarkness);
-                        t.addVertexWithUV(iconLeft + iconWidth - off, iconTop + iconHeight - off, 0.0D, 0.0D, 1.0D);
-                        t.draw();
-                    }
-                    GL11.glEnable(GL_TEXTURE_2D);
-                    GL11.glEnable(GL11.GL_ALPHA_TEST);*/
                 }
             }
         }
@@ -756,14 +564,7 @@ public class ScreenRecipeTree extends Screen
 			List<IIngredientList> list = new ArrayList<>();
 			if(ingredient.recipe == null || ingredient.category == null) continue;
 			ingredient.category.getIngredients(ingredient.recipe,ingredient.category.getRecipeLayout(), null, list);
-			List<RecipeTreeIngredient> inputs = currentPage.getTreeIngredients();/*list
-				.stream()
-				.filter(it -> !it.getIngredients().isEmpty())
-				.map(it -> it.getIngredients().get(0))
-				.map(it -> currentPage.getTreeIngredients().stream().filter(it2 -> it.matches(it2.ingredient.ingredient.getIngredient())).findFirst().orElse(null))
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());*/
-			//List<RecipeTreeIngredient> list = currentPage.getTreeIngredients().stream().filter(r -> r.ingredient.recipe == entry.ingredient.recipe).collect(Collectors.toList());
+			List<RecipeTreeIngredient> inputs = currentPage.getTreeIngredients();
 			for (RecipeTreeIngredient child : inputs) {
 				if(child == entry) continue;
 				if(child.ingredient.recipe == null || child.ingredient.category == null) continue;
@@ -771,15 +572,10 @@ public class ScreenRecipeTree extends Screen
 				double childY = (viewportTop + viewportHeight/2d) + ((entry.getY() * ACHIEVEMENT_CELL_HEIGHT - shiftY) + 11) * zoom;
 				double parentX = (viewportLeft + viewportWidth/2d) + ((child.getX() * ACHIEVEMENT_CELL_WIDTH - shiftX) + 11) * zoom;
 				double parentY = (viewportTop + viewportHeight/2d) + ((child.getY() * ACHIEVEMENT_CELL_HEIGHT - shiftY) + 11) * zoom;
-				boolean unlocked = false;//entry.isCompleted();
-				boolean canUnlock = false;//entry.preRequisitesCompleted();
+				boolean unlocked = false;
+				boolean canUnlock = false;
 
 				final double zoomOff = 11 * zoom;
-//            if (
-//                (((childX + zoomOff) <= viewportLeft || (childX - zoomOff) >= viewportRight || (childY - zoomOff) >= viewportBottom || (childY + zoomOff) <= viewportTop) &&
-//                (((parentX + zoomOff) <= viewportLeft || (parentX - zoomOff) >= viewportRight || (parentY - zoomOff) >= viewportBottom || (parentY + zoomOff) <= viewportTop)))) {
-//                continue;
-//            }
 
 				boolean isHovered = false;
 				{
@@ -827,25 +623,8 @@ public class ScreenRecipeTree extends Screen
             }
 			float brightness = 0.50F;
 			GL11.glColor4f(brightness, brightness, brightness, 1.0F);
-            /*if(recipeTreeIngredient.isCompleted()) {
-                float brightness = 1.0F;
-                GL11.glColor4f(brightness, brightness, brightness, 1.0F);
-            } else if(recipeTreeIngredient.preRequisitesCompleted()) {
-                // Flicker if can unlock
-                float brightness = timeSin(1, 600) >= 0.6 ? 0.6F : 0.8F;
-                GL11.glColor4f(brightness, brightness, brightness, 1.0F);
-            } else {
-                // Darken if not unlock-able
-                float brightness = 0.3F;
-                GL11.glColor4f(brightness, brightness, brightness, 1.0F);
-            }*/
 
             drawGuiIconDouble(achViewX - (ACHIEVEMENT_ICON_WIDTH - ACHIEVEMENT_CELL_WIDTH) * zoom, achViewY - (ACHIEVEMENT_ICON_HEIGHT - ACHIEVEMENT_CELL_HEIGHT) * zoom, ACHIEVEMENT_ICON_WIDTH * zoom, ACHIEVEMENT_ICON_HEIGHT * zoom, currentPage.drawIngredientBackground(ingredient));
-
-            /*if(!recipeTreeIngredient.preRequisitesCompleted()) {
-                float brightness = 0.1F;
-                GL11.glColor4f(brightness, brightness, brightness, 1.0F);
-            }*/
 
             GL11.glPushMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
@@ -854,10 +633,6 @@ public class ScreenRecipeTree extends Screen
 
             GL11.glTranslated(achViewX + 3 * zoom, achViewY + 3 * zoom, 0);
             GL11.glScaled(zoom, zoom, 1);
-            /*ItemModelDispatcher.getInstance().getDispatch(achievementItem)
-                .renderItemIntoGui(Tessellator.instance, mc.font, mc.textureManager, achievementItem, 0, 0, 1.0f);
-			ItemModelDispatcher.getInstance().getDispatch(achievementItem)
-				.renderItemOverlayIntoGUI(Tessellator.instance, mc.font, mc.textureManager, achievementItem, 0, 0, 1.0f);*/
 			IIngredientType<?> type = ingredient.ingredient.getType();
 			IIngredientRenderer<Object> renderer = (IIngredientRenderer<Object>) type.getRenderer(TMB.getRuntime());
 			new DrawableIngredient<>(ingredient.ingredient.getIngredient(), renderer).draw(TMB.getRuntime().getGuiHelper());
@@ -875,26 +650,10 @@ public class ScreenRecipeTree extends Screen
     }
     private void drawAchievementToolTip(RecipeTreeIngredient treeIngredient, int mouseX, int mouseY){
 		StringBuilder s = new StringBuilder(treeIngredient.ingredient.ingredient.getName());
-		/*if(quest.getPreRequisites().isEmpty() || quest.preRequisitesCompleted()){
-			if(quest.isCompleted()){
-				s.append("\n").append(TextFormatting.LIME).append("Completed!");
-				if(!quest.areAllRewardsRedeemed()){
-					s.append("\n").append(TextFormatting.LIGHT_BLUE).append("Unclaimed rewards!");
-				}
-			} else {
-				s.append("\n").append(TextFormatting.LIGHT_GRAY).append(quest.numberOfCompletedTasks()).append("/").append(quest.getTasks().size()).append(" tasks.");
-			}
-		} else {
-			s.append("\n").append(TextFormatting.RED).append("Requires ").append("(").append(quest.getQuestLogic()).append("):");
-			for (Quest preRequisite : quest.getPreRequisites()) {
-				s.append("\n").append(TextFormatting.RED).append("- ").append(preRequisite.getTranslatedName());
-			}
-			s.append(TextFormatting.WHITE);
-		}*/
 		tooltip.render(s.toString(),mouseX,mouseY,8,-8);
     }
     public boolean drawSidebar(){
-        return /*VintageQuesting.CHAPTERS.size()*/0 > 1;
+        return false;
     }
     private void scrollPagesList(float amount) {
         if(amount == 0.0f) return;
@@ -910,76 +669,6 @@ public class ScreenRecipeTree extends Screen
     }
     private int getTotalPagesListHeight() {
         return PAGE_BUTTON_HEIGHT * 0;//VintageQuesting.CHAPTERS.size();
-    }
-
-    @Nullable
-    private RecipeTreePage drawPagesListItems(int x, int y, int width, int mouseX, int mouseY) {
-        int y2 = y;
-		RecipeTreePage pageHovered = null;
-		/*for (QuestChapterPage page : VintageQuesting.CHAPTERS) {
-			String name = page.getName();
-			int textColor = 0xFF7F7F7F;
-			if (page == currentPage) {
-				textColor = 0xFFFFFFFF;
-			}
-			if (mouseX >= x && mouseX < x + width && mouseY >= y2 && mouseY < y2 + PAGE_BUTTON_HEIGHT) {
-				textColor = 0xFFFFFFA0;
-				pageHovered = page;
-			}
-			renderItem.render(page.getIcon(), x, y2 + (PAGE_BUTTON_HEIGHT / 2) - 9);
-			if (page.getCompletionFraction() >= 1) {
-				GL11.glColor4f(1f, 1f, 1f, 1f);
-				drawGuiIcon(x + 8, y2 + (PAGE_BUTTON_HEIGHT / 2) - 9 + 8, 11, 11, TextureRegistry.getTexture("minecraft:gui/screen/achievement/star"));
-			}
-			mc.font.drawStringWithShadow(name, x + 19, y2 + (PAGE_BUTTON_HEIGHT / 2) - 4, textColor);
-			y2 += PAGE_BUTTON_HEIGHT;
-		}*/
-
-        return pageHovered;
-    }
-    protected void drawPagesListScrollBar(int mouseX, int mouseY) {
-        float totalPagesListHeight = getTotalPagesListHeight();
-        float scrollBarHeightPercent = pagesListScrollRegionHeight / totalPagesListHeight;
-
-        if(scrollBarHeightPercent > 1.0f) return;
-
-        glDisable(GL_TEXTURE_2D);
-
-        int scrollBarX = pageListRight - 6;
-
-        int scrollBarHeightPx = (int) (scrollBarHeightPercent * pagesListScrollRegionHeight);
-        if(scrollBarHeightPx < 32) {
-            scrollBarHeightPx = 32;
-        }
-
-        float scrollPercent = pageListScrollAmount / (totalPagesListHeight - pagesListScrollRegionHeight);
-
-        int scrollBarY = (int) (top + (pagesListScrollRegionHeight - scrollBarHeightPx) * scrollPercent);
-
-        Tessellator t = Tessellator.instance;
-
-        t.startDrawingQuads();
-        t.setColorOpaque(0, 0, 0);
-        t.drawRectangle(scrollBarX, top, 6, pagesListScrollRegionHeight);
-        t.setColorRGBA_I(0x808080, 255);
-        t.drawRectangle(scrollBarX, scrollBarY, 6, scrollBarHeightPx);
-        t.setColorRGBA_I(0xc0c0c0, 255);
-        t.drawRectangle(scrollBarX + 1, scrollBarY, 5, scrollBarHeightPx - 1);
-        t.draw();
-
-        glEnable(GL_TEXTURE_2D);
-
-        if(clickX != null && clickY != null) {
-            if(clickX >= scrollBarX && clickY >= top && clickX <= scrollBarX + 6 && clickY < bottom) {
-                if(oldPagesListScrollAmount == null) {
-                    oldPagesListScrollAmount = pageListScrollAmount;
-                }
-                pageListScrollAmount = oldPagesListScrollAmount + (clickY - mouseY) * (1.0f / scrollBarHeightPercent) * -1.0f;
-                onScrollPagesList();
-            }
-        }else {
-            oldPagesListScrollAmount = null;
-        }
     }
 
     private void overlayBackground(int minX, int maxX, int minY, int maxY, int color)
