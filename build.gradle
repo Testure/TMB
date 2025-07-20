@@ -160,7 +160,7 @@ remapJar {
 	archiveVersion.set(archiveVersion.get()+"-${bta_version}")
 }
 
-/*publishing {
+publishing {
 	if(checkVersion(project.mod_group,project.mod_name,project.mod_version)) {
 		repositories {
 			maven {
@@ -177,7 +177,7 @@ remapJar {
 			maven(MavenPublication) {
 				groupId = project.mod_group
 				artifactId = project.mod_name
-				version = project.mod_version + "-" + project.bta_version
+				version = project.mod_version
 				from components.java
 			}
 		}
@@ -198,4 +198,3 @@ static boolean checkVersion(String group, String name, String version) {
 		return true
 	}
 }
-*/
