@@ -11,4 +11,12 @@ public interface IIngredientTypeWithSubtypes<B, T> extends IIngredientType<T> {
 	default T getDefaultIngredient(B base) {
 		throw new UnsupportedOperationException();
 	}
+
+	String getName(T ingredient);
+
+	void add(T ingredient, int amount);
+
+	int getAmount(T ingredient);
+
+	boolean matches(T ingredient, Object otherIngredient);
 }

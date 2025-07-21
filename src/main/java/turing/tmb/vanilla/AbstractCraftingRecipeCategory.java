@@ -7,6 +7,7 @@ import net.minecraft.core.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import turing.tmb.RecipeLayoutBuilder;
 import turing.tmb.RecipeTranslator;
+import turing.tmb.TMB;
 import turing.tmb.TypedIngredient;
 import turing.tmb.api.ItemStackIngredientRenderer;
 import turing.tmb.api.VanillaTypes;
@@ -52,14 +53,18 @@ public abstract class AbstractCraftingRecipeCategory<R extends RecipeEntryCrafti
 
 	@Override
 	public void drawRecipe(ITMBRuntime runtime, T recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
-		ingredients.add(0, new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getOutput())));
-
-		addInputs(runtime, recipe, layout, ingredients, context);
+		getIngredients(recipe, layout, context, ingredients);
 
 		arrow.draw(runtime.getGuiHelper(), x + 62, (background.getHeight() / 2) + 6);
 	}
 
 	abstract void addInputs(ITMBRuntime runtime, T recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context);
+
+	@Override
+	public void getIngredients(T recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients) {
+		ingredients.add(0, new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getOutput())));
+		addInputs(TMB.getRuntime(), recipe, layout, ingredients, context);
+	}
 
 	@Override
 	public IRecipeLayout getRecipeLayout() {

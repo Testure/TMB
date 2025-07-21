@@ -12,4 +12,11 @@ public interface IKeybinds {
 	OptionBoolean toomanyblocks$getIsRecipeViewEnabled();
 
 	OptionString toomanyblocks$getLastTMBSearch();
+
+
+	KeyBinding toomanyblocks$getKeyShowRecipeTree();
+
+	KeyBinding toomanyblocks$getKeySetDefaultRecipe();
+
+	KeyBinding toomanyblocks$getKeyAddFavourite();
 }

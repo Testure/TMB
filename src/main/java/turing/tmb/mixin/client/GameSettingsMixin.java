@@ -20,6 +20,15 @@ public class GameSettingsMixin implements IKeybinds {
 	public KeyBinding keyHideTMB = new KeyBinding("key.tmb.hide").bind(InputDevice.keyboard, Keyboard.KEY_O);
 
 	@Unique
+	public KeyBinding keyShowRecipeTree = new KeyBinding("key.tmb.showRecipeTree").bind(InputDevice.keyboard, Keyboard.KEY_T);
+
+	@Unique
+	public KeyBinding keySetDefaultRecipe = new KeyBinding("key.tmb.setDefaultRecipe").bind(InputDevice.keyboard, Keyboard.KEY_D);
+
+	@Unique
+	public KeyBinding keyAddFavourite = new KeyBinding("key.tmb.keyAddFavourite").bind(InputDevice.keyboard, Keyboard.KEY_A);
+
+	@Unique
 	public OptionBoolean isTMBHidden = new OptionBoolean((GameSettings) ((Object) this), "isTMBHidden", false);
 
 	@Unique
@@ -46,6 +55,21 @@ public class GameSettingsMixin implements IKeybinds {
 	@Override
 	public OptionString toomanyblocks$getLastTMBSearch() {
 		return lastTMBSearch;
+	}
+
+	@Override
+	public KeyBinding toomanyblocks$getKeyShowRecipeTree() {
+		return keyShowRecipeTree;
+	}
+
+	@Override
+	public KeyBinding toomanyblocks$getKeySetDefaultRecipe() {
+		return keySetDefaultRecipe;
+	}
+
+	@Override
+	public KeyBinding toomanyblocks$getKeyAddFavourite() {
+		return keyAddFavourite;
 	}
 
 	@Inject(method = "saveOptions", at = @At("HEAD"))

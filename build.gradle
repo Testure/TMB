@@ -177,7 +177,7 @@ publishing {
 			maven(MavenPublication) {
 				groupId = project.mod_group
 				artifactId = project.mod_name
-				version = project.mod_version + "-" + project.bta_version
+				version = project.mod_version
 				from components.java
 			}
 		}

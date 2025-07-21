@@ -117,6 +117,11 @@ public class RecipeIndex implements IRecipeIndex {
 	}
 
 	@Override
+	public Map<IRecipeCategory<?>, List<IRecipeTranslator<?>>> getRecipeLists() {
+		return recipeLists;
+	}
+
+	@Override
 	public void registerCatalyst(IRecipeCategory<?> category, ITypedIngredient<?> catalyst) {
 		catalysts.get(category).add(catalyst);
 	}

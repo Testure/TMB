@@ -5,10 +5,13 @@ import turing.tmb.api.ingredient.ITypedIngredient;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public interface IRecipeIndex {
 	List<IRecipeCategory<?>> getCategoriesForCatalyst(ITypedIngredient<?> ingredient);
+
+	Map<IRecipeCategory<?>, List<IRecipeTranslator<?>>> getRecipeLists();
 
 	void registerCatalyst(IRecipeCategory<?> category, ITypedIngredient<?> catalyst);
 

@@ -63,6 +63,15 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 
 	@Override
 	public void drawRecipe(ITMBRuntime runtime, TrommelRecipeTranslator recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
+
+		getIngredients(recipe, layout, context, ingredients);
+
+		arrowBack.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) + 7);
+		arrow.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) + 7);
+	}
+
+	@Override
+	public void getIngredients(TrommelRecipeTranslator recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients) {
 		ingredients.add(0, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()));
 
 		for (int i = 0; i < 9; i++) {
@@ -74,8 +83,6 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 			}
 		}
 
-		arrowBack.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) + 7);
-		arrow.draw(runtime.getGuiHelper(), x + 26, (background.getHeight() / 2) + 7);
 	}
 
 	@Override

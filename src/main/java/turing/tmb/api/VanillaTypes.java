@@ -3,6 +3,7 @@ package turing.tmb.api;
 import net.minecraft.core.WeightedRandomLootObject;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
+import turing.tmb.TypedIngredient;
 import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.ingredient.IIngredientTypeWithSubtypes;
 
@@ -31,6 +32,28 @@ public final class VanillaTypes {
 		@Override
 		public ItemStack getDefaultIngredient(Item base) {
 			return base.getDefaultStack();
+		}
+
+		@Override
+		public String getName(ItemStack ingredient) {
+			return ingredient.getDisplayName();
+		}
+
+		@Override
+		public void add(ItemStack ingredient, int amount) {
+			ingredient.stackSize += amount;
+		}
+
+		@Override
+		public int getAmount(ItemStack ingredient) {
+			return ingredient.stackSize;
+		}
+
+		@Override
+		public boolean matches(ItemStack ingredient, Object otherIngredient) {
+			if(otherIngredient instanceof TypedIngredient<?>) throw new IllegalArgumentException("Received TypedIngredient instead of actual ingredient class, use .getIngredient() when calling this method.");
+			if(!(otherIngredient instanceof ItemStack)) return false;
+			return ingredient.isItemEqual((ItemStack) otherIngredient);
 		}
 	};
 

@@ -7,6 +7,13 @@ tmb.tooltip.allCategories=Click to see all categories
 
 gui.options.page.controls.category.tmb=Too Many Blocks
 gui.options.page.general.category.tmb=Too Many Blocks
+gui.tmb.recipeTree.label.title=Recipe Tree
 key.tmb.hide=Hide TMB
+key.tmb.keyAddFavourite=Add/Remove Favourite
+key.tmb.setDefaultRecipe=Set/Remove Default Recipe
+key.tmb.showRecipeTree=Show Recipe Tree
 options.isRecipeViewEnabled=Enable Recipe Viewing
 options.isTMBHidden=Hide TMB
+
+message.tmb.setDefaultRecipe=Set default recipe for '%s' to '%s'!
+message.tmb.removeDefaultRecipe=Removed default recipe for '%s'.

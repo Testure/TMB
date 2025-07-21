@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ButtonElement;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TooltipElement;
-import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.SoundCategory;
@@ -15,21 +14,18 @@ import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import turing.tmb.RecipeIngredient;
 import turing.tmb.TMB;
 import turing.tmb.TooltipBuilder;
-import turing.tmb.api.ItemStackIngredientRenderer;
-import turing.tmb.api.VanillaTypes;
-import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.ingredient.IIngredientRenderer;
 import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.*;
+import turing.tmb.util.IKeybinds;
 import turing.tmb.util.IngredientList;
-import turing.tmb.util.LookupContext;
 import turing.tmb.util.RenderUtil;
 
 import java.util.*;
@@ -51,6 +47,7 @@ public class ScreenTMBRecipe extends Screen {
 	private int tabsPerPage = 7;
 	private final List<IRecipeCategory<?>> tabList = new ArrayList<>();
 	private final List<Pair<ITypedIngredient<?>, Pair<Integer, Integer>>> drawnIngredients = new ArrayList<>();
+	private final List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 	private final ButtonElement rightButton = new ButtonElement(0, 0, 0, ">");
 	private final ButtonElement leftButton = new ButtonElement(1, 0, 0, "<");
 	private final ButtonElement tabLeftButton = new ButtonElement(2, 0, 0, "<");
@@ -229,6 +226,7 @@ public class ScreenTMBRecipe extends Screen {
 
 		TMB.getRuntime().getGuiHelper().getCycleTimer().onDraw();
 		drawnIngredients.clear();
+		recipeIngredients.clear();
 
 		tooltip = "";
 		TooltipBuilder tooltipBuilder = new TooltipBuilder();
@@ -263,6 +261,7 @@ public class ScreenTMBRecipe extends Screen {
 			renderCatalysts(category, mx, my, tooltipBuilder, isCtrl, isShift);
 			int X = x + 4;
 			int Y = y + 14;
+
 			GL11.glPushMatrix();
 			GL11.glTranslatef(x + 4, y + 14, 0);
 			IRecipeLayout layout = category.getRecipeLayout();
@@ -279,13 +278,33 @@ public class ScreenTMBRecipe extends Screen {
 					GL11.glTranslatef(slot.getX(), slot.getY(), 0);
 					X += slot.getX();
 					Y += slot.getY();
-					slot.draw(TMB.getRuntime().getGuiHelper());
+					boolean defaultRecipe = false;
+					if(slot.getRole() == RecipeIngredientRole.OUTPUT){
+						if (ingredients.size() > I) {
+							IIngredientList list = ingredients.get(I);
+							ITypedIngredient<?> ingredient = TMB.getRuntime().getGuiHelper().getCycleTimer().getCycledItem(list.getIngredients());
+							if(ingredient != null){
+								if(TMB.getRuntime().getDefaultRecipes().entrySet().stream().anyMatch((E)->E.getKey().ingredient.matches(ingredient.getIngredient()))){
+									Map.Entry<RecipeIngredient, IRecipeTranslator<?>> entry = TMB.getRuntime().getDefaultRecipes().entrySet().stream().filter((E) -> E.getKey().ingredient.matches(ingredient.getIngredient())).collect(Collectors.toList()).get(0);
+									if(entry.getValue() == recipe){
+										defaultRecipe = true;
+									}
+								}
+							}
+						}
+					}
+					if(defaultRecipe){
+						slot.draw(TMB.getRuntime().getGuiHelper(),1,1,0,1);
+					} else {
+						slot.draw(TMB.getRuntime().getGuiHelper());
+					}
 					if (ingredients.size() > I) {
 						GL11.glTranslatef(1, 1, 0);
 						X++;
 						Y++;
 						IIngredientList list = ingredients.get(I);
 						ITypedIngredient<?> ingredient = TMB.getRuntime().getGuiHelper().getCycleTimer().getCycledItem(list.getIngredients());
+
 						if (lookupContext != null) {
 							Optional<ITypedIngredient<?>> found = list.getIngredients().stream().filter((t) -> t.hashCode() == lookupContext.getIngredient().hashCode()).findFirst();
 							if (found.isPresent()) {
@@ -297,6 +316,7 @@ public class ScreenTMBRecipe extends Screen {
 							IIngredientRenderer<Object> renderer = (IIngredientRenderer<Object>) type.getRenderer(TMB.getRuntime());
 							new DrawableIngredient<>(ingredient.getIngredient(), renderer).draw(TMB.getRuntime().getGuiHelper());
 							drawnIngredients.add(Pair.of(ingredient, Pair.of(X, Y)));
+							recipeIngredients.add(new RecipeIngredient(ingredient, recipe, category, slot.getRole()));
 							if (mx >= X && mx < X + 18 && my >= Y && my < Y + 18) {
 								int mouseX = mx - ((this.width - this.xSize) / 2) - 4;
 								int mouseY = my - ((this.height - this.ySize) / 2) - 14 - ((category.getBackground().getHeight() + 4) * i);
@@ -373,6 +393,7 @@ public class ScreenTMBRecipe extends Screen {
 			tooltipElement.render(tooltip, mx, my, 8, -8);
 			GL11.glPopMatrix();
 		}
+		super.render(mx,my,partialTick);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -393,6 +414,7 @@ public class ScreenTMBRecipe extends Screen {
 
 			new DrawableIngredient<>(ingredient.getIngredient(), ingredient.getType().getRenderer(TMB.getRuntime())).draw(TMB.getRuntime().getGuiHelper(), x + 3, y + 3);
 			drawnIngredients.add(Pair.of(ingredient, Pair.of(x + 3, y + 3)));
+			recipeIngredients.add(new RecipeIngredient(ingredient,null, null, RecipeIngredientRole.CATALYST));
 
 			if (mx >= x && mx < x + 22 && my >= y && my < y + 22) {
 				ingredient.getType().getRenderer(TMB.getRuntime()).getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
@@ -427,8 +449,66 @@ public class ScreenTMBRecipe extends Screen {
 			}
 			mc.displayScreen(s);
 		}
+
+		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeyShowRecipeTree().getKeyCode()){
+			for (int i = 0; i < drawnIngredients.size(); i++) {
+				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
+				RecipeIngredient recipeIngredient = recipeIngredients.get(i);
+				if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
+					if (recipeIngredient.recipe != null) {
+						mc.displayScreen(new ScreenRecipeTree(this,new RecipeTreePage(recipeIngredient),recipeIngredient));
+					}
+					break;
+				}
+			}
+		}
+
+		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeyAddFavourite().getKeyCode()){
+			for (int i = 0; i < drawnIngredients.size(); i++) {
+				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
+				RecipeIngredient recipeIngredient = recipeIngredients.get(i);
+				if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
+					if (recipeIngredient.recipe != null) {
+						if (TMB.getRuntime().getFavourites().stream().anyMatch(it -> it.matches(recipeIngredient.ingredient.getIngredient()))) {
+							TMB.getRuntime().getFavourites().removeIf(ingredient -> recipeIngredient.ingredient.matches(ingredient.getIngredient()));
+						} else {
+							TMB.getRuntime().getFavourites().add(recipeIngredient.ingredient);
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeySetDefaultRecipe().getKeyCode()){
+			loop: for (int i = 0; i < drawnIngredients.size(); i++) {
+				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
+				RecipeIngredient recipeIngredient = recipeIngredients.get(i);
+				if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
+					if (recipeIngredient.recipe != null && recipeIngredient.role == RecipeIngredientRole.OUTPUT) {
+						Iterator<Map.Entry<RecipeIngredient, IRecipeTranslator<?>>> iterator = TMB.getRuntime().getDefaultRecipes().entrySet().iterator();
+						while (iterator.hasNext()) {
+							RecipeIngredient ingredient = iterator.next().getKey();
+							if(ingredient.ingredient.matches(recipeIngredient.ingredient.getIngredient())){
+								iterator.remove();
+								if(Objects.equals(recipeIngredient.recipe.getOriginal().toString(), ingredient.recipe.getOriginal().toString())){
+									mc.hudIngame.addChatMessage(String.format(I18n.getInstance().translateKey("message.tmb.removeDefaultRecipe"),recipeIngredient.ingredient.getName()));
+									break loop;
+								}
+							}
+						}
+						TMB.getRuntime().getDefaultRecipes().put(recipeIngredient, recipeIngredient.recipe);
+						mc.hudIngame.addChatMessage(String.format(I18n.getInstance().translateKey("message.tmb.setDefaultRecipe"), recipeIngredient.ingredient.getName(), recipeIngredient.recipe.getOriginal().toString()));
+						//mc.displayScreen(new ScreenRecipeTree(this,new RecipeTreePage(recipeIngredient),recipeIngredient));
+					}
+					break;
+				}
+			}
+		}
+
 		if (eventKey == mc.gameSettings.keyShowRecipe.getKeyCode() || eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
-			for (Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn : drawnIngredients) {
+			for (int i = 0; i < drawnIngredients.size(); i++) {
+				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 				if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
 					if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
 						TMB.getRuntime().showRecipe(drawn.getLeft(), RecipeIngredientRole.INPUT);
