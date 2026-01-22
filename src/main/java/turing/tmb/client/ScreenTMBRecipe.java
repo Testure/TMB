@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 import turing.tmb.RecipeIngredient;
 import turing.tmb.TMB;
 import turing.tmb.TooltipBuilder;
+import turing.tmb.api.ISupportsRecipeFilling;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.ingredient.IIngredientRenderer;
@@ -53,6 +54,7 @@ public class ScreenTMBRecipe extends Screen {
 	private final ButtonElement tabLeftButton = new ButtonElement(2, 0, 0, "<");
 	private final ButtonElement tabRightButton = new ButtonElement(3, 0, 0, ">");
 	private String tooltip = "";
+	private int debounce = 10;
 
 	public ScreenTMBRecipe(Screen parent) {
 		super(parent);
@@ -220,6 +222,9 @@ public class ScreenTMBRecipe extends Screen {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void render(int mx, int my, float partialTick) {
+		if(debounce > 0){
+			debounce--;
+		}
 		renderBackground();
 		GL11.glEnable(3042);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -440,6 +445,7 @@ public class ScreenTMBRecipe extends Screen {
 
 	@Override
 	public void keyPressed(char eventCharacter, int eventKey, int mx, int my) {
+		if(debounce > 0) return;
 		if (eventKey == Keyboard.KEY_BACK) {
 			mc.displayScreen(getParentScreen());
 		} else if (eventKey == Keyboard.KEY_ESCAPE || eventKey == mc.gameSettings.keyInventory.getKeyCode()) {
@@ -448,6 +454,26 @@ public class ScreenTMBRecipe extends Screen {
 				s = s.getParentScreen();
 			}
 			mc.displayScreen(s);
+		}
+
+		if(eventKey == ((IKeybinds) mc.gameSettings).toomanyblocks$getKeyFillRecipe().getKeyCode()){
+			Screen s = getParentScreen();
+			while (s instanceof ScreenTMBRecipe) {
+				s = s.getParentScreen();
+			}
+			if(s instanceof ISupportsRecipeFilling){
+				for (int i = 0; i < drawnIngredients.size(); i++) {
+					Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
+					RecipeIngredient recipeIngredient = recipeIngredients.get(i);
+					if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
+						if (recipeIngredient.recipe != null) {
+							mc.displayScreen(s);
+							((ISupportsRecipeFilling) s).fillRecipe(recipeIngredient.recipe);
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeyShowRecipeTree().getKeyCode()){
@@ -511,8 +537,10 @@ public class ScreenTMBRecipe extends Screen {
 				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 				if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
 					if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+						debounce = 10;
 						TMB.getRuntime().showRecipe(drawn.getLeft(), RecipeIngredientRole.INPUT);
 					} else {
+						debounce = 10;
 						TMB.getRuntime().showRecipe(drawn.getLeft(), RecipeIngredientRole.OUTPUT);
 					}
 					break;

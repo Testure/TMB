@@ -65,6 +65,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyAddFavourite()));
 		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeySetDefaultRecipe()));
 		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyShowRecipeTree()));
+		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyFillRecipe()));
 		OptionsPages.CONTROLS.withComponent(category);
 		OptionsCategory category1 = new OptionsCategory("gui.options.page.general.category.tmb");
 		category1.withComponent(new BooleanOptionComponent(((IKeybinds) settings).toomanyblocks$getIsRecipeViewEnabled()));

@@ -29,6 +29,10 @@ public class GameSettingsMixin implements IKeybinds {
 	public KeyBinding keyAddFavourite = new KeyBinding("key.tmb.keyAddFavourite").bind(InputDevice.keyboard, Keyboard.KEY_A);
 
 	@Unique
+	public KeyBinding keyFillRecipe = new KeyBinding("key.tmb.keyFillRecipe").bind(InputDevice.keyboard, Keyboard.KEY_F);
+
+
+	@Unique
 	public OptionBoolean isTMBHidden = new OptionBoolean((GameSettings) ((Object) this), "isTMBHidden", false);
 
 	@Unique
@@ -70,6 +74,11 @@ public class GameSettingsMixin implements IKeybinds {
 	@Override
 	public KeyBinding toomanyblocks$getKeyAddFavourite() {
 		return keyAddFavourite;
+	}
+
+	@Override
+	public KeyBinding toomanyblocks$getKeyFillRecipe() {
+		return keyFillRecipe;
 	}
 
 	@Inject(method = "saveOptions", at = @At("HEAD"))

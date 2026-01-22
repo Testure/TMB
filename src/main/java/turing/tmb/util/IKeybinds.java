@@ -19,4 +19,6 @@ public interface IKeybinds {
 	KeyBinding toomanyblocks$getKeySetDefaultRecipe();
 
 	KeyBinding toomanyblocks$getKeyAddFavourite();
+
+	KeyBinding toomanyblocks$getKeyFillRecipe();
 }

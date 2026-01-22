@@ -12,6 +12,7 @@ key.tmb.hide=Hide TMB
 key.tmb.keyAddFavourite=Add/Remove Favourite
 key.tmb.setDefaultRecipe=Set/Remove Default Recipe
 key.tmb.showRecipeTree=Show Recipe Tree
+key.tmb.keyFillRecipe=Fill Recipe
 options.isRecipeViewEnabled=Enable Recipe Viewing
 options.isTMBHidden=Hide TMB
 

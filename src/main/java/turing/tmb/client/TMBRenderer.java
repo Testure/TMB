@@ -233,10 +233,12 @@ public class TMBRenderer {
 				GL11.glPopMatrix();
 			}
 
-			if (enabledRecipes) {
+			if (enabledRecipes && debounce <= 0) {
 				if (mc.gameSettings.keyShowRecipe.isPressed()) {
+					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
 				} else if (mc.gameSettings.keyShowUsage.isPressed()) {
+					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
 				}
 			}
@@ -325,10 +327,12 @@ public class TMBRenderer {
 				GL11.glPopMatrix();
 			}
 
-			if (enabledRecipes) {
+			if (enabledRecipes && debounce <= 0) {
 				if (mc.gameSettings.keyShowRecipe.isPressed()) {
+					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
 				} else if (mc.gameSettings.keyShowUsage.isPressed()) {
+					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
 				}
 			}
