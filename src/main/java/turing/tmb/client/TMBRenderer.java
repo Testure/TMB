@@ -147,7 +147,7 @@ public class TMBRenderer {
 	}
 
 	public static void keyTyped(char c, int key, int mouseX, int mouseY) {
-		if (search.isFocused && show) {
+		if (search != null && search.isFocused && show) {
 			search.textboxKeyTyped(c, key);
 		}
 	}

@@ -47,7 +47,7 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(char eventCharacter, int eventKey, int mx, int my, CallbackInfo ci) {
 		TMBRenderer.keyTyped(eventCharacter, eventKey, mx, my);
-		if (TMBRenderer.search.isFocused) {
+		if (TMBRenderer.search != null && TMBRenderer.search.isFocused) {
 			ci.cancel();
 		}
 		if (TMB.shouldReplaceGuidebook && TMBRenderer.enabledRecipes) {
