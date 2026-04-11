@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ButtonElement;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TooltipElement;
+import net.minecraft.core.data.registry.recipe.RecipeEntryBase;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.SoundCategory;
@@ -331,7 +332,18 @@ public class ScreenTMBRecipe extends Screen {
 								if (list instanceof IngredientList && ((IngredientList) list).itemGroup != null) {
 									tooltipBuilder.add(TextFormatting.formatted(I18n.getInstance().translateKeyAndFormat("tmb.tooltip.itemGroup", ((IngredientList) list).itemGroup), TextFormatting.LIGHT_GRAY));
 								}
+								if(slot.getRole() == RecipeIngredientRole.OUTPUT){
+									if(parentScreen instanceof ISupportsRecipeFilling){
+										List<Class<? extends RecipeEntryBase<?, ?, ?>>> supportedRecipes = ((ISupportsRecipeFilling) parentScreen).getSupportedRecipes();
+										if(supportedRecipes.stream().anyMatch((E)->E.isAssignableFrom(recipe.getOriginal().getClass()))){
+											String key = ((IKeybinds) mc.gameSettings).toomanyblocks$getKeyFillRecipe().getKeyName();
+											tooltipBuilder.add(tooltipBuilder.getLines().size()-1, TextFormatting.LIME+I18n.getInstance().translateKeyAndFormat("tmb.tooltip.fillRecipe", key));
+										}
+									}
+								}
 							}
+
+
 						}
 						X--;
 						Y--;
@@ -393,12 +405,13 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 
+		super.render(mx,my,partialTick);
+
 		if (!tooltip.isEmpty()) {
 			GL11.glPushMatrix();
 			tooltipElement.render(tooltip, mx, my, 8, -8);
 			GL11.glPopMatrix();
 		}
-		super.render(mx,my,partialTick);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -468,7 +481,8 @@ public class ScreenTMBRecipe extends Screen {
 					if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
 						if (recipeIngredient.recipe != null) {
 							mc.displayScreen(s);
-							((ISupportsRecipeFilling) s).fillRecipe(recipeIngredient.recipe);
+							boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+							((ISupportsRecipeFilling) s).fillRecipe(recipeIngredient.recipe,shift);
 							break;
 						}
 					}

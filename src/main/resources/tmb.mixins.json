@@ -11,6 +11,8 @@
     "client.MinecraftMixin",
     "client.MobInfoRegistryAccessor",
     "client.ScreenContainerAbstractMixin",
+    "client.ScreenCraftingMixin",
+    "client.ScreenFurnaceMixin",
     "client.ScreenInventoryCreativeAccessor",
     "client.ScreenInventoryCreativeMixin",
     "client.ScreenMixin",

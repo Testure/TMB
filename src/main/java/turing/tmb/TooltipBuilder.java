@@ -16,6 +16,11 @@ public class TooltipBuilder implements ITooltipBuilder {
 	}
 
 	@Override
+	public void add(int index, String text) {
+		lines.add(index, text);
+	}
+
+	@Override
 	public void addAll(Collection<String> text) {
 		lines.addAll(text);
 	}

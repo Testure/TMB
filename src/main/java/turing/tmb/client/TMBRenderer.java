@@ -143,6 +143,7 @@ public class TMBRenderer {
 			if (currentFavouritePage > favouritePages) currentFavouritePage = 0;
 		}
 
+		if(search == null) return;
 		search.mouseClicked(mouseX, mouseY, 1);
 	}
 

@@ -2,8 +2,9 @@ tmb.category.shapedCrafting=Shaped Crafting
 tmb.category.shapelessCrafting=Shapeless Crafting
 tmb.category.info=Info
 
-tmb.tooltip.itemGroup=Accepts Any %s
+tmb.tooltip.itemGroup=Accepts any: %s
 tmb.tooltip.allCategories=Click to see all categories
+tmb.tooltip.fillRecipe=Press %s to autofill recipe.
 
 gui.options.page.controls.category.tmb=Too Many Blocks
 gui.options.page.general.category.tmb=Too Many Blocks
