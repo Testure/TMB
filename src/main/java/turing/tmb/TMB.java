@@ -100,6 +100,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 			plugin.registerIngredients(runtime);
 			plugin.registerRecipeCatalysts(runtime);
 			plugin.registerRecipes(runtime);
+			plugin.registerRecipeFilling(runtime);
 		}
 		runtime.isReady = true;
 		long timeTook = System.currentTimeMillis() - time;

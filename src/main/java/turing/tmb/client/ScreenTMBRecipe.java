@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 import turing.tmb.RecipeIngredient;
 import turing.tmb.TMB;
 import turing.tmb.TooltipBuilder;
-import turing.tmb.api.ISupportsRecipeFilling;
+import turing.tmb.api.RecipeFiller;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.ingredient.IIngredientRenderer;
@@ -333,8 +333,8 @@ public class ScreenTMBRecipe extends Screen {
 									tooltipBuilder.add(TextFormatting.formatted(I18n.getInstance().translateKeyAndFormat("tmb.tooltip.itemGroup", ((IngredientList) list).itemGroup), TextFormatting.LIGHT_GRAY));
 								}
 								if(slot.getRole() == RecipeIngredientRole.OUTPUT){
-									if(parentScreen instanceof ISupportsRecipeFilling){
-										List<Class<? extends RecipeEntryBase<?, ?, ?>>> supportedRecipes = ((ISupportsRecipeFilling) parentScreen).getSupportedRecipes();
+									if(parentScreen instanceof RecipeFiller){
+										List<Class<? extends RecipeEntryBase<?, ?, ?>>> supportedRecipes = ((RecipeFiller) parentScreen).getSupportedRecipes();
 										if(supportedRecipes.stream().anyMatch((E)->E.isAssignableFrom(recipe.getOriginal().getClass()))){
 											String key = ((IKeybinds) mc.gameSettings).toomanyblocks$getKeyFillRecipe().getKeyName();
 											tooltipBuilder.add(tooltipBuilder.getLines().size()-1, TextFormatting.LIME+I18n.getInstance().translateKeyAndFormat("tmb.tooltip.fillRecipe", key));
@@ -474,7 +474,7 @@ public class ScreenTMBRecipe extends Screen {
 			while (s instanceof ScreenTMBRecipe) {
 				s = s.getParentScreen();
 			}
-			if(s instanceof ISupportsRecipeFilling){
+			if(s instanceof RecipeFiller){
 				for (int i = 0; i < drawnIngredients.size(); i++) {
 					Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 					RecipeIngredient recipeIngredient = recipeIngredients.get(i);
@@ -482,7 +482,21 @@ public class ScreenTMBRecipe extends Screen {
 						if (recipeIngredient.recipe != null) {
 							mc.displayScreen(s);
 							boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-							((ISupportsRecipeFilling) s).fillRecipe(recipeIngredient.recipe,shift);
+							((RecipeFiller) s).fillRecipe(recipeIngredient.recipe,s,shift);
+							break;
+						}
+					}
+				}
+			} else if (TMB.getRuntime().getRecipeFillers().containsKey(s.getClass())) {
+				RecipeFiller recipeFiller = TMB.getRuntime().getRecipeFillers().get(s.getClass());
+				for (int i = 0; i < drawnIngredients.size(); i++) {
+					Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
+					RecipeIngredient recipeIngredient = recipeIngredients.get(i);
+					if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
+						if (recipeIngredient.recipe != null) {
+							mc.displayScreen(s);
+							boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+							recipeFiller.fillRecipe(recipeIngredient.recipe,s,shift);
 							break;
 						}
 					}

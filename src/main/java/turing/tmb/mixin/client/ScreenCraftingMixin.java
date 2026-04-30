@@ -7,6 +7,7 @@ import net.minecraft.client.gui.guidebook.crafting.RecipePageCrafting;
 import net.minecraft.client.gui.guidebook.crafting.displays.RecipeDisplayAdapter;
 import net.minecraft.core.data.registry.recipe.RecipeEntryBase;
 import net.minecraft.core.data.registry.recipe.RecipeSymbol;
+import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCrafting;
 import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCraftingShaped;
 import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCraftingShapeless;
 import net.minecraft.core.item.ItemStack;
@@ -14,8 +15,7 @@ import net.minecraft.core.player.inventory.menu.MenuAbstract;
 import net.minecraft.core.player.inventory.slot.Slot;
 import net.minecraft.core.util.collection.Pair;
 import org.spongepowered.asm.mixin.Mixin;
-import turing.tmb.TMB;
-import turing.tmb.api.ISupportsRecipeFilling;
+import turing.tmb.api.RecipeFiller;
 import turing.tmb.api.recipe.IRecipeTranslator;
 import turing.tmb.util.InventoryWrapper;
 
@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Mixin(value = ScreenCrafting.class, remap = false)
-public abstract class ScreenCraftingMixin extends ScreenContainerAbstract implements ISupportsRecipeFilling {
+public abstract class ScreenCraftingMixin extends ScreenContainerAbstract implements RecipeFiller<RecipeEntryCrafting<?, ItemStack>, ScreenCrafting> {
 	private ScreenCraftingMixin(MenuAbstract container) {
 		super(container);
 	}
 
 	@Override
-	public void fillRecipe(IRecipeTranslator<?> translator, boolean maximum) {
+	public void fillRecipe(IRecipeTranslator<RecipeEntryCrafting<?, ItemStack>> translator, boolean maximum) {
 		InventoryWrapper w = new InventoryWrapper(mc.thePlayer.inventory);
 		for (Slot slot : inventorySlots.slots) {
 			if(slot.hasItem() && slot.index > 0 && slot.index < 10){

@@ -27,4 +27,8 @@ public interface ITMBPlugin {
 	default void registerRecipes(ITMBRuntime runtime) {
 
 	}
+
+	default void registerRecipeFilling(ITMBRuntime runtime) {
+
+	}
 }

@@ -1,9 +1,11 @@
 package turing.tmb;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TooltipElement;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.collection.Pair;
+import turing.tmb.api.RecipeFiller;
 import turing.tmb.api.ingredient.IIngredientRegistry;
 import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.ingredient.IIngredientTypeRegistry;
@@ -32,6 +34,7 @@ public class TMBRuntime implements ITMBRuntime {
 	protected final GuiHelper guiHelper = new GuiHelper(this);
 	public final List<ITypedIngredient<?>> favourites = new ArrayList<>();
 	protected final Map<RecipeIngredient, IRecipeTranslator<?>> defaultRecipes = new HashMap<>();
+	protected final Map<Class<? extends Screen>, RecipeFiller> recipeFillers = new HashMap<>();
 	protected boolean isReady;
 
 	protected TMBRuntime() {
@@ -44,6 +47,7 @@ public class TMBRuntime implements ITMBRuntime {
 		recipeIndex.clear();
 		index.clear();
 		guiHelper.clear();
+		recipeFillers.clear();
 	}
 
 	@Override
@@ -110,6 +114,11 @@ public class TMBRuntime implements ITMBRuntime {
 	@Override
 	public RecipeIndex getRecipeIndex() {
 		return recipeIndex;
+	}
+
+	@Override
+	public Map<Class<? extends Screen>, RecipeFiller> getRecipeFillers() {
+		return recipeFillers;
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package turing.tmb.api.runtime;
 
+import net.minecraft.client.gui.Screen;
 import turing.tmb.RecipeIngredient;
+import turing.tmb.api.RecipeFiller;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.ingredient.IIngredientRegistry;
 import turing.tmb.api.ingredient.IIngredientType;
@@ -25,7 +27,7 @@ public interface ITMBRuntime {
 
 	IRecipeIndex getRecipeIndex();
 
-
+	Map<Class<? extends Screen>, RecipeFiller> getRecipeFillers();
 
 	void showRecipe(ILookupContext lookup);
 
