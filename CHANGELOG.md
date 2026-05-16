@@ -1,0 +1,1 @@
+- Added the ability to autofill crafting and furnace recipes (also has an API for mod support.)
