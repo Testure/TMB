@@ -5,40 +5,36 @@ import net.minecraft.client.gui.ButtonElement;
 import net.minecraft.client.gui.ItemElement;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TooltipElement;
+import net.minecraft.client.gui.achievements.ScreenAchievements;
 import net.minecraft.client.gui.options.OptionsButtonElement;
+import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.render.Lighting;
 import net.minecraft.client.render.Scissor;
-import net.minecraft.client.render.item.model.ItemModelDispatcher;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.renderer.*;
+import net.minecraft.client.render.tessellator.RenderBuffer;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
-import net.minecraft.core.net.command.TextFormatting;
-import net.minecraft.core.util.collection.Pair;
 import net.minecraft.core.util.helper.Color;
 import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL41;
 import turing.tmb.RecipeIngredient;
 import turing.tmb.RecipeTreeIngredient;
 import turing.tmb.TMB;
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.ingredient.IIngredientRenderer;
 import turing.tmb.api.ingredient.IIngredientType;
-import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class ScreenRecipeTree extends Screen
 {
@@ -114,7 +110,6 @@ public class ScreenRecipeTree extends Screen
 		mainRecipeResult = ingredient;
 
         this.parent = parent;
-        this.mc = Minecraft.getMinecraft();
         this.tooltip = new TooltipElement(mc);
         this.renderItem = new ItemElement(mc);
 
@@ -203,9 +198,9 @@ public class ScreenRecipeTree extends Screen
             super.keyPressed(eventCharacter, eventKey, mx, my);
         }
 
-		if (eventKey == mc.gameSettings.keyShowRecipe.getKeyCode() || eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+		if (eventKey == GameSettings.KEY_SHOW_RECIPE.getKeyCode() || eventKey == GameSettings.KEY_SHOW_USAGE.getKeyCode()) {
 			if(hoveredTreeIngredient != null){
-				if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+				if (eventKey == GameSettings.KEY_SHOW_USAGE.getKeyCode()) {
 					TMB.getRuntime().showRecipe(hoveredTreeIngredient.ingredient.ingredient, RecipeIngredientRole.INPUT);
 				} else {
 					TMB.getRuntime().showRecipe(hoveredTreeIngredient.ingredient.ingredient, RecipeIngredientRole.OUTPUT);
@@ -293,51 +288,43 @@ public class ScreenRecipeTree extends Screen
         overlayBackground(0, width, 0, top, 0x404040);
         overlayBackground(0, width, bottom, height, 0x404040);
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GLRenderer.enableState(State.BLEND);
+		GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
 
-        super.render(mx, my, partialTick); // Draw Buttons
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        Lighting.disable();
+		super.render(mx, my, partialTick); // Draw Buttons
+		GLRenderer.enableState(State.DEPTH_TEST);
+		GLRenderer.globalSetLightEnabled(true);
+		Lighting.disable();
 
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GLRenderer.globalSetLightEnabled(false);
+		GLRenderer.disableState(State.DEPTH_TEST);
 
         {
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glDisable(GL11.GL_ALPHA_TEST);
-            GL11.glShadeModel(GL11.GL_SMOOTH);
+			GLRenderer.pushFrame();
+			GLRenderer.setShader(Shaders.COLOR);
+			GLRenderer.enableState(State.BLEND);
+			GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
 
             byte fadeDist = 4;
-            Tessellator tessellator = Tessellator.instance;
+            TessellatorGeneral tessellator = GLRenderer.getTessellator();
 			tessellator.startDrawingQuads();
-			tessellator.setColorRGBA_I(0, 0);
+			tessellator.setColor2i(0, 0);
 			tessellator.addVertexWithUV(0, top + fadeDist, 0.0D, 0.0D, 1.0D);
 			tessellator.addVertexWithUV(width, top + fadeDist, 0.0D, 1.0D, 1.0D);
-			tessellator.setColorRGBA_I(0, 255);
+			tessellator.setColor2i(0, 255);
 			tessellator.addVertexWithUV(width, top, 0.0D, 1.0D, 0.0D);
 			tessellator.addVertexWithUV(0, top, 0.0D, 0.0D, 0.0D);
 			tessellator.draw();
 
 			tessellator.startDrawingQuads();
-			tessellator.setColorRGBA_I(0, 255);
+			tessellator.setColor2i(0, 255);
 			tessellator.addVertexWithUV(0, bottom, 0.0D, 0.0D, 1.0D);
 			tessellator.addVertexWithUV(width, bottom, 0.0D, 1.0D, 1.0D);
-			tessellator.setColorRGBA_I(0, 0);
+			tessellator.setColor2i(0, 0);
 			tessellator.addVertexWithUV(width, bottom - fadeDist, 0.0D, 1.0D, 0.0D);
 			tessellator.addVertexWithUV(0, bottom - fadeDist, 0.0D, 0.0D, 0.0D);
 			tessellator.draw();
-            GL11.glEnable(GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_ALPHA_TEST);
+			GLRenderer.popFrame();
         }
 
         if (hoveredTreeIngredient != null){
@@ -345,8 +332,7 @@ public class ScreenRecipeTree extends Screen
         }
 
         renderLabels();
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GLRenderer.enableState(State.DEPTH_TEST);
 
         hoveredPage = null;
     }
@@ -367,7 +353,7 @@ public class ScreenRecipeTree extends Screen
     }
 
     protected void renderLabels() {
-        font.drawCenteredString(I18n.getInstance().translateKey("gui.tmb.recipeTree.label.title")/* + " " + viewportZoom + " X:" + currentShiftX + ", Y:" + currentShiftY*/, width/2, 5 , 0xFFFFFF);
+        drawStringCenteredShadow(this.fontRenderer, I18n.getInstance().translateKey("gui.tmb.recipeTree.label.title")/* + " " + viewportZoom + " X:" + currentShiftX + ", Y:" + currentShiftY*/, width/2, 5 , 0xFFFFFF);
     }
 
 
@@ -379,174 +365,318 @@ public class ScreenRecipeTree extends Screen
 
         zLevel = 0.0F;
 
-        GL11.glDepthFunc(GL11.GL_GEQUAL);
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0, 0, -200F);
+		GLRenderer.setDepthFunc(CompareFunc.GREATER_EQUAL);
+        GLRenderer.pushFrame();
+        GLRenderer.modelM4f().translate(0, 0, -200F);
         Scissor.enable(viewportLeft, viewportTop, viewportWidth, viewportHeight);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+		GLRenderer.globalSetLightEnabled(false);
         drawRectDouble(viewportLeft, viewportTop, viewportRight, viewportBottom, 0xFF000000 | currentPage.backgroundColor()); // Ensures that the viewport always has a background of some kind
 
-        GL11.glPushMatrix();
+        GLRenderer.pushFrame();
         drawBackgroundTiles(shiftX, shiftY);
 
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthFunc(GL11.GL_LEQUAL); // Responsible for culling the overdraw later on
+		GLRenderer.enableState(State.DEPTH_TEST);
+		GLRenderer.setDepthFunc(CompareFunc.LESS_EQUAL); // Responsible for culling the overdraw later on
         drawConnectingLines(mouseX, mouseY,shiftX, shiftY);
 
-        Lighting.enableInventoryLight();
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+		Lighting.enableInventoryLight();
+		GLRenderer.globalSetLightEnabled(false);
         hoveredTreeIngredient = drawAchievementIcons(mouseX, mouseY, shiftX, shiftY);
 
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Scissor.disable();
+		GLRenderer.disableState(State.DEPTH_TEST);
+		GLRenderer.enableState(State.BLEND);
+		GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		Scissor.disable();
 
         // drawRectDouble(viewportLeft + viewportWidth/2d - 2.5, viewportTop + viewportHeight/2d - 2.5, viewportLeft + viewportWidth/2d + 2.5, viewportTop + viewportHeight/2d + 2.5, 0xFFA0A0A0); // Debug cross-hair
 
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
 
         zLevel = 0.0F;
-        GL11.glDepthFunc(GL11.GL_LEQUAL);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GLRenderer.setDepthFunc(CompareFunc.LESS_EQUAL);
+		GLRenderer.disableState(State.DEPTH_TEST);
     }
 
-    private static final int TILE_WIDTH = 16;
-    private static final int TILE_HEIGHT = 16;
+	private static final int TILE_WIDTH = 16;
+	private static final int TILE_HEIGHT = 16;
 
-    public int lastTileX = Integer.MIN_VALUE;
-    public int lastTileY = Integer.MIN_VALUE;
-    public int lastTilesWide = Integer.MIN_VALUE;
-    public int lastTilesTall = Integer.MIN_VALUE;
-    private void drawBackgroundTiles(double shiftX, double shiftY){
-        double zoom = viewportZoom/* * 0.85*/;
+	public int lastTileX = Integer.MIN_VALUE;
+	public int lastTileY = Integer.MIN_VALUE;
+	public int lastTilesWide = Integer.MIN_VALUE;
+	public int lastTilesTall = Integer.MIN_VALUE;
+	public @Nullable RenderBuffer lastBackgroundTileBuf;
+	public @Nullable RenderBuffer lastBackgroundShadowBuf;
+	private void drawBackgroundTiles(double shiftX, double shiftY){
+		double zoom = this.viewportZoom/* * 0.85*/;
 
-        TextureRegistry.blockAtlas.bind();
-        final int offset = 18 * TILE_WIDTH;
-        int viewTileX = (MathHelper.floor(shiftX) + offset) / TILE_WIDTH;
-        int viewTileY = (MathHelper.floor(shiftY) + offset) / TILE_HEIGHT;
-        double remainderX = (shiftX + offset) % TILE_WIDTH;
-        double remainderY = (shiftY + offset) % TILE_HEIGHT;
-        Random random = new Random();
+		TextureRegistry.worldAtlas.bind();
+		final int offset = 18 * TILE_WIDTH;
+		int viewTileX = (MathHelper.floor(shiftX) + offset) / TILE_WIDTH;
+		int viewTileY = (MathHelper.floor(shiftY) + offset) / TILE_HEIGHT;
+		double remainderX = (shiftX + offset) % TILE_WIDTH;
+		double remainderY = (shiftY + offset) % TILE_HEIGHT;
+		Random random = new Random();
 
-        int tilesWide = (int) (viewportWidth/(TILE_WIDTH * zoom) + 2);
-        int tilesTall = (int) (viewportHeight/(TILE_HEIGHT * zoom) + 2);
+		int tilesWide = (int) (this.viewportWidth /(TILE_WIDTH * zoom) + 2);
+		int tilesTall = (int) (this.viewportHeight /(TILE_HEIGHT * zoom) + 2);
 
-        int orgX = -tilesWide/2 - 1;
-        int orgY = -tilesTall/2 - 1;
-        int endX = tilesWide/2 + 1;
-        int endY = tilesTall/2 + 1;
+		int orgX = -tilesWide/2 - 1;
+		int orgY = -tilesTall/2 - 1;
+		int endX = tilesWide/2 + 1;
+		int endY = tilesTall/2 + 1;
 
-        tilesWide = endX - orgX;
-        tilesTall = endY - orgY;
+		tilesWide = endX - orgX;
+		tilesTall = endY - orgY;
 
-        // Cache background, saves some render time which is nice
-        if (viewTileX != lastTileX || viewTileY != lastTileY || tilesWide != lastTilesWide || tilesTall != lastTilesTall) {
-            lastTileX = viewTileX;
-            lastTileY = viewTileY;
-            lastTilesWide = tilesWide;
-            lastTilesTall = tilesTall;
+		// Cache background, saves some render time which is nice
+		boolean dirty = false;
+		if (viewTileX != this.lastTileX || viewTileY != this.lastTileY || tilesWide != this.lastTilesWide || tilesTall != this.lastTilesTall) {
+			this.lastTileX = viewTileX;
+			this.lastTileY = viewTileY;
+			this.lastTilesWide = tilesWide;
+			this.lastTilesTall = tilesTall;
+			dirty = true;
 
-            for (BGLayer layer : layers){
-                layer.resize(tilesWide, tilesTall);
-            }
+			for (BGLayer layer : this.layers){
+				layer.resize(tilesWide, tilesTall);
+			}
 
-            long worldSeed = mc.currentWorld == null ? 0 : mc.currentWorld.getRandomSeed();
-            for (int _y = 0; _y < tilesTall; _y++){
-                for (int _x = 0; _x < tilesWide; _x++) {
-                    int tileX = orgX + _x + viewTileX;
-                    int tileY = orgY + _y + viewTileY;
-                    // Hopefully this is actually random enough :)
-                    random.setSeed(worldSeed);
-                    long l1 = random.nextLong();
-                    random.setSeed(tileX);
-                    long l2 = random.nextLong();
-                    random.setSeed(tileY);
-                    long l3 = random.nextLong();
+			long worldSeed = this.mc.currentWorld == null ? 0 : this.mc.currentWorld.getRandomSeed();
+			for (int _y = 0; _y < tilesTall; _y++){
+				for (int _x = 0; _x < tilesWide; _x++) {
+					int tileX = orgX + _x + viewTileX;
+					int tileY = orgY + _y + viewTileY;
+					// Hopefully this is actually random enough :)
+					random.setSeed(worldSeed);
+					long l1 = random.nextLong();
+					random.setSeed(tileX);
+					long l2 = random.nextLong();
+					random.setSeed(tileY);
+					long l3 = random.nextLong();
 
-                    long seed = Objects.hash(l1, l2, ~l3);
+					long seed = Objects.hash(l1, l2, ~l3);
 
-                    for (BGLayer layer : layers) {
-                        random.setSeed(seed);
-                        IconCoordinate fore = currentPage.getBackgroundTile(this, layer.id, random, tileX, tileY);
-                        layer.put(fore, _x, _y);
-                    }
-                }
-            }
-
-            for (BGLayer layer : layers) {
-                random.setSeed(worldSeed);
-                currentPage.postProcessBackground(this, random, layer, orgX + viewTileX, orgY + viewTileY);
-            }
-        }
+					for (BGLayer layer : this.layers) {
+						random.setSeed(seed);
+						IconCoordinate fore = this.currentPage.getBackgroundTile(this, layer.id, random, tileX, tileY);
+						layer.put(fore, _x, _y);
+					}
+				}
+			}
 
 
+//            long l1 = random.nextLong();
+//            random.setSeed(viewTileX);
+//            long l2 = random.nextLong();
+//            random.setSeed(viewTileY);
+//            long l3 = random.nextLong();
+//
+//            long seed = Objects.hash(l1, l2, ~l3);
+//            random.setSeed(seed);
 
-        for(int _y = 0; _y < tilesTall; _y++) {
-            int tileY = orgY + _y + viewTileY;
-            float brightness = 0.3F; //- ((float)(tileY) / 25F) * 0.3F;
-            for(int _x = 0; _x < tilesWide; _x++) {
-                int tileX = orgX + _x + viewTileX;
-
-                for (int i = layers.length - 1; i >= 0; i--) {
-                    BGLayer topLayer = getLayer(i);
-                    IconCoordinate fore = topLayer.get(_x, _y);
-
-                    IconCoordinate next = null;
-                    if (i - 1 >= 0) {
-                        BGLayer nextLayer = getLayer(i - 1);
-                        next = nextLayer.get(_x, _y);
-                    }
+			for (BGLayer layer : this.layers) {
+				random.setSeed(worldSeed);
+				this.currentPage.postProcessBackground(this, random, layer, orgX + viewTileX, orgY + viewTileY);
+			}
+		}
 
 
-                    boolean bottom = false;
-                    boolean top = false;
-                    boolean left = false;
-                    boolean right = false;
-                    boolean topLeft = false;
-                    boolean topRight = false;
-                    boolean bottomLeft = false;
-                    boolean bottomRight = false;
+		if (dirty) {
+			for (int renderpass = 0; renderpass < 2; renderpass++) {
+				TessellatorGeneral t = GLRenderer.getTessellator();
+				if (renderpass == 0) {
+					t.startDrawingQuads();
+				} else {
+					t.startDrawing(DrawMode.TRIANGLES);
+				}
+				for(int _y = 0; _y < tilesTall; _y++) {
+					int tileY = orgY + _y + viewTileY;
+					float brightness = 0.6F - ((float)(tileY) / 25F) * 0.3F;
+					for(int _x = 0; _x < tilesWide; _x++) {
+						int tileX = orgX + _x + viewTileX;
+
+						for (int i = this.layers.length - 1; i >= 0; i--) {
+							BGLayer topLayer = getLayer(i);
+							IconCoordinate fore = topLayer.get(_x, _y);
+
+							IconCoordinate next = null;
+							if (i - 1 >= 0) {
+								BGLayer nextLayer = getLayer(i - 1);
+								next = nextLayer.get(_x, _y);
+							}
 
 
-                    if (fore != null && next == null && i - 1 >= 0) {
-                        BGLayer nextLayer = getLayer(i - 1);
-                        top = nextLayer.get(_x, _y - 1) != null;
-                        left = nextLayer.get(_x - 1, _y) != null;
-                        right = nextLayer.get(_x + 1, _y) != null;
-                        bottom = nextLayer.get(_x, _y + 1) != null;
-                        topLeft = nextLayer.get(_x - 1, _y - 1) != null;
-                        topRight = nextLayer.get(_x + 1, _y - 1) != null;
-                        bottomLeft = nextLayer.get(_x - 1, _y + 1) != null;
-                        bottomRight = nextLayer.get(_x + 1, _y + 1) != null;
-                    }
+							boolean bottom = false;
+							boolean top = false;
+							boolean left = false;
+							boolean right = false;
+							boolean topLeft = false;
+							boolean topRight = false;
+							boolean bottomLeft = false;
+							boolean bottomRight = false;
 
-                    double iconLeft = (viewportLeft + viewportWidth / 2d) + zoom * (((orgX + _x) * TILE_WIDTH) - remainderX);
-                    double iconTop = (viewportTop + viewportHeight / 2d) + zoom * (((orgY + _y) * TILE_HEIGHT) - remainderY);
-                    double iconWidth = TILE_WIDTH * zoom;
-                    double iconHeight = TILE_HEIGHT * zoom;
 
-                    if (fore != null) {
-                        float shadowScale = (float) Math.pow(0.65f, i);
-                        if (next != null) {
-                            shadowScale *= 0.5f;
-                        }
-                        GL11.glColor4f(brightness, brightness, brightness, 1.0F);
-                        final double epsilon = 0.05;
-                        drawGuiIconDouble(iconLeft - epsilon, iconTop - epsilon, iconWidth + epsilon * 2, iconHeight + epsilon * 2, fore);
-                    }
-                }
-            }
-        }
-    }
+							if (fore != null && next == null && i - 1 >= 0) {
+								BGLayer nextLayer = getLayer(i - 1);
+								top = nextLayer.get(_x, _y - 1) != null;
+								left = nextLayer.get(_x - 1, _y) != null;
+								right = nextLayer.get(_x + 1, _y) != null;
+								bottom = nextLayer.get(_x, _y + 1) != null;
+								topLeft = nextLayer.get(_x - 1, _y - 1) != null;
+								topRight = nextLayer.get(_x + 1, _y - 1) != null;
+								bottomLeft = nextLayer.get(_x - 1, _y + 1) != null;
+								bottomRight = nextLayer.get(_x + 1, _y + 1) != null;
+							}
+
+							double iconLeft = _x * TILE_WIDTH;
+							double iconTop = _y * TILE_WIDTH;
+							double iconWidth = TILE_WIDTH;
+							double iconHeight = TILE_HEIGHT;
+
+
+							if (renderpass == 0) { // Background block tile quads pass
+								if (fore != null) {
+									float shadowScale = (float) Math.pow(0.65f, i);
+									if (next != null) {
+										shadowScale *= 0.5f;
+									}
+									t.setColor4f(brightness * shadowScale, brightness * shadowScale, brightness * shadowScale, 1.0F);
+									addGuiIconDouble(t, iconLeft, iconTop, iconWidth, iconHeight, fore);
+								}
+							} else { // Background shadow tri pass
+								final double off = 0;
+								double fadeDist = 6 * zoom;
+								short shadowDarkness = 128;
+
+								if (top) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft - off, iconTop + fadeDist + off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth + off, iconTop + fadeDist + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop - off, 0.0D);
+
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop - off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth + off, iconTop + fadeDist + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth + off, iconTop - off, 0.0D);
+								}
+								if (left) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + fadeDist + off, iconTop + iconHeight + off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + fadeDist + off, iconTop - off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop + iconHeight + off, 0.0D);
+
+
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop + iconHeight + off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + fadeDist + off, iconTop - off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop - off, 0.0D);
+								}
+								if (bottom) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth + off, iconTop + iconHeight - fadeDist + off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft - off, iconTop + iconHeight - fadeDist + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth + off, iconTop + iconHeight - off, 0.0D);
+
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth + off, iconTop + iconHeight - off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft - off, iconTop + iconHeight - fadeDist + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop + iconHeight - off, 0.0D);
+								}
+								if (right) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth - fadeDist + off, iconTop - off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth - fadeDist + off, iconTop + iconHeight + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth - off, iconTop - off, 0.0D);
+
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth - off, iconTop - off, 0.0D);
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth - fadeDist + off, iconTop + iconHeight + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth - off, iconTop + iconHeight + off, 0.0D);
+								}
+								if (topLeft && !(left || top)) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft - off, iconTop + fadeDist + off, 0.0D);
+									t.addVertex(iconLeft + fadeDist + off, iconTop - off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop - off, 0.0D);
+								}
+								if (topRight && !(right || top)) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth - fadeDist + off, iconTop - off, 0.0D);
+									t.addVertex(iconLeft + iconWidth - off, iconTop + fadeDist + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth - off, iconTop - off, 0.0D);
+								}
+								if (bottomLeft && !(left || bottom)) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + fadeDist + off, iconTop + iconHeight - off, 0.0D);
+									t.addVertex(iconLeft - off, iconTop + iconHeight - fadeDist + off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft - off, iconTop + iconHeight - off, 0.0D);
+								}
+								if (bottomRight && !(right || bottom)) {
+									t.setColor2i(0, 0);
+									t.addVertex(iconLeft + iconWidth - off, iconTop + iconHeight - fadeDist + off, 0.0D);
+									t.addVertex(iconLeft + iconWidth - fadeDist + off, iconTop + iconHeight - off, 0.0D);
+									t.setColor2i(0, shadowDarkness);
+									t.addVertex(iconLeft + iconWidth - off, iconTop + iconHeight - off, 0.0D);
+								}
+							}
+						}
+					}
+				}
+				if (renderpass == 0) {
+					if (this.lastBackgroundTileBuf == null) {
+						this.lastBackgroundTileBuf = t.record(GL41.glGenVertexArrays(), GL41.glGenBuffers());
+					} else {
+						this.lastBackgroundTileBuf = t.record(this.lastBackgroundTileBuf.vao(), this.lastBackgroundTileBuf.vbo());
+					}
+				} else {
+					if (this.lastBackgroundShadowBuf == null) {
+						this.lastBackgroundShadowBuf = t.record(GL41.glGenVertexArrays(), GL41.glGenBuffers());
+					} else {
+						this.lastBackgroundShadowBuf = t.record(this.lastBackgroundShadowBuf.vao(), this.lastBackgroundShadowBuf.vbo());
+					}
+				}
+			}
+		}
+		double iconLeft = (this.viewportLeft + this.viewportWidth / 2d) + zoom * (orgX * TILE_WIDTH) - zoom * remainderX;
+		double iconTop = (this.viewportTop + this.viewportHeight / 2d) + zoom * ((orgY * TILE_HEIGHT) - remainderY);
+
+		GLRenderer.pushFrame();
+		GLRenderer.modelM4f().translate((float) iconLeft, (float) iconTop,0).scale((float) zoom, (float) zoom, 1);
+		if (this.lastBackgroundTileBuf != null) {
+			TextureRegistry.worldAtlas.bind();
+			GLRenderer.render(this.lastBackgroundTileBuf);
+		}
+		if (this.lastBackgroundShadowBuf != null) {
+			GLRenderer.pushFrame();
+			GLRenderer.setShader(Shaders.COLOR);
+			GLRenderer.enableState(State.BLEND);
+			GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+			GLRenderer.render(this.lastBackgroundShadowBuf);
+			GLRenderer.popFrame();
+		}
+		GLRenderer.popFrame();
+	}
 
     public BGLayer getLayer(int layer){
         if (layer < 0 || layer >= layers.length) return null;
@@ -622,24 +752,24 @@ public class ScreenRecipeTree extends Screen
                 continue;
             }
 			float brightness = 0.50F;
-			GL11.glColor4f(brightness, brightness, brightness, 1.0F);
+			GLRenderer.setColor4f(brightness, brightness, brightness, 1.0F);
 
             drawGuiIconDouble(achViewX - (ACHIEVEMENT_ICON_WIDTH - ACHIEVEMENT_CELL_WIDTH) * zoom, achViewY - (ACHIEVEMENT_ICON_HEIGHT - ACHIEVEMENT_CELL_HEIGHT) * zoom, ACHIEVEMENT_ICON_WIDTH * zoom, ACHIEVEMENT_ICON_HEIGHT * zoom, currentPage.drawIngredientBackground(ingredient));
 
-            GL11.glPushMatrix();
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glEnable(GL11.GL_CULL_FACE);
+			GLRenderer.pushFrame();
+			GLRenderer.globalSetLightEnabled(true);
+			GLRenderer.enableState(State.CULL_FACE);
             ItemStack achievementItem = ingredient.ingredient.getItemStack().orElse(null);
 
-            GL11.glTranslated(achViewX + 3 * zoom, achViewY + 3 * zoom, 0);
-            GL11.glScaled(zoom, zoom, 1);
+			GLRenderer.modelM4f().translate((float) (achViewX + 3 * zoom), (float) (achViewY + 3 * zoom), 0);
+			GLRenderer.modelM4f().scale((float) zoom, (float) zoom, 1);
 			IIngredientType<?> type = ingredient.ingredient.getType();
 			IIngredientRenderer<Object> renderer = (IIngredientRenderer<Object>) type.getRenderer(TMB.getRuntime());
 			new DrawableIngredient<>(ingredient.ingredient.getIngredient(), renderer).draw(TMB.getRuntime().getGuiHelper());
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glPopMatrix();
+			GLRenderer.globalSetLightEnabled(false);
+			GLRenderer.popFrame();
 
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
             if((mouseX >= 0 && mouseY >= viewportTop && mouseX < width && mouseY < viewportBottom) && // In viewport and
                 (mouseX >= achViewX && mouseX <= achViewX + 22 * zoom && mouseY >= achViewY && mouseY <= achViewY + 22 * zoom)) { // Hovering over achievement
@@ -673,18 +803,18 @@ public class ScreenRecipeTree extends Screen
 
     private void overlayBackground(int minX, int maxX, int minY, int maxY, int color)
     {
-        Tessellator tessellator = Tessellator.instance;
-        mc.textureManager.loadTexture("/assets/minecraft/textures/gui/background.png").bind();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float scale = 32F;
-        tessellator.startDrawingQuads();
-        tessellator.setColorOpaque_I(color);
-        tessellator.addVertexWithUV(minX, maxY, 0.0D, (float) minX / scale, (float) maxY / scale);
-        tessellator.addVertexWithUV(maxX, maxY, 0.0D, (float) maxX / scale, (float) maxY / scale);
-        tessellator.setColorOpaque_I(color);
-        tessellator.addVertexWithUV(maxX, minY, 0.0D, (float) maxX / scale, (float) minY / scale);
-        tessellator.addVertexWithUV(minX, minY, 0.0D, (float) minX / scale, (float) minY / scale);
-        tessellator.draw();
+		TessellatorGeneral tessellator = GLRenderer.getTessellator();
+		this.mc.textureManager.loadTexture("/assets/minecraft/textures/gui/background.png").bind();
+		GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		float scale = 32F;
+		tessellator.startDrawingQuads();
+		tessellator.setColorOpaque1i(color);
+		tessellator.addVertexWithUV(minX, maxY, 0.0D, (float) minX / scale, (float) maxY / scale);
+		tessellator.addVertexWithUV(maxX, maxY, 0.0D, (float) maxX / scale, (float) maxY / scale);
+		tessellator.setColorOpaque1i(color);
+		tessellator.addVertexWithUV(maxX, minY, 0.0D, (float) maxX / scale, (float) minY / scale);
+		tessellator.addVertexWithUV(minX, minY, 0.0D, (float) minX / scale, (float) minY / scale);
+		tessellator.draw();
     }
 
     public static class BGLayer {

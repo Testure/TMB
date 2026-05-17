@@ -1,7 +1,6 @@
 package turing.tmb.vanilla;
 
 import net.minecraft.core.block.Blocks;
-import net.minecraft.core.data.registry.recipe.RecipeEntryBase;
 import net.minecraft.core.data.registry.recipe.entry.RecipeEntryCrafting;
 import net.minecraft.core.item.ItemStack;
 import org.jetbrains.annotations.Nullable;

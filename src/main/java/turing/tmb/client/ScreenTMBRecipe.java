@@ -6,6 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ButtonElement;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TooltipElement;
+import net.minecraft.client.option.GameSettings;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
 import net.minecraft.core.data.registry.recipe.RecipeEntryBase;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
@@ -15,9 +18,10 @@ import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
+
 import turing.tmb.RecipeIngredient;
 import turing.tmb.TMB;
+import turing.tmb.TMBOptions;
 import turing.tmb.TooltipBuilder;
 import turing.tmb.api.RecipeFiller;
 import turing.tmb.api.drawable.IIngredientList;
@@ -26,7 +30,6 @@ import turing.tmb.api.ingredient.IIngredientRenderer;
 import turing.tmb.api.ingredient.IIngredientType;
 import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.*;
-import turing.tmb.util.IKeybinds;
 import turing.tmb.util.IngredientList;
 import turing.tmb.util.RenderUtil;
 
@@ -227,8 +230,8 @@ public class ScreenTMBRecipe extends Screen {
 			debounce--;
 		}
 		renderBackground();
-		GL11.glEnable(3042);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GLRenderer.enableState(State.BLEND);
+		GLRenderer.setColor4f(1,1,1,1);
 
 		TMB.getRuntime().getGuiHelper().getCycleTimer().onDraw();
 		drawnIngredients.clear();
@@ -239,7 +242,7 @@ public class ScreenTMBRecipe extends Screen {
 		boolean isCtrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
 		boolean isShift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 
-		GL11.glPushMatrix();
+		GLRenderer.pushFrame();
 		for (int i = 0; i < tabsPerPage; i++) {
 			int index = this.currentTabPage * this.tabsPerPage + i;
 			if (index >= tabList.size()) break;
@@ -247,14 +250,14 @@ public class ScreenTMBRecipe extends Screen {
 				renderTab(i, mx, my, false, tabList.get(index));
 			}
 		}
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 
 		this.mc.textureManager.loadTexture("/assets/minecraft/textures/gui/container/guidebook/guidebook.png").bind();
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(x, (double) y, 0, 0, this.xSize, this.ySize, 158, 220);
 
-		GL11.glPushMatrix();
+		GLRenderer.pushFrame();
 
 		if (mx >= x && my >= y && mx < x + this.xSize && my < y + this.ySize) {
 			scroll(Mouse.getDWheel());
@@ -268,8 +271,9 @@ public class ScreenTMBRecipe extends Screen {
 			int X = x + 4;
 			int Y = y + 14;
 
-			GL11.glPushMatrix();
-			GL11.glTranslatef(x + 4, y + 14, 0);
+			GLRenderer.pushFrame();
+
+			GLRenderer.modelM4f().translate(x + 4, y + 14, 0);
 			IRecipeLayout layout = category.getRecipeLayout();
 			List<IRecipeTranslator<?>> recipes = recipeList.stream().filter((p) -> p.getLeft().hashCode() == category.hashCode()).map(Pair::getRight).collect(Collectors.toList());
 			for (int i = 0; i < this.recipesPerPage; i++) {
@@ -280,8 +284,8 @@ public class ScreenTMBRecipe extends Screen {
 				category.drawRecipe(TMB.getRuntime(), recipe, layout, ingredients, lookupContext);
 				for (int I = 0; I < layout.getSlots().size(); I++) {
 					IRecipeSlot<Object, ?> slot = (IRecipeSlot<Object, ?>) layout.getSlots().get(I);
-					GL11.glPushMatrix();
-					GL11.glTranslatef(slot.getX(), slot.getY(), 0);
+					GLRenderer.pushFrame();
+					GLRenderer.modelM4f().translate(slot.getX(), slot.getY(), 0);
 					X += slot.getX();
 					Y += slot.getY();
 					boolean defaultRecipe = false;
@@ -305,7 +309,7 @@ public class ScreenTMBRecipe extends Screen {
 						slot.draw(TMB.getRuntime().getGuiHelper());
 					}
 					if (ingredients.size() > I) {
-						GL11.glTranslatef(1, 1, 0);
+						GLRenderer.modelM4f().translate(1, 1, 0);
 						X++;
 						Y++;
 						IIngredientList list = ingredients.get(I);
@@ -336,7 +340,7 @@ public class ScreenTMBRecipe extends Screen {
 									if(parentScreen instanceof RecipeFiller){
 										List<Class<? extends RecipeEntryBase<?, ?, ?>>> supportedRecipes = ((RecipeFiller) parentScreen).getSupportedRecipes();
 										if(supportedRecipes.stream().anyMatch((E)->E.isAssignableFrom(recipe.getOriginal().getClass()))){
-											String key = ((IKeybinds) mc.gameSettings).toomanyblocks$getKeyFillRecipe().getKeyName();
+											String key = TMBOptions.keyFillRecipe.getKeyName();
 											tooltipBuilder.add(tooltipBuilder.getLines().size()-1, TextFormatting.LIME+I18n.getInstance().translateKeyAndFormat("tmb.tooltip.fillRecipe", key));
 										}
 									}
@@ -350,23 +354,22 @@ public class ScreenTMBRecipe extends Screen {
 					}
 					X -= slot.getX();
 					Y -= slot.getY();
-					GL11.glPopMatrix();
+					GLRenderer.popFrame();
 				}
-				GL11.glTranslatef(0, category.getBackground().getHeight() + 4, 0);
+				GLRenderer.modelM4f().translate(0, category.getBackground().getHeight() + 4, 0);
 				Y += category.getBackground().getHeight() + 4;
 			}
-			GL11.glPopMatrix();
+			GLRenderer.popFrame();
 
-			GL11.glTranslatef(x, y + 4, 0);
+			GLRenderer.modelM4f().translate(x, y + 4, 0);
 			String text = I18n.getInstance().translateKey(category.getName());
-			int textX = ((xSize / 2) - mc.font.getStringWidth(text) / 2);
-			mc.font.renderString(text, textX + 1, 1, 0xFFFFFF, true);
-			mc.font.renderString(text, textX, 0, 0xFFFFFF, false);
-			if (mx >= x && mx < x + xSize && my >= y && my < y + mc.font.fontHeight) {
+			int textX = ((xSize / 2) - mc.font.stringWidth(text) / 2);
+			drawStringShadow(mc.font, text, textX + 1, 1, 0xFFFFFF);
+			if (mx >= x && mx < x + xSize && my >= y && my < y + mc.font.getFont().fontHeight()) {
 				tooltip = I18n.getInstance().translateKey("tmb.tooltip.allCategories");
 			}
 		}
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 
 		if (!tooltipBuilder.getLines().isEmpty()) {
 			StringBuilder builder = new StringBuilder();
@@ -383,10 +386,9 @@ public class ScreenTMBRecipe extends Screen {
 			leftButton.drawButton(mc, mx, my);
 
 			String pageText = "Page " + (currentRecipePage + 1) + "/" + recipePages;
-			int textX = (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.font.getStringWidth(pageText) / 2;
+			int textX = (((this.width - this.xSize) / 2) + (this.xSize / 2)) - mc.font.stringWidth(pageText) / 2;
 			int textY = ((this.height - this.ySize) / 2) + this.ySize - 16;
-			mc.font.renderString(pageText, textX + 1, textY + 1, 0xFFFFFF, true);
-			mc.font.renderString(pageText, textX, textY, 0xFFFFFF, false);
+			drawStringShadow(mc.font, pageText, textX + 1, textY + 1, 0xFFFFFF);
 		}
 
 		if (tabPages > 1) {
@@ -408,9 +410,9 @@ public class ScreenTMBRecipe extends Screen {
 		super.render(mx,my,partialTick);
 
 		if (!tooltip.isEmpty()) {
-			GL11.glPushMatrix();
+			GLRenderer.pushFrame();
 			tooltipElement.render(tooltip, mx, my, 8, -8);
-			GL11.glPopMatrix();
+			GLRenderer.popFrame();
 		}
 	}
 
@@ -418,8 +420,8 @@ public class ScreenTMBRecipe extends Screen {
 	private void renderCatalysts(IRecipeCategory<?> category, int mx, int my, ITooltipBuilder tooltipBuilder, boolean isCtrl, boolean isShift) {
 		List<ITypedIngredient<?>> catalysts = TMB.getRuntime().getRecipeIndex().getCatalystsForCategory(category);
 
-		GL11.glEnable(3042);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GLRenderer.enableState(State.BLEND);
+		GLRenderer.setColor4f(1,1,1,1);
 
 		for (int i = 0; i < catalysts.size(); i++) {
 			this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/gui_vanilla.png").bind();
@@ -441,8 +443,8 @@ public class ScreenTMBRecipe extends Screen {
 	}
 
 	private void renderTab(int x, int mx, int my, boolean selected, IRecipeCategory<?> category) {
-		GL11.glEnable(3042);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GLRenderer.enableState(State.BLEND);
+		GLRenderer.setColor4f(1,1,1,1);
 		this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/tab_" + (!selected ? "un" : "") + "selected.png").bind();
 		int y = ((this.height - this.ySize) / 2) - 21;
 		if (!selected) y += 2;
@@ -458,10 +460,17 @@ public class ScreenTMBRecipe extends Screen {
 
 	@Override
 	public void keyPressed(char eventCharacter, int eventKey, int mx, int my) {
-		if(debounce > 0) return;
+		if(debounce > 0) {
+			super.keyPressed(eventCharacter, eventKey, mx, my);
+			return;
+		}
+		if(TMBRenderer.search.isFocused) {
+			super.keyPressed(eventCharacter, eventKey, mx, my);
+			return;
+		}
 		if (eventKey == Keyboard.KEY_BACK) {
 			mc.displayScreen(getParentScreen());
-		} else if (eventKey == Keyboard.KEY_ESCAPE || eventKey == mc.gameSettings.keyInventory.getKeyCode()) {
+		} else if (eventKey == Keyboard.KEY_ESCAPE || eventKey == GameSettings.KEY_INVENTORY.getKeyCode()) {
 			Screen s = getParentScreen();
 			while (s instanceof ScreenTMBRecipe) {
 				s = s.getParentScreen();
@@ -469,7 +478,7 @@ public class ScreenTMBRecipe extends Screen {
 			mc.displayScreen(s);
 		}
 
-		if(eventKey == ((IKeybinds) mc.gameSettings).toomanyblocks$getKeyFillRecipe().getKeyCode()){
+		if(eventKey == (TMBOptions.keyFillRecipe.getKeyCode())){
 			Screen s = getParentScreen();
 			while (s instanceof ScreenTMBRecipe) {
 				s = s.getParentScreen();
@@ -504,7 +513,7 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 
-		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeyShowRecipeTree().getKeyCode()){
+		if (eventKey == (TMBOptions.keyShowRecipeTree.getKeyCode())){
 			for (int i = 0; i < drawnIngredients.size(); i++) {
 				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 				RecipeIngredient recipeIngredient = recipeIngredients.get(i);
@@ -517,7 +526,7 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 
-		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeyAddFavourite().getKeyCode()){
+		if (eventKey == (TMBOptions.keyAddFavourite.getKeyCode())){
 			for (int i = 0; i < drawnIngredients.size(); i++) {
 				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 				RecipeIngredient recipeIngredient = recipeIngredients.get(i);
@@ -534,7 +543,7 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 
-		if (eventKey == ((IKeybinds)mc.gameSettings).toomanyblocks$getKeySetDefaultRecipe().getKeyCode()){
+		if (eventKey == (TMBOptions.keySetDefaultRecipe.getKeyCode())){
 			loop: for (int i = 0; i < drawnIngredients.size(); i++) {
 				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 				RecipeIngredient recipeIngredient = recipeIngredients.get(i);
@@ -560,11 +569,11 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 
-		if (eventKey == mc.gameSettings.keyShowRecipe.getKeyCode() || eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+		if (eventKey == GameSettings.KEY_SHOW_RECIPE.getKeyCode() || eventKey == GameSettings.KEY_SHOW_USAGE.getKeyCode()) {
 			for (int i = 0; i < drawnIngredients.size(); i++) {
 				Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn = drawnIngredients.get(i);
 				if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
-					if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+					if (eventKey == GameSettings.KEY_SHOW_USAGE.getKeyCode()) {
 						debounce = 10;
 						TMB.getRuntime().showRecipe(drawn.getLeft(), RecipeIngredientRole.INPUT);
 					} else {
@@ -575,5 +584,6 @@ public class ScreenTMBRecipe extends Screen {
 				}
 			}
 		}
+		super.keyPressed(eventCharacter, eventKey, mx, my);
 	}
 }

@@ -12,9 +12,11 @@
     "client.MobInfoRegistryAccessor",
     "client.ScreenContainerAbstractMixin",
     "client.ScreenCraftingMixin",
+    "client.ScreenFurnaceBlastMixin",
     "client.ScreenFurnaceMixin",
     "client.ScreenInventoryCreativeAccessor",
     "client.ScreenInventoryCreativeMixin",
+    "client.ScreenInventoryMixin",
     "client.ScreenMixin",
     "client.ScreenPauseMixin"
   ],

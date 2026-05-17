@@ -1,7 +1,7 @@
 package turing.tmb.api;
 
+import net.minecraft.client.render.renderer.GLRenderer;
 import net.minecraft.core.WeightedRandomLootObject;
-import org.lwjgl.opengl.GL11;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.ingredient.IIngredientRenderer;
@@ -15,8 +15,8 @@ public class LootObjectIngredientRenderer implements IIngredientRenderer<Weighte
 		ItemStackIngredientRenderer.INSTANCE.render(helper, ingredient.getDefinedItemStack());
 		if (ingredient.isRandomYield()) {
 			String text = ingredient.getMinYield() + "-" + ingredient.getMaxYield();
-			GL11.glScalef(0.9F, 0.9F, 1F);
-			helper.getMinecraft().font.drawStringWithShadow(text, 0, 9, 0xFFFFFF);
+			GLRenderer.modelM4f().scale(0.9F, 0.9F, 1F);
+			helper.getMinecraft().font.render(text, 0, 9).setColor(0xFFFFFF).setShadow().call();
 		}
 	}
 

@@ -19,7 +19,7 @@ public class VanillaPlugin implements ITMBPlugin {
 	public static ShapedCraftingRecipeCategory shapedCraftingCategory;
 	public static ShapelessCraftingRecipeCategory shapelessCraftingCategory;
 	public static FurnaceRecipeCategory<RecipeEntryFurnace, FurnaceRecipeTranslator<RecipeEntryFurnace>> furnaceCategory;
-	public static FurnaceRecipeCategory<RecipeEntryBlastFurnace, FurnaceRecipeTranslator<RecipeEntryBlastFurnace>> blastFurnaceCategory;
+	public static BlastFurnaceRecipeCategory<RecipeEntryBlastFurnace, BlastFurnaceRecipeTranslator<RecipeEntryBlastFurnace>> blastFurnaceCategory;
 	public static TrommelRecipeCategory trommelCategory;
 	public static MobInfoCategory mobInfoCategory;
 
@@ -32,7 +32,7 @@ public class VanillaPlugin implements ITMBPlugin {
 	@Override
 	public void registerIngredients(ITMBRuntime runtime) {
 		IIngredientRegistry<ItemStack> registry = runtime.getRegistryForIngredientType(VanillaTypes.ITEM_STACK);
-		for (ItemStack stack : MenuInventoryCreative.creativeItems) {
+		for (ItemStack stack : MenuInventoryCreative.creativeContents) {
 			if (stack != null && stack.itemID > 0) {
 				registry.registerIngredient(ModIDHelper.getModIDForItem(stack), stack.getDisplayName(), stack);
 			}
@@ -42,7 +42,7 @@ public class VanillaPlugin implements ITMBPlugin {
 	@Override
 	public void registerRecipes(ITMBRuntime runtime) {
 		runtime.getRecipeIndex().registerRecipes(furnaceCategory, Registries.RECIPES.getAllFurnaceRecipes(), FurnaceRecipeTranslator::new);
-		runtime.getRecipeIndex().registerRecipes(blastFurnaceCategory, Registries.RECIPES.getAllBlastFurnaceRecipes(), FurnaceRecipeTranslator::new);
+		runtime.getRecipeIndex().registerRecipes(blastFurnaceCategory, Registries.RECIPES.getAllBlastFurnaceRecipes(), BlastFurnaceRecipeTranslator::new);
 		runtime.getRecipeIndex().registerRecipes(trommelCategory, Registries.RECIPES.getAllTrommelRecipes(), TrommelRecipeTranslator::new);
 		runtime.getRecipeIndex().registerRecipes(mobInfoCategory, MobInfoRegistryAccessor.getMobInfoMap().values(), MobInfoRecipeTranslator::new);
 
@@ -59,8 +59,8 @@ public class VanillaPlugin implements ITMBPlugin {
 	public void registerRecipeCategories(ITMBRuntime runtime) {
 		shapedCraftingCategory = runtime.getRecipeIndex().registerCategory(new ShapedCraftingRecipeCategory());
 		shapelessCraftingCategory = runtime.getRecipeIndex().registerCategory(new ShapelessCraftingRecipeCategory());
-		furnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.furnace", Blocks.FURNACE_STONE_ACTIVE.getDefaultStack(), false));
-		blastFurnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.blast_furnace", Blocks.FURNACE_BLAST_ACTIVE.getDefaultStack(), true));
+		furnaceCategory = runtime.getRecipeIndex().registerCategory(new FurnaceRecipeCategory<>(runtime, "guidebook.section.furnace", Blocks.FURNACE_STONE_ACTIVE.getDefaultStack()));
+		blastFurnaceCategory = runtime.getRecipeIndex().registerCategory(new BlastFurnaceRecipeCategory<>(runtime, "guidebook.section.blast_furnace", Blocks.FURNACE_BLAST_ACTIVE.getDefaultStack()));
 		trommelCategory = runtime.getRecipeIndex().registerCategory(new TrommelRecipeCategory());
 		mobInfoCategory = runtime.getRecipeIndex().registerCategory(new MobInfoCategory());
 	}

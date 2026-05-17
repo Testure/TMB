@@ -8,15 +8,17 @@ import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TextFieldElement;
 import net.minecraft.client.gui.TooltipElement;
 import net.minecraft.client.gui.container.ScreenContainerAbstract;
-import net.minecraft.core.item.ItemStack;
+import net.minecraft.client.option.GameSettings;
+import net.minecraft.client.render.renderer.GLRenderer;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
+
 import turing.tmb.SearchQuery;
 import turing.tmb.TMB;
+import turing.tmb.TMBOptions;
 import turing.tmb.TooltipBuilder;
 import turing.tmb.api.ISearchQuery;
 import turing.tmb.api.drawable.gui.IGuiProperties;
@@ -24,7 +26,6 @@ import turing.tmb.api.ingredient.ITypedIngredient;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.api.runtime.IIngredientIndex;
 import turing.tmb.api.runtime.ITMBRuntime;
-import turing.tmb.util.IKeybinds;
 import turing.tmb.util.RenderUtil;
 
 import java.util.Collection;
@@ -53,9 +54,9 @@ public class TMBRenderer {
 		initialized = true;
 
 		tooltip = new TooltipElement(mc);
-		search = new TextFieldElement(null, Minecraft.getMinecraft().font, 0, 0, 120, 20, ((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getLastTMBSearch().value, "Search...");
-		show = !((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsTMBHidden().value;
-		enabledRecipes = ((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsRecipeViewEnabled().value;
+		search = new TextFieldElement(null, Minecraft.getMinecraft().font, 0, 0, 120, 20, TMBOptions.lastTMBSearch.value, "Search...");
+		show = !TMBOptions.isTMBHidden.value;//((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsTMBHidden().value;
+		enabledRecipes = TMBOptions.isRecipeViewEnabled.value;//((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsRecipeViewEnabled().value;
 	}
 
 	public static void renderHeader(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
@@ -75,7 +76,7 @@ public class TMBRenderer {
 		leftButton.yPosition = startY;
 		rightButton.xPosition = Math.min(startX + (18 * (w / 18)), width - 18);
 		rightButton.yPosition = startY;
-		mc.font.renderString(str, ((((leftButton.xPosition + leftButton.width) + (rightButton.xPosition + rightButton.width)) / 2) - mc.font.getStringWidth(str) / 2) - 4, startY + 4, 0xFFFFFF, false);
+		mc.font.render(str, ((((leftButton.xPosition + leftButton.width) + (rightButton.xPosition + rightButton.width)) / 2) - mc.font.stringWidth(str) / 2) - 4, startY + 4).setColor(0xFFFFFF).call();
 		leftButton.drawButton(mc, mouseX, mouseY);
 		rightButton.drawButton(mc, mouseX, mouseY);
 
@@ -101,7 +102,7 @@ public class TMBRenderer {
 		leftButton2.yPosition = startY;
 		rightButton2.xPosition = Math.min(startX + (18 * (w / 18)), width - 18);
 		rightButton2.yPosition = startY;
-		mc.font.renderString(str, ((((leftButton2.xPosition + leftButton2.width) + (rightButton2.xPosition + rightButton2.width)) / 2) - mc.font.getStringWidth(str) / 2) - 4, startY + 4, 0xFFFFFF, false);
+		mc.font.render(str, ((((leftButton2.xPosition + leftButton2.width) + (rightButton2.xPosition + rightButton2.width)) / 2) - mc.font.stringWidth(str) / 2) - 4, startY + 4).setColor(0xFFFFFF).call();
 		leftButton2.drawButton(mc, mouseX, mouseY);
 		rightButton2.drawButton(mc, mouseX, mouseY);
 	}
@@ -229,22 +230,22 @@ public class TMBRenderer {
 			if (!tooltipBuilder.getLines().isEmpty()) {
 				StringBuilder builder = new StringBuilder();
 				tooltipBuilder.getLines().forEach(str -> builder.append(str).append("\n"));
-				GL11.glPushMatrix();
+				GLRenderer.pushFrame();
 				tooltip.render(builder.toString(), mouseX, mouseY, 8, -8);
-				GL11.glPopMatrix();
+				GLRenderer.popFrame();
 			}
 
 			if (enabledRecipes && debounce <= 0) {
-				if (mc.gameSettings.keyShowRecipe.isPressed()) {
+				if (GameSettings.KEY_SHOW_RECIPE.isPressed()) {
 					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
-				} else if (mc.gameSettings.keyShowUsage.isPressed()) {
+				} else if (GameSettings.KEY_SHOW_USAGE.isPressed()) {
 					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
 				}
 			}
 
-			if (((IKeybinds) mc.gameSettings).toomanyblocks$getKeyAddFavourite().isPressed()) {
+			if (TMBOptions.keyAddFavourite.isPressed()) {
 				if (runtime.getFavourites().stream().noneMatch(it -> it.matches(hoveredItem.getIngredient()))) {
 					runtime.getFavourites().add(hoveredItem);
 				}
@@ -323,22 +324,22 @@ public class TMBRenderer {
 			if (!tooltipBuilder.getLines().isEmpty()) {
 				StringBuilder builder = new StringBuilder();
 				tooltipBuilder.getLines().forEach(str -> builder.append(str).append("\n"));
-				GL11.glPushMatrix();
+				GLRenderer.pushFrame();
 				tooltip.render(builder.toString(), mouseX, mouseY, 8, -8);
-				GL11.glPopMatrix();
+				GLRenderer.popFrame();
 			}
 
 			if (enabledRecipes && debounce <= 0) {
-				if (mc.gameSettings.keyShowRecipe.isPressed()) {
+				if (GameSettings.KEY_SHOW_RECIPE.isPressed()) {
 					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
-				} else if (mc.gameSettings.keyShowUsage.isPressed()) {
+				} else if (GameSettings.KEY_SHOW_USAGE.isPressed()) {
 					debounce = 20;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
 				}
 			}
 
-			if (((IKeybinds) mc.gameSettings).toomanyblocks$getKeyAddFavourite().isPressed() && debounce <= 0) {
+			if (TMBOptions.keyAddFavourite.isPressed() && debounce <= 0) {
 				debounce = 10;
 				if (runtime.getFavourites().stream().anyMatch(it -> it.matches(hoveredItem.getIngredient()))) {
 					runtime.getFavourites().removeIf(it -> it.matches(hoveredItem.getIngredient()));

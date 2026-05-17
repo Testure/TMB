@@ -1,9 +1,9 @@
 package turing.tmb.api.ingredient;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.Font;
-import org.lwjgl.opengl.GL11;
-import turing.tmb.TMB;
+import net.minecraft.client.render.font.FontRenderer;
+import net.minecraft.client.render.renderer.GLRenderer;
+
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 
@@ -14,10 +14,10 @@ public interface IIngredientRenderer<T> {
 	void render(IGuiHelper helper, T ingredient);
 
 	default void render(IGuiHelper helper, T ingredient, int posX, int posY) {
-		GL11.glPushMatrix();
-		GL11.glTranslatef(posX, posY, 0);
+		GLRenderer.pushFrame();
+		GLRenderer.modelM4f().translate(posX, posY, 0);
 		render(helper, ingredient);
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 
 	List<String> getTooltip(ITooltipBuilder tooltipBuilder, boolean isCtrl, boolean isShift);
@@ -27,7 +27,7 @@ public interface IIngredientRenderer<T> {
 		tooltipBuilder.addAll(list);
 	}
 
-	default Font getFontRenderer(Minecraft minecraft, T ingredient) {
+	default FontRenderer getFontRenderer(Minecraft minecraft, T ingredient) {
 		return minecraft.font;
 	}
 

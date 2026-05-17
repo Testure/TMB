@@ -7,7 +7,6 @@ import turing.tmb.api.recipe.IRecipeLayout;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.util.IngredientList;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ShapedCraftingRecipeCategory extends AbstractCraftingRecipeCategory<RecipeEntryCraftingShaped, ShapedCraftingRecipeTranslator> {

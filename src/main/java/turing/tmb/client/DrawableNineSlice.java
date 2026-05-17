@@ -2,7 +2,10 @@ package turing.tmb.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.TextureManager;
+import net.minecraft.client.render.renderer.DrawMode;
+import net.minecraft.client.render.renderer.GLRenderer;
 import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 
 public class DrawableNineSlice {
@@ -16,7 +19,7 @@ public class DrawableNineSlice {
 		TextureManager textureManager = mc.textureManager;
 		textureManager.bindTexture(textureManager.loadTexture(image));
 
-		Tessellator tessellator = Tessellator.instance;
+		TessellatorGeneral tessellator = GLRenderer.getTessellator();
 
 		float minU = 0;
 		float maxU = width;
@@ -30,7 +33,7 @@ public class DrawableNineSlice {
 		float vTop = minV + vSize * (sliceTop / (float) height);
 		float vBottom = maxV - vSize * (sliceBottom / (float) height);
 
-		tessellator.startDrawing(7);
+		tessellator.startDrawingQuads();
 
 		draw(tessellator, minU, minV, uLeft, vTop, xOffset, yOffset, sliceLeft, sliceTop);
 		draw(tessellator, minU, vBottom, uLeft, maxV, xOffset, yOffset + height - sliceBottom, sliceLeft, sliceBottom);
@@ -56,7 +59,7 @@ public class DrawableNineSlice {
 		tessellator.draw();
 	}
 
-	private void drawTiled(Tessellator tessellator, float uMin, float vMin, float uMax, float vMax, int xOffset, int yOffset, int tiledWidth, int tiledHeight, int width, int height) {
+	private void drawTiled(TessellatorGeneral tessellator, float uMin, float vMin, float uMax, float vMax, int xOffset, int yOffset, int tiledWidth, int tiledHeight, int width, int height) {
 		int xTileCount = tiledWidth / width;
 		int yTileCount = tiledHeight / height;
 		int xRemainder = tiledWidth - (xTileCount * width);
@@ -84,7 +87,7 @@ public class DrawableNineSlice {
 		}
 	}
 
-	private static void draw(Tessellator tessellator, float minU, float minV, float maxU, float maxV, int xOffset, int yOffset, int width, int height) {
+	private static void draw(TessellatorGeneral tessellator, float minU, float minV, float maxU, float maxV, int xOffset, int yOffset, int width, int height) {
 		tessellator.addVertexWithUV(xOffset, yOffset + height, 0, minU, maxV);
 		tessellator.addVertexWithUV(xOffset + width, yOffset + height, 0, maxU, maxV);
 		tessellator.addVertexWithUV(xOffset + width, yOffset, 0, maxU, minV);

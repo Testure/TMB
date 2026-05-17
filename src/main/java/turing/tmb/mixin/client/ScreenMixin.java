@@ -7,10 +7,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import turing.tmb.TMBOptions;
 import turing.tmb.api.drawable.gui.IGuiProperties;
 import turing.tmb.client.TMBRenderer;
 import turing.tmb.util.GuiHelper;
-import turing.tmb.util.IKeybinds;
 
 @Mixin(value = Screen.class, remap = false)
 public class ScreenMixin {
@@ -58,7 +58,7 @@ public class ScreenMixin {
 	public void checkKeybinds(char eventCharacter, int eventKey, int mx, int my, CallbackInfo ci) {
 		Screen t = (Screen) (Object) this;
 		if(GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
-		if (eventKey == ((IKeybinds) mc.gameSettings).toomanyblocks$getKeyHideTMB().getKeyCode()) {
+		if (eventKey == TMBOptions.keyHideTMB.getKeyCode()) {
 			TMBRenderer.show = !TMBRenderer.show;
 		}
 	}

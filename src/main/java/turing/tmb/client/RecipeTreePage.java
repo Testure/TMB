@@ -257,7 +257,7 @@ public class RecipeTreePage {
 	}
 
 	public static IconCoordinate getTextureFromBlock(Block<?> block) {
-        return BlockModelDispatcher.getInstance().getDispatch(block).getBlockTextureFromSideAndMetadata(Side.TOP, 0);
+        return BlockModelDispatcher.getInstance().getDispatch(block).getOverlayTexture(0);
     }
 
 	public String getId() {

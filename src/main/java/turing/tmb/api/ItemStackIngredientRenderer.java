@@ -1,6 +1,6 @@
 package turing.tmb.api;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.render.renderer.GLRenderer;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.net.command.TextFormatting;
 import turing.tmb.TMB;
@@ -20,7 +20,7 @@ public class ItemStackIngredientRenderer implements IIngredientRenderer<ItemStac
 		RenderUtil.renderItemInGui(helper.getMinecraft(), ingredient, 0, 0, 1, 1, 1, 1);
 		if (ingredient.stackSize > 1) {
 			String text = String.valueOf(ingredient.stackSize);
-			helper.getMinecraft().font.drawStringWithShadow(text, 16 - helper.getMinecraft().font.getStringWidth(text), 8, 0xFFFFFF);
+			helper.getMinecraft().font.render(text, 16 - helper.getMinecraft().font.stringWidth(text), 8).setZ(999).setShadow().setColor(0xFFFFFF).call();
 		}
 	}
 

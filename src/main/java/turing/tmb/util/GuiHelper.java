@@ -2,12 +2,16 @@ package turing.tmb.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Screen;
-import net.minecraft.client.render.Font;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.font.FontRenderer;
+import net.minecraft.client.render.renderer.BlendFactor;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.Shaders;
+import net.minecraft.client.render.renderer.State;
+import net.minecraft.client.render.tessellator.TessellatorShader;
 import net.minecraft.client.render.texture.meta.gui.GuiTextureProperties;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.core.util.helper.MathHelper;
-import org.lwjgl.opengl.GL11;
+
 import turing.tmb.api.drawable.IIngredientList;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.drawable.gui.IScreenHandler;
@@ -47,7 +51,7 @@ public class GuiHelper implements IGuiHelper {
 	public void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, int uvWidth, int uvHeight) {
 		float uScale = 0.00390625F;
 		float vScale = 0.00390625F;
-		Tessellator tessellator = Tessellator.instance;
+		TessellatorShader tessellator = GLRenderer.getTessellator();
 		tessellator.startDrawingQuads();
 		tessellator.addVertexWithUV(x + (double)0.0F, y + (double)height, 0, (double)((float)(u + 0) * uScale), (double)((float)(v + uvHeight) * vScale));
 		tessellator.addVertexWithUV(x + (double)width, y + (double)height, 0, (double)((float)(u + uvWidth) * uScale), (double)((float)(v + uvHeight) * vScale));
@@ -59,7 +63,7 @@ public class GuiHelper implements IGuiHelper {
 	@Override
 	public void drawTexturedModalRect(int x, int y, int u, int v, int width, int height) {
 		float scale = 0.00390625F;
-		Tessellator tessellator = Tessellator.instance;
+		TessellatorShader tessellator = GLRenderer.getTessellator();
 		tessellator.startDrawingQuads();
 		tessellator.addVertexWithUV(x, y + height, 0, (float)(u) * scale, (float)(v + height) * scale);
 		tessellator.addVertexWithUV(x + width, y + height, 0, (float)(u + width) * scale, (float)(v + height) * scale);
@@ -75,7 +79,7 @@ public class GuiHelper implements IGuiHelper {
 
 	public void drawGuiIconDouble(double x, double y, double width, double height, IconCoordinate coordinate) {
 		coordinate.parentAtlas.bind();
-		Tessellator t = Tessellator.instance;
+		TessellatorShader t = GLRenderer.getTessellator();
 		if (coordinate.hasMeta("gui")) {
 			GuiTextureProperties properties = Objects.requireNonNull(coordinate.getMeta("gui", GuiTextureProperties.class));
 			double uScale;
@@ -186,7 +190,7 @@ public class GuiHelper implements IGuiHelper {
 		double realU1 = coordinate.getSubIconU(u1 / (double)coordinate.width);
 		double realV0 = coordinate.getSubIconV(v0 / (double)coordinate.height);
 		double realV1 = coordinate.getSubIconV(v1 / (double)coordinate.height);
-		Tessellator t = Tessellator.instance;
+		TessellatorShader t = GLRenderer.getTessellator();
 		t.startDrawingQuads();
 		t.addVertexWithUV(x0, y1, 0, realU0, realV1);
 		t.addVertexWithUV(x1, y1, 0, realU1, realV1);
@@ -213,29 +217,33 @@ public class GuiHelper implements IGuiHelper {
 		float r = (float)(color >> 16 & 255) / 255.0F;
 		float g = (float)(color >> 8 & 255) / 255.0F;
 		float b = (float)(color & 255) / 255.0F;
-		Tessellator tessellator = Tessellator.instance;
-		GL11.glEnable(3042);
-		GL11.glDisable(3553);
-		GL11.glBlendFunc(770, 771);
-		GL11.glColor4f(r, g, b, a);
+		TessellatorShader tessellator = GLRenderer.getTessellator();
+		GLRenderer.enableState(State.BLEND);
+		GLRenderer.setShader(Shaders.COLOR);
+		GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+		GLRenderer.setColor4f(r,g,b,a);
 		tessellator.startDrawingQuads();
 		tessellator.addVertex(minX, maxY, 0);
 		tessellator.addVertex(maxX, maxY, 0);
 		tessellator.addVertex(maxX, minY, 0);
 		tessellator.addVertex(minX, minY, 0);
 		tessellator.draw();
-		GL11.glEnable(3553);
-		GL11.glDisable(3042);
+		GLRenderer.setShader(Shaders.INTERFACE);
+		GLRenderer.disableState(State.BLEND);
 	}
 
 	@Override
 	public void drawString(String s, int x, int y, int color, boolean isShadow) {
-		getFont().drawString(s, x, y, color, isShadow);
+		if(isShadow){
+			getFont().render(s, x, y).setColor(color).setShadow().call();
+		} else {
+			getFont().render(s, x, y).setColor(color).call();
+		}
 	}
 
 	@Override
 	public void drawStringWithShadow(String s, int x, int y, int color) {
-		getFont().drawStringWithShadow(s, x, y, color);
+		getFont().render(s, x, y).setColor(color).setShadow().call();
 	}
 
 	@Override
@@ -268,7 +276,7 @@ public class GuiHelper implements IGuiHelper {
 	}
 
 	@Override
-	public Font getFont() {
+	public FontRenderer getFont() {
 		return getMinecraft().font;
 	}
 }

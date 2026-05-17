@@ -11,7 +11,6 @@ import net.minecraft.client.gui.options.components.KeyBindingComponent;
 import net.minecraft.client.gui.options.components.OptionsCategory;
 import net.minecraft.client.gui.options.data.OptionsPages;
 import net.minecraft.client.option.GameSettings;
-import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.net.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +21,10 @@ import turing.tmb.api.recipe.IRecipeCategory;
 import turing.tmb.api.recipe.IRecipeTranslator;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.api.runtime.ITMBRuntime;
-import turing.tmb.plugin.BTATweaker;
-import turing.tmb.util.IKeybinds;
 import turing.tmb.vanilla.VanillaPlugin;
+import turniplabs.halplibe.HalpLibe;
 import turniplabs.halplibe.util.ClientStartEntrypoint;
+import turniplabs.halplibe.util.OptionsInitEntrypoint;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint {
-    public static final String MOD_ID = "tmb";
+public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint, OptionsInitEntrypoint {
+    public static final String MOD_ID = HalpLibe.registerMod("tmb",true);
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static boolean shouldShowModName = true;
 	public static boolean shouldReplaceGuidebook = true;
@@ -59,22 +58,25 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 	}
 
 	public static void onClientStart() {
-		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		OptionsCategory category = new OptionsCategory("gui.options.page.controls.category.tmb");
-		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyHideTMB()));
-		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyAddFavourite()));
-		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeySetDefaultRecipe()));
-		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyShowRecipeTree()));
-		category.withComponent(new KeyBindingComponent(((IKeybinds) settings).toomanyblocks$getKeyFillRecipe()));
+		category.withComponent(new KeyBindingComponent(TMBOptions.keyHideTMB));
+		category.withComponent(new KeyBindingComponent(TMBOptions.keyAddFavourite));
+		category.withComponent(new KeyBindingComponent(TMBOptions.keySetDefaultRecipe));
+		category.withComponent(new KeyBindingComponent(TMBOptions.keyShowRecipeTree));
+		category.withComponent(new KeyBindingComponent(TMBOptions.keyFillRecipe));
 		OptionsPages.CONTROLS.withComponent(category);
 		OptionsCategory category1 = new OptionsCategory("gui.options.page.general.category.tmb");
-		category1.withComponent(new BooleanOptionComponent(((IKeybinds) settings).toomanyblocks$getIsRecipeViewEnabled()));
+		category1.withComponent(new BooleanOptionComponent(TMBOptions.isRecipeViewEnabled));
 		OptionsPages.GENERAL.withComponent(category1);
-		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsTMBHidden());
-		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getLastTMBSearch());
-		settings.getAllOptions().add(((IKeybinds) settings).toomanyblocks$getIsRecipeViewEnabled());
 		loadTMB();
 		runtime.index.gatherIngredients();
+	}
+
+	@Override
+	public void initOptions(GameSettings settings) {
+		GameSettings.register(TMBOptions.isTMBHidden);
+		GameSettings.register(TMBOptions.lastTMBSearch);
+		GameSettings.register(TMBOptions.isRecipeViewEnabled);
 	}
 
 	@Override
@@ -226,9 +228,6 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		gatherPlugins(true);
 		loadTMB();
 		runtime.index.gatherIngredients();
-		if (FabricLoader.getInstance().isModLoaded("btatweaker")) {
-			BTATweaker.onReload();
-		}
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {

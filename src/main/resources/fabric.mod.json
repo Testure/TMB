@@ -30,6 +30,9 @@
 		],
 		"btatweakerPlugin": [
 			"turing.tmb.plugin.BTATweaker"
+		],
+		"initOptions": [
+			"turing.tmb.TMB"
 		]
 	},
   "mixins": [
@@ -38,7 +41,8 @@
 
   "depends": {
 		"minecraft": "*",
-    "fabricloader": ">=0.15.5"
+    "fabricloader": ">=${loader}",
+		"java": ">=${java}"
   },
   "suggests": {
   }

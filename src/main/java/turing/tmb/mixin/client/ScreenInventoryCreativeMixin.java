@@ -21,4 +21,9 @@ public class ScreenInventoryCreativeMixin {
 			TMBRenderer.keyTyped(eventCharacter, eventKey, mx, my);
 		}
 	}
+
+	@Inject(method = "drawGuiContainerBackgroundLayer", at = @At("HEAD"))
+	public void tick(CallbackInfo ci) {
+		TMBRenderer.onTick();
+	}
 }

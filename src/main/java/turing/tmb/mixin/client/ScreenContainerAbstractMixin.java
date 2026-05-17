@@ -2,6 +2,7 @@ package turing.tmb.mixin.client;
 
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.container.ScreenContainerAbstract;
+import net.minecraft.client.option.GameSettings;
 import net.minecraft.core.player.inventory.menu.MenuAbstract;
 import net.minecraft.core.player.inventory.slot.Slot;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +52,7 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 			ci.cancel();
 		}
 		if (TMB.shouldReplaceGuidebook && TMBRenderer.enabledRecipes) {
-			if (eventKey == mc.gameSettings.keyShowUsage.getKeyCode()) {
+			if (eventKey == GameSettings.KEY_SHOW_USAGE.getKeyCode()) {
 				ci.cancel();
 				int slotId = getSlotId(mx, my);
 				if (slotId >= 0) {
@@ -61,7 +62,7 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 					}
 				}
 			}
-			if (eventKey == mc.gameSettings.keyShowRecipe.getKeyCode()) {
+			if (eventKey == GameSettings.KEY_SHOW_RECIPE.getKeyCode()) {
 				ci.cancel();
 				int slotId = getSlotId(mx, my);
 				if (slotId >= 0) {

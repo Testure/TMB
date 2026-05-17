@@ -1,8 +1,8 @@
 package turing.tmb.api.ingredient;
 
+import org.jspecify.annotations.Nullable;
 import turing.tmb.api.runtime.ITMBRuntime;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 @FunctionalInterface

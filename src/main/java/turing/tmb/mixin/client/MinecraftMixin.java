@@ -12,14 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import turing.tmb.TMB;
+import turing.tmb.TMBOptions;
 import turing.tmb.client.TMBRenderer;
-import turing.tmb.util.IKeybinds;
 
 @Mixin(value = Minecraft.class, remap = false)
 public abstract class MinecraftMixin {
-	@Shadow
-	public GameSettings gameSettings;
-
 	@Shadow
 	@Nullable
 	public Screen currentScreen;
@@ -36,7 +33,7 @@ public abstract class MinecraftMixin {
 	public void checkKeybind(CallbackInfo ci) {
 		if (debounce > 0) debounce--;
 		if (debounce <= 0) {
-			if (((IKeybinds) gameSettings).toomanyblocks$getKeyHideTMB().isPressed()) {
+			if (TMBOptions.keyHideTMB.isPressed()) {
 				if (TMBRenderer.search != null && !TMBRenderer.search.isFocused) {
 					if (currentScreen instanceof ScreenInventoryCreative) {
 						if (((ScreenInventoryCreativeAccessor) currentScreen).getSearchField().isFocused) {

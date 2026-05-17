@@ -23,7 +23,7 @@ import turing.tmb.util.IngredientList;
 
 import java.util.List;
 
-public class FurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol, ItemStack, Void>, T extends FurnaceRecipeTranslator<R>> implements IRecipeCategory<T> {
+public class BlastFurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol[], ItemStack, Void>, T extends BlastFurnaceRecipeTranslator<R>> implements IRecipeCategory<T> {
 	private final IDrawable background;
 	private final IDrawable icon;
 	private final IDrawable arrow;
@@ -33,11 +33,11 @@ public class FurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol, ItemS
 	private final int x = 44;
 	private final String title;
 
-	public FurnaceRecipeCategory(ITMBRuntime runtime, String title, ItemStack icon) {
+	public BlastFurnaceRecipeCategory(ITMBRuntime runtime, String title, ItemStack icon) {
 		this.background = new DrawableBlank(120, 40);
 		this.title = title;
 		this.icon = new DrawableIngredient<>(icon, ItemStackIngredientRenderer.INSTANCE);
-		this.arrow = new DrawableAnimated(new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 82, 128, 24, 16, 0, 0, 0, 0, 24, 16), 10, IDrawableAnimated.StartDirection.LEFT, false);
+		this.arrow = new DrawableAnimated(new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 82, 128, 24, 16, 0, 0, 0, 0, 24, 16), 15, IDrawableAnimated.StartDirection.LEFT, false);
 		this.arrowBack = new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 24, 133, 24, 16, 0, 0, 0, 0, 24, 16);
 		this.flame = new DrawableAnimated(new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 82, 114, 14, 14, 0, 0,0, 0, 14, 14), 1, IDrawableAnimated.StartDirection.TOP, true);
 		this.flameBack = new DrawableTexture("/assets/tmb/textures/gui/gui_vanilla.png", 1, 134, 14, 14, 0, 0, 0, 0, 14, 14);
@@ -75,15 +75,21 @@ public class FurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol, ItemS
 
 	@Override
 	public void getIngredients(T recipe, IRecipeLayout layout, ILookupContext context, List<IIngredientList> ingredients) {
-		ingredients.add(0, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()));
-		ingredients.add(1, new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getOutput())));
+		ingredients.add(0, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()[0]));
+		if(recipe.getOriginal().getInput().length > 1){
+			ingredients.add(1, IngredientList.fromRecipeSymbol(recipe.getOriginal().getInput()[1]));
+		} else {
+			ingredients.add(1, new IngredientList());
+		}
+		ingredients.add(2, new IngredientList(TypedIngredient.itemStackIngredient(recipe.getOriginal().getOutput())));
 	}
 
 	@Override
 	public IRecipeLayout getRecipeLayout() {
 		return new RecipeLayoutBuilder()
 			.addInputSlot(0, VanillaTypes.ITEM_STACK).setPosition(x, (background.getHeight() / 2) - 6).build()
-			.addOutputSlot(1, VanillaTypes.ITEM_STACK).setPosition(x + 56, (background.getHeight() / 2) - 6).build()
+			.addInputSlot(1, VanillaTypes.ITEM_STACK).setPosition(x - 20, (background.getHeight() / 2) - 6).build()
+			.addOutputSlot(2, VanillaTypes.ITEM_STACK).setPosition(x + 56, (background.getHeight() / 2) - 6).build()
 			.build();
 	}
 }

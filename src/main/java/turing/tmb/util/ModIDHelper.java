@@ -14,7 +14,7 @@ public class ModIDHelper {
 		name = name.substring(5);
 		if (name.contains(".")) name = name.substring(0, name.indexOf("."));
 
-		if (!FabricLoader.getInstance().getModContainer(name).isPresent()) return "minecraft";
+		if (FabricLoader.getInstance().getModContainer(name).isEmpty()) return "minecraft";
 		return name;
 	}
 

@@ -1,6 +1,8 @@
 package turing.tmb.api.recipe;
 
-import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.render.renderer.GLRenderer;
+
 import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.builder.ITooltipBuilder;
 import turing.tmb.api.drawable.gui.IGuiHelper;
@@ -21,19 +23,19 @@ public interface IRecipeSlot<I, T extends IIngredientType<I>> extends IDrawable,
 
 	@Override
 	default void draw(IGuiHelper helper) {
-		GL11.glPushMatrix();
-		GL11.glColor4f(1F, 1F, 1F, 1F);
+		GLRenderer.pushFrame();
+		GLRenderer.setColor4f(1F, 1F, 1F, 1F);
 		helper.getMinecraft().textureManager.loadTexture("/assets/minecraft/textures/gui/container/crafting.png").bind();
 		helper.drawTexturedModalRect(0, 0, 7, 83, 18, 18);
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 
 	default void draw(IGuiHelper helper, float r, float g, float b, float a) {
-		GL11.glPushMatrix();
-		GL11.glColor4f(r,g,b,a);
+		GLRenderer.pushFrame();
+		GLRenderer.setColor4f(r,g,b,a);
 		helper.getMinecraft().textureManager.loadTexture("/assets/minecraft/textures/gui/container/crafting.png").bind();
 		helper.drawTexturedModalRect(0, 0, 7, 83, 18, 18);
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 
 	@Override

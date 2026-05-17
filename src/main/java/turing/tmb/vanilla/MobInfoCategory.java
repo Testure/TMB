@@ -1,9 +1,12 @@
 package turing.tmb.vanilla;
 
 import net.minecraft.client.gui.guidebook.mobs.MobInfoRegistry;
-import net.minecraft.client.render.EntityRenderDispatcher;
+import net.minecraft.client.render.EntityRendererDispatcher;
 import net.minecraft.client.render.Lighting;
 import net.minecraft.client.render.Scissor;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.Shaders;
+import net.minecraft.client.render.renderer.State;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.entity.Entity;
@@ -13,7 +16,7 @@ import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
+
 import turing.tmb.RecipeLayoutBuilder;
 import turing.tmb.TMB;
 import turing.tmb.TypedIngredient;
@@ -70,7 +73,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 
 	private void drawHeart(ITMBRuntime runtime, int x, int y, boolean half) {
 		runtime.getGuiHelper().drawGuiIcon(x, y, 9, 9, TextureRegistry.getTexture("minecraft:gui/hud/heart/container"));
-		runtime.getGuiHelper().drawGuiIcon(x, y, 9, 9, TextureRegistry.getTexture("minecraft:gui/hud/heart/" + (half ? "half" : "full")));
+		runtime.getGuiHelper().drawGuiIcon(x, y, 9, 9, TextureRegistry.getTexture("minecraft:gui/hud/heart/survival/" + (half ? "half" : "full")));
 	}
 
 	private void drawHeart(ITMBRuntime runtime, int x, int y) {
@@ -78,34 +81,37 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 	}
 
 	private void drawMob(Mob mob, int x, int y) {
-		float heightFactor = 27.777779F;
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		float heightFactor = 50f / 1.8f;
+
+		GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
 		Scissor.enable(x + 9, y + 9, 52, 70);
-		GL11.glEnable(32826);
-		GL11.glEnable(2903);
-		GL11.glEnable(2929);
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float)(x + 34), (float)(y + 44 + 32), 50.0F);
-		float f1 = 30.0F;
-		GL11.glScalef(-f1, f1, f1);
-		GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-		float f5 = (float)(x + 34);
-		float f6 = (float)(y + 44 + 32) - heightFactor * mob.bbHeight;
-		GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
+
+		GLRenderer.enableState(State.DEPTH_TEST);
+		GLRenderer.pushFrame();
+		GLRenderer.setShader(Shaders.WORLD);
+		GLRenderer.modelM4f().translate(x + 34, y + 44 + 32, 50F);
+		float scale = 30F;
+		GLRenderer.modelM4f().scale(-scale, scale, scale);
+		GLRenderer.modelM4f().rotateZ(org.joml.Math.toRadians(180F));
+		float f5 = (float) (x + 34) - x;
+		float f6 = (float) (y + 44 + 32) - (heightFactor * this.mob.bbHeight) - y;
+		GLRenderer.modelM4f().rotateY(org.joml.Math.toRadians(135F));
 		Lighting.enableLight();
-		GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-		GL11.glRotatef(-((float)Math.atan(f6 / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
-		mob.yBodyRot = (float)Math.atan(f5 / 40.0F) * 20.0F;
-		mob.yRot = (float)Math.atan(f5 / 40.0F) * 40.0F;
-		mob.xRot = -((float)Math.atan(f6 / 40.0F)) * 20.0F;
-		mob.entityBrightness = 1.0F;
-		GL11.glTranslatef(0.0F, mob.heightOffset, 0.0F);
-		EntityRenderDispatcher.instance.viewLerpYaw = 180.0F;
-		EntityRenderDispatcher.instance.renderEntityPreviewWithPosYaw(Tessellator.instance, mob, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F);
-		GL11.glPopMatrix();
+		GLRenderer.modelM4f().rotateY(org.joml.Math.toRadians(-135F));
+		GLRenderer.modelM4f().rotateX(org.joml.Math.toRadians(-(float) Math.atan(f6 / 40F) * 20F));
+		this.mob.yBodyRot = (float) Math.atan(f5 / 40F) * 20F;
+		this.mob.yRot = (float) Math.atan(f5 / 40F) * 40F;
+		this.mob.xRot = -(float) Math.atan(f6 / 40F) * 20F;
+		this.mob.entityBrightness = 1.0F;
+		GLRenderer.modelM4f().translate(0.0F, this.mob.heightOffset, 0.0F);
+		EntityRendererDispatcher.instance.viewLerpYaw = 180F;
+		GLRenderer.globalGetNormalTransformMatrix().scale(1, -1, 1);
+		EntityRendererDispatcher.instance.renderEntityPreviewWithPosYaw(GLRenderer.getTessellator(), this.mob, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+		GLRenderer.popFrame();
 		Lighting.disable();
-		GL11.glDisable(32826);
-		GL11.glDisable(2929);
+		GLRenderer.disableState(State.DEPTH_TEST);
+
 		Scissor.disable();
 	}
 

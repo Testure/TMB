@@ -23,10 +23,6 @@ import java.util.List;
 
 @Mixin(value = ScreenFurnace.class, remap = false)
 public abstract class ScreenFurnaceMixin extends ScreenContainerAbstract implements RecipeFiller<RecipeEntryBase<RecipeSymbol, ItemStack, Void>, ScreenFurnace> {
-	@Shadow
-	@Final
-	private TileEntityFurnace furnaceInventory;
-
 	public ScreenFurnaceMixin(MenuAbstract container) {
 		super(container);
 	}
@@ -41,45 +37,22 @@ public abstract class ScreenFurnaceMixin extends ScreenContainerAbstract impleme
 			}
 		}
 
-		if (translator.getOriginal() instanceof RecipeEntryFurnace) {
-			RecipeEntryFurnace recipe = (RecipeEntryFurnace) translator.getOriginal();
-			List<RecipeSymbol> list = new ArrayList<>();
-			list.add(recipe.getInput());
-			Pair<Boolean, List<ItemStack>> pair = w.containsRecipe(list);
-			if(pair.getLeft()){
-				List<ItemStack> materials = pair.getRight();
-				List<ItemStack> resolved = recipe.getInput().resolve();
-				Pair<Boolean, ItemStack> contains = InventoryWrapper.listContains(resolved, materials.get(0), ItemStack::isItemEqual, true);
-				if(contains.getLeft()){
-					ItemStack recipeStack = contains.getRight();
-					int amount = recipeStack.stackSize;
-					if(maximum){
-						amount = materials.get(0).stackSize / recipeStack.stackSize;
-					}
-					ItemStack removedStack = w.removeUntil(recipeStack.itemID, recipeStack.getMetadata(), amount, recipeStack.getData(), false, false);
-					inventorySlots.slots.get(0).set(removedStack);
+		RecipeEntryFurnace recipe = (RecipeEntryFurnace) translator.getOriginal();
+		List<RecipeSymbol> list = new ArrayList<>();
+		list.add(recipe.getInput());
+		Pair<Boolean, List<ItemStack>> pair = w.containsRecipe(list);
+		if(pair.getLeft()){
+			List<ItemStack> materials = pair.getRight();
+			List<ItemStack> resolved = recipe.getInput().resolve();
+			Pair<Boolean, ItemStack> contains = InventoryWrapper.listContains(resolved, materials.get(0), ItemStack::isItemEqual, true);
+			if(contains.getLeft()){
+				ItemStack recipeStack = contains.getRight();
+				int amount = recipeStack.stackSize;
+				if(maximum){
+					amount = materials.get(0).stackSize / recipeStack.stackSize;
 				}
-			}
-		}
-
-		if (translator.getOriginal() instanceof RecipeEntryBlastFurnace) {
-			RecipeEntryBlastFurnace recipe = (RecipeEntryBlastFurnace) translator.getOriginal();
-			List<RecipeSymbol> list = new ArrayList<>();
-			list.add(recipe.getInput());
-			Pair<Boolean, List<ItemStack>> pair = w.containsRecipe(list);
-			if(pair.getLeft()){
-				List<ItemStack> materials = pair.getRight();
-				List<ItemStack> resolved = recipe.getInput().resolve();
-				Pair<Boolean, ItemStack> contains = InventoryWrapper.listContains(resolved, materials.get(0), ItemStack::isItemEqual, true);
-				if(contains.getLeft()){
-					ItemStack recipeStack = contains.getRight();
-					int amount = recipeStack.stackSize;
-					if(maximum){
-						amount = materials.get(0).stackSize / recipeStack.stackSize;
-					}
-					ItemStack removedStack = w.removeUntil(recipeStack.itemID, recipeStack.getMetadata(), amount, recipeStack.getData(), false, false);
-					inventorySlots.slots.get(0).set(removedStack);
-				}
+				ItemStack removedStack = w.removeUntil(recipeStack.itemID, recipeStack.getMetadata(), amount, recipeStack.getData(), false, false);
+				inventorySlots.slots.get(0).set(removedStack);
 			}
 		}
 	}
@@ -87,11 +60,7 @@ public abstract class ScreenFurnaceMixin extends ScreenContainerAbstract impleme
 	@Override
 	public List<Class<? extends RecipeEntryBase<?, ?, ?>>> getSupportedRecipes() {
 		ArrayList<Class<? extends RecipeEntryBase<?, ?, ?>>> list = new ArrayList<>();
-		if(furnaceInventory instanceof TileEntityFurnace){
-			list.add(RecipeEntryFurnace.class);
-		} else {
-			list.add(RecipeEntryBlastFurnace.class);
-		}
+		list.add(RecipeEntryFurnace.class);
 		return list;
 	}
 }
