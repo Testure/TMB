@@ -142,7 +142,7 @@ publishing {
 	if(checkVersion(modGroup.get(), modName.get(), modVersion.get())){
 		repositories {
 			maven {
-				name = "SignalumMavenReleases"
+				name = "signalumMaven"
 				url = uri("https://maven.thesignalumproject.net/releases")
 				credentials(PasswordCredentials::class)
 				authentication {
