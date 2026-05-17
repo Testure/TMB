@@ -1,8 +1,16 @@
 import com.smushytaco.lwjgl_gradle.Preset
+import groovy.namespace.QName
+import groovy.util.Node
+import groovy.util.NodeList
+import groovy.xml.XmlParser
+import java.io.FileNotFoundException
+import java.net.URL
+
 plugins {
 	alias(libs.plugins.loom)
 	alias(libs.plugins.lwjgl)
     java
+	`maven-publish`
 }
 val modVersion: Provider<String> = providers.gradleProperty("mod_version")
 val modGroup: Provider<String> = providers.gradleProperty("mod_group")
@@ -127,3 +135,47 @@ tasks {
 }
 // Removes LWJGL2 dependencies
 configurations.configureEach { exclude(group = "org.lwjgl.lwjgl") }
+
+
+
+publishing {
+	if(checkVersion(modGroup.get(), modName.get(), modVersion.get())){
+		repositories {
+			maven {
+				name = "SignalumMavenReleases"
+				url = uri("https://maven.thesignalumproject.net/releases")
+				credentials(PasswordCredentials::class)
+				authentication {
+					create<BasicAuthentication>("basic")
+				}
+			}
+
+			publications {
+				create<MavenPublication>("maven") {
+					groupId = project.property("mod_group").toString()
+					artifactId = project.property("mod_name").toString()
+					version = project.property("mod_version").toString()
+					from(components["java"])
+				}
+			}
+		}
+	}
+}
+
+fun checkVersion(group: String, name: String, version: String): Boolean {
+	return try {
+		val xml = URL("https://maven.thesignalumproject.net/releases/$group/$name/maven-metadata.xml").readText()
+		val metadata = XmlParser().parseText(xml)
+
+		val versions = metadata.getAt(QName("versioning")).getAt("versions").getAt("version").map { (it as Node).text() }
+
+		if (version in versions) {
+			System.err.println("Version $version of $group.$name already exists!")
+			false
+		} else {
+			true
+		}
+	} catch (ignored: FileNotFoundException) {
+		true
+	}
+}
