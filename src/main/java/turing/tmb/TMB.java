@@ -73,7 +73,7 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 	}
 
 	@Override
-	public void initOptions(GameSettings settings) {
+	public void initOptions() {
 		GameSettings.register(TMBOptions.isTMBHidden);
 		GameSettings.register(TMBOptions.lastTMBSearch);
 		GameSettings.register(TMBOptions.isRecipeViewEnabled);

@@ -106,9 +106,11 @@ tasks {
 		targetCompatibility = javaVersion.get().toString()
 		if (javaVersion.get() > 8) options.release = javaVersion
 	}
-	named<UpdateDaemonJvm>("updateDaemonJvm") {
-		languageVersion = libs.versions.gradleJava.map { JavaLanguageVersion.of(it.toInt()) }
-		vendor = JvmVendorSpec.ADOPTIUM
+	if(rootProject == this){
+		named<UpdateDaemonJvm>("updateDaemonJvm") {
+			languageVersion = libs.versions.gradleJava.map { JavaLanguageVersion.of(it.toInt()) }
+			vendor = JvmVendorSpec.ADOPTIUM
+		}
 	}
 	withType<JavaExec>().configureEach { defaultCharacterEncoding = "UTF-8" }
 	withType<Javadoc>().configureEach { options.encoding = "UTF-8" }
