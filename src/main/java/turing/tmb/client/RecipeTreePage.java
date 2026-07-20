@@ -239,9 +239,9 @@ public class RecipeTreePage {
 
 	public IconCoordinate drawIngredientBackground(RecipeIngredient ingredient) {
 		if(ingredient == root.ingredient){
-			return TextureRegistry.getTexture(Achievement.TYPE_SPECIAL.texture);
+			return TextureRegistry.getTexture(Achievement.TYPE_SPECIAL.texture());
 		}
-		return TextureRegistry.getTexture(Achievement.TYPE_NORMAL.texture);
+		return TextureRegistry.getTexture(Achievement.TYPE_NORMAL.texture());
 	}
 
 	public int lineColorLocked(boolean isHovered) {
