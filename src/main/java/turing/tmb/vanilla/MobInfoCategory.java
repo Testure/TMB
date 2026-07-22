@@ -160,7 +160,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 
 		getIngredients(recipe, layout, context, ingredients);
 
-		if (mob == null && !giveUp) {
+		/*if (mob == null && !giveUp) {
 			Class<? extends Entity> mobClass = recipe.getOriginal().getEntityClass();
 			try {
 				mob = (Mob)mobClass.getConstructor(World.class).newInstance(runtime.getGuiHelper().getMinecraft().currentWorld);
@@ -173,7 +173,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 
 		if (mob != null) {
 			drawMob(mob, 2, 2);
-		}
+		}*/
 	}
 
 	@Override
