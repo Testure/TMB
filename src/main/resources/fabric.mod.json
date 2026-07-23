@@ -22,9 +22,6 @@
     "main": [
 			"turing.tmb.TMB"
     ],
-		"afterClientStart": [
-			"turing.tmb.TMB"
-		],
 		"gatherTMBPlugins": [
 			"turing.tmb.TMB"
 		],

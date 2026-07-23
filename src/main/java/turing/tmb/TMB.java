@@ -23,8 +23,9 @@ import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.api.runtime.ITMBRuntime;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.HalpLibe;
-import turniplabs.halplibe.util.ClientStartEntrypoint;
+import turniplabs.halplibe.event.defs.ClientEvents;
 import turniplabs.halplibe.util.OptionsInitEntrypoint;
+import turniplabs.halplibe.util.dependency.Key;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint, OptionsInitEntrypoint {
+public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint {
     public static final String MOD_ID = HalpLibe.registerMod("tmb",true);
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static boolean shouldShowModName = true;
@@ -44,6 +45,8 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 
     @Override
     public void onInitialize() {
+		Key key = Key.of(MOD_ID);
+		ClientEvents.AFTER_CLIENT_START.listen(key, TMB::loadData);
 		CommandManager.registerCommand(new CommandReload());
 		gatherPlugins(false);
 		if (FabricLoader.getInstance().isModLoaded("modnametooltip")) {
@@ -77,16 +80,6 @@ public class TMB implements ModInitializer, ClientStartEntrypoint, TMBEntrypoint
 		GameSettings.register(TMBOptions.isTMBHidden);
 		GameSettings.register(TMBOptions.lastTMBSearch);
 		GameSettings.register(TMBOptions.isRecipeViewEnabled);
-	}
-
-	@Override
-	public void beforeClientStart() {
-
-	}
-
-	@Override
-	public void afterClientStart() {
-		loadData();
 	}
 
 	private static void loadTMB() {
