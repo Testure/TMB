@@ -35,16 +35,17 @@ import java.util.stream.Collectors;
 @Environment(EnvType.CLIENT)
 public class TMBRenderer {
 	public static int currentPage = 0;
-	public static int pages = 0;
+	public static int pageCount = 0;
 	public static int currentFavouritePage = 0;
-	public static int favouritePages = 0;
+	public static int favouritePageCount = 0;
 	public static boolean show = true;
 	public static boolean enabledRecipes = true;
 	protected static boolean initialized;
 	protected static final ButtonElement leftButton = new ButtonElement(0, 0, 0, 16, 16, "<");
 	protected static final ButtonElement rightButton = new ButtonElement(1, 0, 0, 16, 16, ">");
-	protected static final ButtonElement leftButton2 = new ButtonElement(0, 0, 0, 16, 16, "<");
-	protected static final ButtonElement rightButton2 = new ButtonElement(1, 0, 0, 16, 16, ">");
+	protected static final ButtonElement favoritesLeftButton = new ButtonElement(0, 0, 0, 16, 16, "<");
+	protected static final ButtonElement favoritesRightButton = new ButtonElement(1, 0, 0, 16, 16, ">");
+	protected static final int buttonWidth = leftButton.width + 2;
 	public static TextFieldElement search;
 	protected static TooltipElement tooltip;
 	private static ITypedIngredient<?> hoveredItem = null;
@@ -55,56 +56,56 @@ public class TMBRenderer {
 
 		tooltip = new TooltipElement(mc);
 		search = new TextFieldElement(null, Minecraft.getMinecraft().font, 0, 0, 120, 20, TMBOptions.lastTMBSearch.value, "Search...");
-		show = !TMBOptions.isTMBHidden.value;//((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsTMBHidden().value;
-		enabledRecipes = TMBOptions.isRecipeViewEnabled.value;//((IKeybinds) Minecraft.getMinecraft().gameSettings).toomanyblocks$getIsRecipeViewEnabled().value;
+		show = !TMBOptions.isTMBHidden.value;
+		enabledRecipes = TMBOptions.isRecipeViewEnabled.value;
 	}
 
-	public static void renderHeader(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
-		if (!show || !initialized) return;
+	protected static void renderHeader(ButtonElement leftButton, ButtonElement rightButton, int currentPage, int pageCount, boolean favorites, int mouseX, int mouseY, int width, int height, Minecraft mc, @Nullable IGuiProperties properties) {
 		int w = (int) (width / 3.5F);
 		Screen currentScreen = mc.currentScreen;
-		if (currentScreen instanceof ScreenContainerAbstract) {
-			w = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - 16, w);
+		if (currentScreen instanceof ScreenContainerAbstract screen) {
+			w = Math.min(((width / 2) - (screen.xSize / 2)) - 16, w);
 		} else if (properties != null) {
-			w = Math.min(((width / 2) - properties.guiXSize() / 2) - 16, w);
+			w = Math.min(((width / 2) - (properties.guiXSize() / 2)) - 16, w);
 		}
-		int startX = width - w;
+		int minDistance = buttonWidth + buttonWidth + 50;
+		int startX = favorites ? 0 : width - w;
 		int startY = 4;
-		String str = "Page " + (currentPage + 1) + " / " + (pages + 1);
+		String str = "Page " + (currentPage + 1) + " / " + (pageCount + 1);
 
-		leftButton.xPosition = startX;
 		leftButton.yPosition = startY;
-		rightButton.xPosition = Math.min(startX + (18 * (w / 18)), width - 18);
 		rightButton.yPosition = startY;
-		mc.font.render(str, ((((leftButton.xPosition + leftButton.width) + (rightButton.xPosition + rightButton.width)) / 2) - mc.font.stringWidth(str) / 2) - 4, startY + 4).setColor(0xFFFFFF).call();
+		int rightStartX = startX + (buttonWidth * (w / buttonWidth));
+		if (favorites) {
+			leftButton.xPosition = startX;
+			rightButton.xPosition = Math.max(rightStartX, leftButton.xPosition + minDistance);
+		} else {
+			leftButton.xPosition = startX;
+			rightButton.xPosition = Math.min(rightStartX, width - buttonWidth);
+			leftButton.xPosition = Math.min(startX, rightButton.xPosition - minDistance);
+		}
+		int diff = (((rightButton.xPosition) - (leftButton.xPosition + buttonWidth)) / 2);
+		mc.font.render(str, (leftButton.xPosition + buttonWidth + diff) - (mc.font.stringWidth(str) / 2), startY + 4).setColor(0xFFFFFF).call();
 		leftButton.drawButton(mc, mouseX, mouseY);
 		rightButton.drawButton(mc, mouseX, mouseY);
 
-		search.yPosition = height - search.height - 4;
-		search.xPosition = width / 2 - search.width / 2;
-		search.drawTextBox();
+		if (!favorites) {
+			search.xPosition = width / 2 - search.width / 2;
+			search.yPosition = height - search.height - 4;
+			search.drawTextBox();
+		}
 	}
 
-	public static void renderHeader2(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
+	public static void renderHeader(boolean favorites, int mouseX, int mouseY, int width, int height, Minecraft mc, @Nullable IGuiProperties properties) {
 		if (!show || !initialized) return;
-		int w = (int) (width / 3.5F);
-		Screen currentScreen = mc.currentScreen;
-		if (currentScreen instanceof ScreenContainerAbstract) {
-			w = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - 16, w);
-		} else if (properties != null) {
-			w = Math.min(((width / 2) - properties.guiXSize() / 2) - 16, w);
-		}
-		int startX = 0;//width - w;
-		int startY = 4;
-		String str = "Page " + (currentFavouritePage + 1) + " / " + (favouritePages + 1);
-
-		leftButton2.xPosition = startX;
-		leftButton2.yPosition = startY;
-		rightButton2.xPosition = Math.min(startX + (18 * (w / 18)), width - 18);
-		rightButton2.yPosition = startY;
-		mc.font.render(str, ((((leftButton2.xPosition + leftButton2.width) + (rightButton2.xPosition + rightButton2.width)) / 2) - mc.font.stringWidth(str) / 2) - 4, startY + 4).setColor(0xFFFFFF).call();
-		leftButton2.drawButton(mc, mouseX, mouseY);
-		rightButton2.drawButton(mc, mouseX, mouseY);
+		if (favorites && TMB.getRuntime().getFavourites().isEmpty()) return;
+		renderHeader(
+			favorites ? favoritesLeftButton : leftButton,
+			favorites ? favoritesRightButton : rightButton,
+			favorites ? currentFavouritePage : currentPage,
+			favorites ? favouritePageCount : pageCount,
+			favorites, mouseX, mouseY, width, height, mc, properties
+		);
 	}
 
 	public static void onTick() {
@@ -127,12 +128,12 @@ public class TMBRenderer {
 				change = -1;
 			}
 			currentPage += change;
-			if (currentPage < 0) currentPage = pages;
-			if (currentPage > pages) currentPage = 0;
+			if (currentPage < 0) currentPage = pageCount;
+			if (currentPage > pageCount) currentPage = 0;
 		}
 
-		boolean left2 = leftButton2.mouseClicked(mc, mouseX, mouseY);
-		boolean right2 = rightButton2.mouseClicked(mc, mouseX, mouseY);
+		boolean left2 = favoritesLeftButton.mouseClicked(mc, mouseX, mouseY);
+		boolean right2 = favoritesRightButton.mouseClicked(mc, mouseX, mouseY);
 		if (left2 || right2) {
 			mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0F, 1.0F);
 			int change = 1;
@@ -140,8 +141,8 @@ public class TMBRenderer {
 				change = -1;
 			}
 			currentFavouritePage += change;
-			if (currentFavouritePage < 0) currentFavouritePage = favouritePages;
-			if (currentFavouritePage > favouritePages) currentFavouritePage = 0;
+			if (currentFavouritePage < 0) currentFavouritePage = favouritePageCount;
+			if (currentFavouritePage > favouritePageCount) currentFavouritePage = 0;
 		}
 
 		if(search == null) return;
@@ -157,8 +158,8 @@ public class TMBRenderer {
 	private static void scroll(int direction) {
 		int change = MathHelper.clamp(-direction, -1, 1);
 		currentPage += change;
-		if (currentPage < 0) currentPage = pages;
-		if (currentPage > pages) currentPage = 0;
+		if (currentPage < 0) currentPage = pageCount;
+		if (currentPage > pageCount) currentPage = 0;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -178,21 +179,21 @@ public class TMBRenderer {
 		int startX = (int) (width / 3.5F);
 
 		if (currentScreen instanceof ScreenContainerAbstract) {
-			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - 18, startX);
+			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - buttonWidth, startX);
 		} else if (properties != null) {
-			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - 18, startX);
+			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - buttonWidth, startX);
 		}
 
-		int itemsX = (startX / 18);
-		int itemsY = Math.min((height / 18) - 1, ((height - 28) / 18));
+		int itemsX = (startX / buttonWidth);
+		int itemsY = Math.min((height / buttonWidth) - 1, ((height - 28) / buttonWidth));
 		int xOffset = 0;
 		int yOffset = 1;
 
 		int itemsPerPage = itemsX * itemsY;
 		if (itemsPerPage <= 0) return;
-		pages = toDisplay.size() / itemsPerPage;
+		pageCount = toDisplay.size() / itemsPerPage;
 
-		if (currentPage > pages) currentPage = pages;
+		if (currentPage > pageCount) currentPage = pageCount;
 
 		List<ITypedIngredient<?>> pageList = toDisplay.stream().skip((long) itemsPerPage * currentPage).limit(itemsPerPage).collect(Collectors.toList());
 
@@ -270,13 +271,13 @@ public class TMBRenderer {
 		int startX = (int) (width / 3.5F);
 
 		if (currentScreen instanceof ScreenContainerAbstract) {
-			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - 18, startX);
+			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - buttonWidth, startX);
 		} else if (properties != null) {
-			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - 18, startX);
+			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - buttonWidth, startX);
 		}
 
-		int itemsX = (startX / 18);
-		int itemsY = Math.min((height / 18) - 1, ((height - 28) / 18));
+		int itemsX = (startX / buttonWidth);
+		int itemsY = Math.min((height / buttonWidth) - 1, ((height - 28) / buttonWidth));
 		int xOffset = 0;
 		int yOffset = 1;
 
@@ -284,9 +285,9 @@ public class TMBRenderer {
 
 		int itemsPerPage = itemsX * itemsY;
 		if (itemsPerPage <= 0) return;
-		favouritePages = toDisplay.size() / itemsPerPage;
+		favouritePageCount = toDisplay.size() / itemsPerPage;
 
-		if (currentFavouritePage > favouritePages) currentFavouritePage = favouritePages;
+		if (currentFavouritePage > favouritePageCount) currentFavouritePage = favouritePageCount;
 
 		List<ITypedIngredient<?>> pageList = toDisplay.stream().skip((long) itemsPerPage * currentFavouritePage).limit(itemsPerPage).collect(Collectors.toList());
 

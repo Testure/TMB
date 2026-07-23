@@ -29,9 +29,9 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(int mouseX, int mouseY, float pt, CallbackInfo ci) {
-		TMBRenderer.renderHeader(mouseX, mouseY, width, height, mc, pt, null);
+		TMBRenderer.renderHeader(false, mouseX, mouseY, width, height, mc, null);
 		TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, pt, null);
-		TMBRenderer.renderHeader2(mouseX, mouseY, width, height, mc, pt, null);
+		TMBRenderer.renderHeader(true, mouseX, mouseY, width, height, mc, null);
 		TMBRenderer.renderItems2(mouseX, mouseY, width, height, mc, pt, null);
 	}
 
