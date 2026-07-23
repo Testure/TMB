@@ -34,7 +34,7 @@ public class TMBRuntime implements ITMBRuntime {
 	protected final GuiHelper guiHelper = new GuiHelper(this);
 	public final List<ITypedIngredient<?>> favourites = new ArrayList<>();
 	protected final Map<RecipeIngredient, IRecipeTranslator<?>> defaultRecipes = new HashMap<>();
-	protected final Map<Class<? extends Screen>, RecipeFiller> recipeFillers = new HashMap<>();
+	protected final Map<Class<? extends Screen>, RecipeFiller<?, ?>> recipeFillers = new HashMap<>();
 	protected boolean isReady;
 
 	protected TMBRuntime() {
@@ -48,6 +48,19 @@ public class TMBRuntime implements ITMBRuntime {
 		index.clear();
 		guiHelper.clear();
 		recipeFillers.clear();
+	}
+
+	protected void gatherIngredients() {
+		index.gatherIngredients();
+	}
+
+	protected void loadLists() {
+		recipeIndex.loadLists();
+	}
+
+	@Override
+	public boolean isReady() {
+		return isReady;
 	}
 
 	@Override
@@ -117,7 +130,7 @@ public class TMBRuntime implements ITMBRuntime {
 	}
 
 	@Override
-	public Map<Class<? extends Screen>, RecipeFiller> getRecipeFillers() {
+	public Map<Class<? extends Screen>, RecipeFiller<?, ?>> getRecipeFillers() {
 		return recipeFillers;
 	}
 

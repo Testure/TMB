@@ -27,7 +27,7 @@ public interface ITMBRuntime {
 
 	IRecipeIndex getRecipeIndex();
 
-	Map<Class<? extends Screen>, RecipeFiller> getRecipeFillers();
+	Map<Class<? extends Screen>, RecipeFiller<?, ?>> getRecipeFillers();
 
 	void showRecipe(ILookupContext lookup);
 
@@ -38,4 +38,6 @@ public interface ITMBRuntime {
 	Map<RecipeIngredient, IRecipeTranslator<?>> getDefaultRecipes();
 
 	List<ITypedIngredient<?>> getFavourites();
+
+	boolean isReady();
 }

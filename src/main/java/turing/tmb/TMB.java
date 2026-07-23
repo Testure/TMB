@@ -72,7 +72,7 @@ public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint
 		category1.withComponent(new BooleanOptionComponent(TMBOptions.isRecipeViewEnabled));
 		OptionsPages.GENERAL.withComponent(category1);
 		loadTMB();
-		runtime.index.gatherIngredients();
+		runtime.gatherIngredients();
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint
 			plugin.registerIngredientTypes(runtime);
 			plugin.registerRecipeCategories(runtime);
 		}
-		runtime.getRecipeIndex().loadLists();
+		runtime.loadLists();
 		for (ITMBPlugin plugin : plugins) {
 			plugin.registerIngredients(runtime);
 			plugin.registerRecipeCatalysts(runtime);
@@ -220,7 +220,7 @@ public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint
 		clear();
 		gatherPlugins(true);
 		loadTMB();
-		runtime.index.gatherIngredients();
+		runtime.gatherIngredients();
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {
@@ -228,7 +228,7 @@ public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint
 	}
 
 	public static ITMBRuntime getRuntime() {
-		if (!runtime.isReady) {
+		if (!runtime.isReady()) {
 			throw new IllegalStateException("Attempt to get runtime before it is ready!");
 		}
 		return runtime;

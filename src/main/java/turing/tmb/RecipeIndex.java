@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.function.Function;
 
 public class RecipeIndex implements IRecipeIndex {
-	private final TMBRuntime runtime;
 	protected final List<IRecipeCategory<?>> categories = new ArrayList<>();
 	protected final List<String> hiddenCategories = new ArrayList<>();
 	protected final Map<IRecipeCategory<?>, List<ITypedIngredient<?>>> catalysts = new HashMap<>();
@@ -17,7 +16,7 @@ public class RecipeIndex implements IRecipeIndex {
 	protected final Map<ILookupContext, List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>>> recipeLookupCache = new HashMap<>();
 
 	public RecipeIndex(TMBRuntime runtime) {
-		this.runtime = runtime;
+
 	}
 
 	protected void clear() {
