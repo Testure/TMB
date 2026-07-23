@@ -21,6 +21,7 @@ import turing.tmb.api.recipe.IRecipeCategory;
 import turing.tmb.api.recipe.IRecipeTranslator;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.api.runtime.ITMBRuntime;
+import turing.tmb.plugin.BTATweaker;
 import turing.tmb.vanilla.VanillaPlugin;
 import turniplabs.halplibe.HalpLibe;
 import turniplabs.halplibe.event.defs.ClientEvents;
@@ -221,6 +222,9 @@ public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint
 		gatherPlugins(true);
 		loadTMB();
 		runtime.gatherIngredients();
+		if (FabricLoader.getInstance().isModLoaded("btatweaker")) {
+			BTATweaker.onReload();
+		}
 	}
 
 	public static void registerPlugin(ITMBPlugin plugin) {

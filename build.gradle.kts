@@ -54,6 +54,9 @@ lwjgl {
 dependencies {
     minecraft("::${libs.versions.bta.get()}")
 
+	implementation(project.files("libs/btatweaker-1.1.1.jar"))
+	compileOnly("org.luaj:luaj-jse:3.0.1")
+
 	runtimeOnly(libs.clientJar)
 	implementation(libs.loader)
 	// If you do not need Halplibe you can comment out or delete this line.
