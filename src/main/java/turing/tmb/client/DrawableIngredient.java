@@ -1,5 +1,6 @@
 package turing.tmb.client;
 
+import net.minecraft.client.render.renderer.GLRenderer;
 import turing.tmb.api.drawable.IDrawable;
 import turing.tmb.api.drawable.gui.IGuiHelper;
 import turing.tmb.api.ingredient.IIngredientRenderer;
@@ -25,6 +26,6 @@ public class DrawableIngredient<T> implements IDrawable {
 
 	@Override
 	public void draw(IGuiHelper helper) {
-		renderer.render(helper, ingredient, 0, 0);;
+		renderer.render(helper, ingredient, 0, 0);
 	}
 }
