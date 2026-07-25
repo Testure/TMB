@@ -30,6 +30,7 @@ import turing.tmb.util.RenderUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
@@ -117,12 +118,16 @@ public class TMBRenderer {
 		scroll(Mouse.getDWheel());
 	}
 
+	protected static void playClickSound(Minecraft mc) {
+		mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0F, 1.0F);
+	}
+
 	public static void mouseClicked(int mouseX, int mouseY, int width, int height, Minecraft mc) {
 		if (!show) return;
 		boolean left = leftButton.mouseClicked(mc, mouseX, mouseY);
 		boolean right = rightButton.mouseClicked(mc, mouseX, mouseY);
 		if (left || right) {
-			mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0F, 1.0F);
+			playClickSound(mc);
 			int change = 1;
 			if (left) {
 				change = -1;
@@ -135,7 +140,7 @@ public class TMBRenderer {
 		boolean left2 = favoritesLeftButton.mouseClicked(mc, mouseX, mouseY);
 		boolean right2 = favoritesRightButton.mouseClicked(mc, mouseX, mouseY);
 		if (left2 || right2) {
-			mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0F, 1.0F);
+			playClickSound(mc);
 			int change = 1;
 			if (left2) {
 				change = -1;
@@ -163,152 +168,65 @@ public class TMBRenderer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void renderItems(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
+	public static void renderList(Function<ITMBRuntime, Collection<ITypedIngredient<?>>> listToDisplay, int startX, int currentPage, int mouseX, int mouseY, int width, int height, Minecraft mc, @Nullable IGuiProperties properties) {
 		if (!initialized) {
 			init(mc);
 			return;
 		}
-		if (!show) {
-			return;
-		}
+		if (!show) return;
+		if (debounce > 0) debounce--;
 
-		Screen currentScreen = mc.currentScreen;
 		ITMBRuntime runtime = TMB.getRuntime();
-		Collection<ITypedIngredient<?>> toDisplay = getToDisplay(runtime);
+		Collection<ITypedIngredient<?>> list = listToDisplay.apply(runtime);
 
-		int startX = (int) (width / 3.5F);
-
-		if (currentScreen instanceof ScreenContainerAbstract) {
-			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - buttonWidth, startX);
+		int X = (int) (width / 3.5F);
+		Screen currentScreen = mc.currentScreen;
+		if (currentScreen instanceof ScreenContainerAbstract containerScreen) {
+			X = Math.min(((width / 2) - containerScreen.xSize / 2) - buttonWidth, X);
 		} else if (properties != null) {
-			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - buttonWidth, startX);
+			X = Math.min(((width / 2) - properties.guiXSize() / 2) - buttonWidth, X);
 		}
 
-		int itemsX = (startX / buttonWidth);
-		int itemsY = Math.min((height / buttonWidth) - 1, ((height - 28) / buttonWidth));
 		int xOffset = 0;
 		int yOffset = 1;
+		int itemsX = X / buttonWidth;
+		int itemsY = Math.min((height / buttonWidth) - 1, ((height - 28) / buttonWidth));
 
 		int itemsPerPage = itemsX * itemsY;
 		if (itemsPerPage <= 0) return;
-		pageCount = toDisplay.size() / itemsPerPage;
 
-		if (currentPage > pageCount) currentPage = pageCount;
+		int numPages = list.size() / itemsPerPage;
+		if (currentPage > numPages) currentPage = numPages;
 
-		List<ITypedIngredient<?>> pageList = toDisplay.stream().skip((long) itemsPerPage * currentPage).limit(itemsPerPage).collect(Collectors.toList());
+		if (startX == 0) {
+			favouritePageCount = numPages;
+		} else {
+			pageCount = numPages;
+			startX = X;
+		}
 
+		boolean isHoldingCtrl = Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
+		boolean isHoldingShift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 		TooltipBuilder tooltipBuilder = new TooltipBuilder();
-		boolean isCtrl = Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
-		boolean isShift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+
+		List<ITypedIngredient<?>> pageList = list.stream().skip((long) itemsPerPage * currentPage).limit(itemsPerPage).toList();
 
 		hoveredItem = null;
+
 		int i = 0;
-		loop: for (int y = 0; y < itemsY; y++) {
+		yLoop: for (int y = 0; y < itemsY; y++) {
 			for (int x = 0; x < itemsX; x++) {
-				if (i >= pageList.size()) break loop;
+				if (i >= pageList.size()) break yLoop;
+
 				ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) pageList.get(i);
-				int xOff = width - startX + (xOffset * 16) + (2 * xOffset);
+				int xOff = (startX != 0 ? width - startX : 0) + (xOffset * 16) + (2 * xOffset);
 				int yOff = 8 + (yOffset * 16) + (2 * yOffset);
 
 				ingredient.getType().getRenderer(runtime).render(runtime.getGuiHelper(), ingredient.getIngredient(), xOff, yOff);
 
 				if (mouseX >= xOff && mouseX < xOff + 16 && mouseY >= yOff && mouseY < yOff + 16) {
 					hoveredItem = ingredient;
-					ingredient.getType().getRenderer(runtime).getTooltip(tooltipBuilder, hoveredItem.getIngredient(), isCtrl, isShift);
-					RenderUtil.renderItemSelected(runtime.getGuiHelper(), xOff, yOff);
-				}
-
-				i++;
-				xOffset++;
-				if (xOffset >= itemsX) {
-					xOffset = 0;
-				}
-			}
-			yOffset++;
-		}
-
-		if (hoveredItem != null) {
-			if (!tooltipBuilder.getLines().isEmpty()) {
-				StringBuilder builder = new StringBuilder();
-				tooltipBuilder.getLines().forEach(str -> builder.append(str).append("\n"));
-				GLRenderer.pushFrame();
-				tooltip.render(builder.toString(), mouseX, mouseY, 8, -8);
-				GLRenderer.popFrame();
-			}
-
-			if (enabledRecipes && debounce <= 0) {
-				if (GameSettings.KEY_SHOW_RECIPE.isPressed()) {
-					debounce = 20;
-					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
-				} else if (GameSettings.KEY_SHOW_USAGE.isPressed()) {
-					debounce = 20;
-					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
-				}
-			}
-
-			if (TMBOptions.keyAddFavourite.isPressed()) {
-				if (runtime.getFavourites().stream().noneMatch(it -> it.matches(hoveredItem.getIngredient()))) {
-					runtime.getFavourites().add(hoveredItem);
-				}
-			}
-		}
-	}
-
-	public static void renderItems2(int mouseX, int mouseY, int width, int height, Minecraft mc, float pt, @Nullable IGuiProperties properties) {
-		if (!initialized) {
-			init(mc);
-			return;
-		}
-		if (!show) {
-			return;
-		}
-		if(debounce > 0) debounce--;
-
-		Screen currentScreen = mc.currentScreen;
-		ITMBRuntime runtime = TMB.getRuntime();
-		Collection<ITypedIngredient<?>> toDisplay = runtime.getFavourites();
-
-		int startX = (int) (width / 3.5F);
-
-		if (currentScreen instanceof ScreenContainerAbstract) {
-			startX = Math.min(((width / 2) - ((ScreenContainerAbstract) (currentScreen)).xSize / 2) - buttonWidth, startX);
-		} else if (properties != null) {
-			startX = Math.min(((width / 2) - properties.guiXSize() / 2) - buttonWidth, startX);
-		}
-
-		int itemsX = (startX / buttonWidth);
-		int itemsY = Math.min((height / buttonWidth) - 1, ((height - 28) / buttonWidth));
-		int xOffset = 0;
-		int yOffset = 1;
-
-		startX = 0;
-
-		int itemsPerPage = itemsX * itemsY;
-		if (itemsPerPage <= 0) return;
-		favouritePageCount = toDisplay.size() / itemsPerPage;
-
-		if (currentFavouritePage > favouritePageCount) currentFavouritePage = favouritePageCount;
-
-		List<ITypedIngredient<?>> pageList = toDisplay.stream().skip((long) itemsPerPage * currentFavouritePage).limit(itemsPerPage).collect(Collectors.toList());
-
-		TooltipBuilder tooltipBuilder = new TooltipBuilder();
-		boolean isCtrl = Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
-		boolean isShift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-
-		hoveredItem = null;
-		int i = 0;
-		loop: for (int y = 0; y < itemsY; y++) {
-			for (int x = 0; x < itemsX; x++) {
-				if (i >= pageList.size()) break loop;
-				ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) pageList.get(i);
-				int xOff = /*width -*/ startX + (xOffset * 16) + (2 * xOffset);
-				int yOff = 8 + (yOffset * 16) + (2 * yOffset);
-
-				ingredient.getType().getRenderer(runtime).render(runtime.getGuiHelper(), ingredient.getIngredient(), xOff, yOff);
-
-				if (mouseX >= xOff && mouseX < xOff + 16 && mouseY >= yOff && mouseY < yOff + 16) {
-					hoveredItem = ingredient;
-					ingredient.getType().getRenderer(runtime).getTooltip(tooltipBuilder, hoveredItem.getIngredient(), isCtrl, isShift);
+					ingredient.getType().getRenderer(runtime).getTooltip(tooltipBuilder, hoveredItem.getIngredient(), isHoldingCtrl, isHoldingShift);
 					RenderUtil.renderItemSelected(runtime.getGuiHelper(), xOff, yOff);
 				}
 
@@ -342,13 +260,21 @@ public class TMBRenderer {
 
 			if (TMBOptions.keyAddFavourite.isPressed() && debounce <= 0) {
 				debounce = 10;
-				if (runtime.getFavourites().stream().anyMatch(it -> it.matches(hoveredItem.getIngredient()))) {
-					runtime.getFavourites().removeIf(it -> it.matches(hoveredItem.getIngredient()));
-				} else {
+				if (runtime.getFavourites().stream().noneMatch(ingredient -> ingredient.matches(hoveredItem.getIngredient()))) {
 					runtime.getFavourites().add(hoveredItem);
+				} else if (startX == 0) {
+					runtime.getFavourites().removeIf(ingredient -> ingredient.matches(hoveredItem.getIngredient()));
 				}
 			}
 		}
+	}
+
+	public static void renderFavorites(int mouseX, int mouseY, int width, int height, Minecraft mc, @Nullable IGuiProperties properties) {
+		renderList(ITMBRuntime::getFavourites, 0, currentFavouritePage, mouseX, mouseY, width, height, mc, properties);
+	}
+
+	public static void renderItems(int mouseX, int mouseY, int width, int height, Minecraft mc, @Nullable IGuiProperties properties) {
+		renderList(TMBRenderer::getToDisplay, (int) (width / 3.5F), currentPage, mouseX, mouseY, width, height, mc, properties);
 	}
 
 	private static Collection<ITypedIngredient<?>> getToDisplay(ITMBRuntime runtime) {

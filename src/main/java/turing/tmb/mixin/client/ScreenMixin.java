@@ -30,9 +30,9 @@ public class ScreenMixin {
 		if (GuiHelper.extraScreens.containsKey(t.getClass().getCanonicalName())) {
 			IGuiProperties properties = GuiHelper.extraScreens.get(t.getClass().getCanonicalName()).apply(t);
 			TMBRenderer.renderHeader(false, mouseX, mouseY, width, height, mc, properties);
-			TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, partialTick, properties);
+			TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, properties);
 			TMBRenderer.renderHeader(true, mouseX, mouseY, width, height, mc, properties);
-			TMBRenderer.renderItems2(mouseX, mouseY, width, height, mc, partialTick, properties);
+			TMBRenderer.renderFavorites(mouseX, mouseY, width, height, mc, properties);
 		}
 	}
 
