@@ -24,6 +24,11 @@ public class VanillaPlugin implements ITMBPlugin {
 	public static MobInfoCategory mobInfoCategory;
 
 	@Override
+	public String getName() {
+		return "minecraft";
+	}
+
+	@Override
 	public void registerIngredientTypes(ITMBRuntime runtime) {
 		runtime.getIngredientTypeRegistry().registerIngredientType(VanillaTypes.ITEM_STACK, ItemStackIngredientRenderer.INSTANCE);
 		runtime.getIngredientTypeRegistry().registerIngredientType(VanillaTypes.LOOT_OBJECT, LootObjectIngredientRenderer.INSTANCE);

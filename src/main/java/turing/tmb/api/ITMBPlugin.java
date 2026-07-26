@@ -31,4 +31,8 @@ public interface ITMBPlugin {
 	default void registerRecipeFilling(ITMBRuntime runtime) {
 
 	}
+
+	default String getName() {
+		return this.getClass().getName();
+	}
 }

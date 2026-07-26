@@ -87,12 +87,14 @@ public class TMB implements ClientModInitializer, TMBEntrypoint, OptionsInitEntr
 		long time = System.currentTimeMillis();
 		LOGGER.info("Loading TMB");
 		for (ITMBPlugin plugin : plugins) {
+			LOGGER.info("Initializing plugin {}", plugin.getName());
 			plugin.registerExtraScreens(runtime.getGuiHelper());
 			plugin.registerIngredientTypes(runtime);
 			plugin.registerRecipeCategories(runtime);
 		}
 		runtime.loadLists();
 		for (ITMBPlugin plugin : plugins) {
+			LOGGER.info("Loading plugin {}", plugin.getName());
 			plugin.registerIngredients(runtime);
 			plugin.registerRecipeCatalysts(runtime);
 			plugin.registerRecipes(runtime);

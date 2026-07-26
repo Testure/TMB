@@ -11,6 +11,11 @@ public class BaseTMBPlugin implements ITMBPlugin {
 	public static InfoRecipeCategory infoCategory;
 
 	@Override
+	public String getName() {
+		return TMB.MOD_ID;
+	}
+
+	@Override
 	public void registerExtraScreens(IGuiHelper helper) {
 		helper.registerScreen(ScreenTMBRecipe.class, (s) -> new IGuiProperties() {
 			@Override
