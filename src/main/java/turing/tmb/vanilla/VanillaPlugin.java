@@ -39,7 +39,7 @@ public class VanillaPlugin implements ITMBPlugin {
 		IIngredientRegistry<ItemStack> registry = runtime.getRegistryForIngredientType(VanillaTypes.ITEM_STACK);
 		for (ItemStack stack : MenuInventoryCreative.creativeContents) {
 			if (stack != null && stack.itemID > 0) {
-				registry.registerIngredient(ModIDHelper.getModIDForItem(stack), stack.getDisplayName(), stack);
+				registry.registerIngredient(ModIDHelper.getModIDForItem(stack), stack.getItemKey(), stack);
 			}
 		}
 	}
