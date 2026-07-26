@@ -3,7 +3,7 @@ package turing.tmb;
 import com.mojang.nbt.NbtIo;
 import com.mojang.nbt.tags.CompoundTag;
 import com.mojang.nbt.tags.Tag;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.options.components.BooleanOptionComponent;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint {
+public class TMB implements ClientModInitializer, TMBEntrypoint, OptionsInitEntrypoint {
     public static final String MOD_ID = HalpLibe.registerMod("tmb",true);
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static boolean shouldShowModName = true;
@@ -44,8 +44,8 @@ public class TMB implements ModInitializer, TMBEntrypoint, OptionsInitEntrypoint
 	protected static final TMBRuntime runtime = new TMBRuntime();
 	protected static final List<ITMBPlugin> plugins = new ArrayList<>();
 
-    @Override
-    public void onInitialize() {
+	@Override
+	public void onInitializeClient() {
 		Key key = Key.of(MOD_ID);
 		ClientEvents.AFTER_CLIENT_START.listen(key, TMB::loadData);
 		CommandManager.registerCommand(new CommandReload());
