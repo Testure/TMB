@@ -12,9 +12,9 @@ plugins {
     java
 	`maven-publish`
 }
-val modVersion: Provider<String> = providers.gradleProperty("mod_version")
-val modGroup: Provider<String> = providers.gradleProperty("mod_group")
-val modName: Provider<String> = providers.gradleProperty("mod_name")
+val modVersion: Provider<String> = project.providers.gradleProperty("mod_version")
+val modGroup: Provider<String> = project.providers.gradleProperty("mod_group")
+val modName: Provider<String> = project.providers.gradleProperty("mod_name")
 
 val javaVersion: Provider<Int> = libs.versions.java.map { it.toInt() }
 
