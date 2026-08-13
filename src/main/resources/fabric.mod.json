@@ -27,9 +27,6 @@
 		],
 		"btatweakerPlugin": [
 			"turing.tmb.plugin.BTATweaker"
-		],
-		"initOptions": [
-			"turing.tmb.TMB"
 		]
 	},
   "mixins": [
