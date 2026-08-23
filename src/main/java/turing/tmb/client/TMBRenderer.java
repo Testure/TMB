@@ -249,10 +249,10 @@ public class TMBRenderer {
 
 			if (enabledRecipes && debounce <= 0) {
 				if (GameSettings.KEY_SHOW_RECIPE.isPressed()) {
-					debounce = 20;
+					debounce = 60;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
 				} else if (GameSettings.KEY_SHOW_USAGE.isPressed()) {
-					debounce = 20;
+					debounce = 60;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.INPUT);
 				}
 			}
