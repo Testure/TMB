@@ -14,6 +14,7 @@ import turing.tmb.TMB;
 import turing.tmb.TypedIngredient;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.client.TMBRenderer;
+import turing.tmb.util.GuiHelper;
 
 @Mixin(value =  ScreenContainerAbstract.class, remap = false)
 public abstract class ScreenContainerAbstractMixin extends Screen {
@@ -29,6 +30,8 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(int mouseX, int mouseY, float pt, CallbackInfo ci) {
+		ScreenContainerAbstract t = (ScreenContainerAbstract) (Object) this;
+		if (GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
 		TMBRenderer.renderHeader(false, mouseX, mouseY, width, height, mc, null);
 		TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, null);
 		TMBRenderer.renderHeader(true, mouseX, mouseY, width, height, mc, null);
@@ -37,16 +40,22 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {
+		ScreenContainerAbstract t = (ScreenContainerAbstract) (Object) this;
+		if (GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
 		TMBRenderer.onTick();
 	}
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"))
 	public void mouseClicked(int mouseX, int mouseY, int buttonNum, CallbackInfo ci) {
+		ScreenContainerAbstract t = (ScreenContainerAbstract) (Object) this;
+		if (GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
 		TMBRenderer.mouseClicked(mouseX, mouseY, width, height, mc);
 	}
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(char eventCharacter, int eventKey, int mx, int my, CallbackInfo ci) {
+		ScreenContainerAbstract t = (ScreenContainerAbstract) (Object) this;
+		if (GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
 		TMBRenderer.keyTyped(eventCharacter, eventKey, mx, my);
 		if (TMBRenderer.search != null && TMBRenderer.search.isFocused) {
 			ci.cancel();
