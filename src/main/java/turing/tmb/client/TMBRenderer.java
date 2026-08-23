@@ -94,6 +94,7 @@ public class TMBRenderer {
 			search.xPosition = width / 2 - search.width / 2;
 			search.yPosition = height - search.height - 4;
 			search.drawTextBox();
+			search.updateCursor(mc, mouseX, mouseY);
 		}
 	}
 
@@ -112,9 +113,7 @@ public class TMBRenderer {
 	public static void onTick() {
 		if (!show) return;
 		if(search == null) return;
-		if (search.isFocused) {
-			search.updateCursorCounter();
-		}
+		search.updateCursorCounter();
 		scroll(Mouse.getDWheel());
 	}
 
