@@ -213,6 +213,7 @@ public class TMB implements ClientModInitializer, TMBEntrypoint {
 
 	private static void gatherPlugins(boolean isReload) {
 		FabricLoader.getInstance().getEntrypoints("gatherTMBPlugins", TMBEntrypoint.class).forEach(tmbEntrypoint -> {
+			LOGGER.info("Found plugin class '{}'", tmbEntrypoint.getClass().getCanonicalName());
 			tmbEntrypoint.onGatherPlugins(isReload);
 		});
 	}
