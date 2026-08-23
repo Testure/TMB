@@ -7,11 +7,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import turing.tmb.client.TMBRenderer;
+import turing.tmb.util.GuiHelper;
 
 @Mixin(value =  ScreenInventory.class, remap = false)
 public abstract class ScreenInventoryMixin extends Screen {
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {
+		Screen t = this;
+		if (GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
 		TMBRenderer.onTick();
 	}
 }
