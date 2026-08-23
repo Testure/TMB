@@ -1,8 +1,10 @@
 package turing.tmb.vanilla;
 
 import net.minecraft.client.gui.guidebook.mobs.MobInfoRegistry;
+import net.minecraft.core.item.ItemStack;
 import turing.tmb.RecipeTranslator;
 import turing.tmb.api.VanillaTypes;
+import turing.tmb.api.ingredient.IIngredientTypeWithSubtypes;
 import turing.tmb.api.ingredient.ITypedIngredient;
 
 public class MobInfoRecipeTranslator extends RecipeTranslator<MobInfoRegistry.MobInfo> {
@@ -11,18 +13,23 @@ public class MobInfoRecipeTranslator extends RecipeTranslator<MobInfoRegistry.Mo
 	}
 
 	@Override
-	public boolean isValidInput(ITypedIngredient<?> ingredient) {
+	public <I> boolean isValidInput(ITypedIngredient<I> ingredient) {
 		return false;
 	}
 
 	@Override
-	public boolean isOutput(ITypedIngredient<?> ingredient) {
+	public <I> boolean isOutput(ITypedIngredient<I> ingredient) {
+		ItemStack stack = null;
 		if (ingredient.getType() == VanillaTypes.ITEM_STACK) {
-			if (recipe.getDrops() != null) {
-				for (MobInfoRegistry.MobDrop drop : recipe.getDrops()) {
-					if (ingredient.getCastIngredient(VanillaTypes.ITEM_STACK).isItemEqual(drop.getStack())) {
-						return true;
-					}
+			stack = ingredient.getCastIngredient(VanillaTypes.ITEM_STACK);
+		}
+		if (ingredient.getType() instanceof IIngredientTypeWithSubtypes<?, I> type && type.getIngredientBaseClass() == ItemStack.class) {
+			stack = ingredient.getBaseIngredient((IIngredientTypeWithSubtypes<ItemStack, I>) type);
+		}
+		if (recipe.getDrops() != null && stack != null) {
+			for (MobInfoRegistry.MobDrop drop : recipe.getDrops()) {
+				if (stack.isItemEqual(drop.getStack())) {
+					return true;
 				}
 			}
 		}

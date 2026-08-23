@@ -3,9 +3,9 @@ package turing.tmb.api.recipe;
 import turing.tmb.api.ingredient.ITypedIngredient;
 
 public interface IRecipeTranslator<T> {
-	boolean isValidInput(ITypedIngredient<?> ingredient);
+	<I> boolean isValidInput(ITypedIngredient<I> ingredient);
 
-	boolean isOutput(ITypedIngredient<?> ingredient);
+	<I> boolean isOutput(ITypedIngredient<I> ingredient);
 
 	T getOriginal();
 }

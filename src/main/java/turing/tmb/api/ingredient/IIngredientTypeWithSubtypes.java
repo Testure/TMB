@@ -14,9 +14,13 @@ public interface IIngredientTypeWithSubtypes<B, T> extends IIngredientType<T> {
 
 	String getName(T ingredient);
 
-	void add(T ingredient, int amount);
+	default void add(T ingredient, int amount) {
+
+	}
+
+	default boolean canAdd() {
+		return false;
+	}
 
 	int getAmount(T ingredient);
-
-	boolean matches(T ingredient, Object otherIngredient);
 }

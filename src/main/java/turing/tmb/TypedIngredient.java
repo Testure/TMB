@@ -46,32 +46,29 @@ public class TypedIngredient<T> implements ITypedIngredient<T> {
 
 	@Override
 	public String getName() {
-		if(getType() instanceof IIngredientTypeWithSubtypes){
-			return ((IIngredientTypeWithSubtypes<?, T>) getType()).getName(ingredient);
+		if(getType() instanceof IIngredientTypeWithSubtypes<?, T> subtypes){
+			return subtypes.getName(ingredient);
 		}
 		return "";
 	}
 
 	@Override
 	public void addAmount(int amount) {
-		if(getType() instanceof IIngredientTypeWithSubtypes){
-			((IIngredientTypeWithSubtypes<?, T>) getType()).add(ingredient, amount);
+		if(getType() instanceof IIngredientTypeWithSubtypes<?, T> subtypes && subtypes.canAdd()){
+			subtypes.add(ingredient, amount);
 		}
 	}
 
 	@Override
 	public int getAmount() {
-		if(getType() instanceof IIngredientTypeWithSubtypes){
-			return ((IIngredientTypeWithSubtypes<?, T>) getType()).getAmount(ingredient);
+		if(getType() instanceof IIngredientTypeWithSubtypes<?, T> subtypes){
+			return subtypes.getAmount(ingredient);
 		}
 		return 1;
 	}
 
 	public boolean matches(Object ingredient){
-		if(getType() instanceof IIngredientTypeWithSubtypes){
-			return ((IIngredientTypeWithSubtypes<?, T>) getType()).matches(this.ingredient, ingredient);
-		}
-		return false;
+		return getType().matches(this.ingredient, ingredient);
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import turing.tmb.api.runtime.ITMBRuntime;
 
 import java.util.Optional;
 
-@FunctionalInterface
 public interface IIngredientType<T> {
 	Class<? extends T> getIngredientClass();
 
@@ -36,4 +35,6 @@ public interface IIngredientType<T> {
 		}
 		return null;
 	}
+
+	boolean matches(T ingredient, Object otherIngredient);
 }

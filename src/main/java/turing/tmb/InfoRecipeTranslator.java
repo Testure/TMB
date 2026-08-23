@@ -8,12 +8,12 @@ public class InfoRecipeTranslator extends RecipeTranslator<IngredientInfo> {
 	}
 
 	@Override
-	public boolean isValidInput(ITypedIngredient<?> ingredient) {
-		return ingredient.hashCode() == recipe.getIngredient().hashCode();
+	public <I> boolean isValidInput(ITypedIngredient<I> ingredient) {
+		return ingredient.matches(recipe.getIngredient());
 	}
 
 	@Override
-	public boolean isOutput(ITypedIngredient<?> ingredient) {
-		return ingredient.hashCode() == recipe.getIngredient().hashCode();
+	public <I> boolean isOutput(ITypedIngredient<I> ingredient) {
+		return ingredient.matches(recipe.getIngredient());
 	}
 }
