@@ -77,7 +77,7 @@ public class IngredientIndex implements IIngredientIndex {
 				if (!query.getNamespaceFilter().isEmpty()) {
 					if (!t.getNamespace().toLowerCase().contains(query.getNamespaceFilter().toLowerCase())) return false;
 				}
-				return t.getUid().toLowerCase().contains(query.getText().toLowerCase());
+				return t.getUid().toLowerCase().contains(query.getText().toLowerCase()) || t.getName().toLowerCase().contains(query.getText().toLowerCase());
 			}).collect(Collectors.toList());
 			if (searchCache.size() > 10) {
 				searchCache.remove(searchCache.keySet().stream().findFirst().get());
