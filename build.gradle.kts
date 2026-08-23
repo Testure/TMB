@@ -33,10 +33,7 @@ repositories {
     maven("https://maven.thesignalumproject.net/infrastructure") { name = "SignalumMavenInfrastructure" }
     maven("https://maven.thesignalumproject.net/releases") { name = "SignalumMavenReleases" }
 	maven("https://maven.thesignalumproject.net/nightly") { name = "SignalumMavenNightly" }
-    ivy("https://github.com/Better-than-Adventure") {
-        patternLayout { artifact("[organisation]/releases/download/[revision]/[module]-bta-[revision].jar") }
-        metadataSources { artifact() }
-    }
+
     ivy("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/") {
         patternLayout { artifact("/v[revision]/client.jar") }
         metadataSources { artifact() }
@@ -146,7 +143,7 @@ configurations.configureEach { exclude(group = "org.lwjgl.lwjgl") }
 
 
 
-publishing {
+/*publishing {
 	if(checkVersion(modGroup, modName, modVersion)){
 		repositories {
 			maven {
@@ -168,7 +165,7 @@ publishing {
 			}
 		}
 	}
-}
+}*/
 
 fun checkVersion(group: String, name: String, version: String): Boolean {
 	return !(rootProject.property("check_versions") as String).toBoolean() || try {
@@ -184,7 +181,8 @@ fun checkVersion(group: String, name: String, version: String): Boolean {
 			true
 		}
 	} catch (e: IOException) {
-		System.err.println(e.message)
+		System.err.println("Failed to check version for $group.$name!")
+		e.printStackTrace()
 		true
 	}
 }
