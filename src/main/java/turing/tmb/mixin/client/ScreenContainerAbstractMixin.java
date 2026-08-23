@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import turing.tmb.TMB;
 import turing.tmb.TypedIngredient;
+import turing.tmb.api.drawable.gui.IGuiProperties;
+import turing.tmb.api.drawable.gui.IScreenHandler;
 import turing.tmb.api.recipe.RecipeIngredientRole;
 import turing.tmb.client.TMBRenderer;
 import turing.tmb.util.GuiHelper;
@@ -32,10 +34,15 @@ public abstract class ScreenContainerAbstractMixin extends Screen {
 	public void render(int mouseX, int mouseY, float pt, CallbackInfo ci) {
 		ScreenContainerAbstract t = (ScreenContainerAbstract) (Object) this;
 		if (GuiHelper.screenBlacklist.contains(t.getClass().getCanonicalName())) return;
-		TMBRenderer.renderHeader(false, mouseX, mouseY, width, height, mc, null);
-		TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, null);
-		TMBRenderer.renderHeader(true, mouseX, mouseY, width, height, mc, null);
-		TMBRenderer.renderFavorites(mouseX, mouseY, width, height, mc, null);
+		IScreenHandler<?> handler = GuiHelper.extraScreens.get(t.getClass().getCanonicalName());
+		IGuiProperties properties = null;
+		if (handler != null) {
+			properties = handler.apply(t);
+		}
+		TMBRenderer.renderHeader(false, mouseX, mouseY, width, height, mc, properties);
+		TMBRenderer.renderItems(mouseX, mouseY, width, height, mc, properties);
+		TMBRenderer.renderHeader(true, mouseX, mouseY, width, height, mc, properties);
+		TMBRenderer.renderFavorites(mouseX, mouseY, width, height, mc, properties);
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
