@@ -327,7 +327,7 @@ public class ScreenTMBRecipe extends Screen {
 							new DrawableIngredient<>(ingredient.getIngredient(), renderer).draw(TMB.getRuntime().getGuiHelper());
 							drawnIngredients.add(Pair.of(ingredient, Pair.of(X, Y)));
 							recipeIngredients.add(new RecipeIngredient(ingredient, recipe, category, slot.getRole()));
-							if (mx >= X && mx < X + 18 && my >= Y && my < Y + 18) {
+							if (mx >= X && mx < X + 16 && my >= Y && my < Y + 16) {
 								int mouseX = mx - ((this.width - this.xSize) / 2) - 4;
 								int mouseY = my - ((this.height - this.ySize) / 2) - 14 - ((category.getBackground().getHeight() + 4) * i);
 								renderer.getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
@@ -402,8 +402,10 @@ public class ScreenTMBRecipe extends Screen {
 		}
 
 		for (Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn : drawnIngredients) {
-			if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
-				RenderUtil.renderItemSelected(TMB.getRuntime().getGuiHelper(), drawn.getRight().getLeft(), drawn.getRight().getRight());
+			int drawnX = drawn.getRight().getLeft();
+			int drawnY = drawn.getRight().getRight();
+			if (mx >= drawnX && my >= drawnY && mx < drawnX + 16 && my < drawnY + 16) {
+				RenderUtil.renderItemSelected(TMB.getRuntime().getGuiHelper(), drawnX, drawnY);
 			}
 		}
 
