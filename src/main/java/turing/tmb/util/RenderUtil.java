@@ -20,7 +20,7 @@ public class RenderUtil {
 
 		ItemModel model = ItemModelDispatcher.getInstance().getDispatch(stack);
 		GLRenderer.modelM4f().translate(x, y, 0);
-		GLRenderer.modelM4f().scale(scaleX, scaleY, 1);
+		GLRenderer.modelM4f().scale(scaleX, scaleY, 0);
 		try {
 			model.renderGui(GLRenderer.getTessellator(), null, stack,0,0, LightIndexHelper.lightIndex2i(15,15), 1);
 		} catch (Exception e) {
