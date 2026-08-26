@@ -424,19 +424,28 @@ public class ScreenTMBRecipe extends Screen {
 		GLRenderer.setColor4f(1,1,1,1);
 
 		for (int i = 0; i < catalysts.size(); i++) {
-			this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/gui_vanilla.png").bind();
-
-			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
 			int x = ((this.width - this.xSize) / 2) - 20;
 			int y = ((this.height - this.ySize) / 2) + (4 + (22 * i));
 
-			this.drawTexturedModalRect(x, y, 0, 0, 22, 22);
+			this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/catalyst.png").bind();
+			this.drawTexturedModalRect(x, (double) y, 0, 0, 24, 24, 256, 256);
 
-			new DrawableIngredient<>(ingredient.getIngredient(), ingredient.getType().getRenderer(TMB.getRuntime())).draw(TMB.getRuntime().getGuiHelper(), x + 3, y + 3);
-			drawnIngredients.add(Pair.of(ingredient, Pair.of(x + 3, y + 3)));
+			int slotX = x + 4;
+			int slotY = y + 3;
+
+			this.mc.textureManager.loadTexture("/assets/minecraft/textures/gui/container/crafting.png").bind();
+			this.drawTexturedModalRect(slotX, slotY, 7, 83, 18, 18);
+
+			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
+
+			slotX++;
+			slotY++;
+
+			new DrawableIngredient<>(ingredient.getIngredient(), ingredient.getType().getRenderer(TMB.getRuntime())).draw(TMB.getRuntime().getGuiHelper(), slotX, slotY);
+			drawnIngredients.add(Pair.of(ingredient, Pair.of(slotX, slotY)));
 			recipeIngredients.add(new RecipeIngredient(ingredient,null, null, RecipeIngredientRole.CATALYST));
 
-			if (mx >= x && mx < x + 22 && my >= y && my < y + 22) {
+			if (mx >= slotX && mx < slotX + 16 && my >= slotY && my < slotY + 16) {
 				ingredient.getType().getRenderer(TMB.getRuntime()).getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
 			}
 		}
