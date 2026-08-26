@@ -54,7 +54,7 @@ public abstract class AbstractCraftingRecipeCategory<R extends RecipeEntryCrafti
 	public void drawRecipe(ITMBRuntime runtime, T recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context) {
 		getIngredients(recipe, layout, context, ingredients);
 
-		arrow.draw(runtime.getGuiHelper(), x + 62, (background.getHeight() / 2) + 6);
+		arrow.draw(runtime.getGuiHelper(), x + 60, (background.getHeight() / 2) + 1);
 	}
 
 	abstract void addInputs(ITMBRuntime runtime, T recipe, IRecipeLayout layout, List<IIngredientList> ingredients, ILookupContext context);
@@ -68,7 +68,7 @@ public abstract class AbstractCraftingRecipeCategory<R extends RecipeEntryCrafti
 	@Override
 	public IRecipeLayout getRecipeLayout() {
 		return new RecipeLayoutBuilder()
-			.addOutputSlot(0, VanillaTypes.ITEM_STACK).setPosition(x + 92, (background.getHeight() / 2) + 6).build()
+			.addOutputSlot(0, VanillaTypes.ITEM_STACK).setPosition(x + 92, (background.getHeight() / 2)).build()
 			.addInputSlot(1, VanillaTypes.ITEM_STACK).setPosition(x, (getBackground().getHeight() / 2) - 18).build()
 			.addInputSlot(2, VanillaTypes.ITEM_STACK).setPosition(x + 18, (getBackground().getHeight() / 2) - 18).build()
 			.addInputSlot(3, VanillaTypes.ITEM_STACK).setPosition(x + 36, (getBackground().getHeight() / 2) - 18).build()
