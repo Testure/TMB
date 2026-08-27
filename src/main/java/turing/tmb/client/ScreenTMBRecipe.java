@@ -303,10 +303,13 @@ public class ScreenTMBRecipe extends Screen {
 							}
 						}
 					}
-					if(defaultRecipe){
-						slot.draw(TMB.getRuntime().getGuiHelper(),1,1,0,1);
-					} else {
-						slot.draw(TMB.getRuntime().getGuiHelper());
+					slot.draw(TMB.getRuntime().getGuiHelper());
+					if (defaultRecipe) {
+						GLRenderer.pushFrame();
+						GLRenderer.modelM4f().translate(0, 0, 2);
+						mc.textureManager.loadTexture("/assets/tmb/textures/gui/star.png").bind();
+						drawTexturedModalRect(12D, 1, 0, 0, 6, 6, 256, 256);
+						GLRenderer.popFrame();
 					}
 					if (ingredients.size() > I) {
 						GLRenderer.modelM4f().translate(1, 1, 0);
@@ -314,6 +317,7 @@ public class ScreenTMBRecipe extends Screen {
 						Y++;
 						IIngredientList list = ingredients.get(I);
 						ITypedIngredient<?> ingredient = TMB.getRuntime().getGuiHelper().getCycleTimer().getCycledItem(list.getIngredients());
+						boolean isItemGroup = (list instanceof IngredientList Ingredientlist && Ingredientlist.itemGroup != null);
 
 						if (lookupContext != null) {
 							Optional<ITypedIngredient<?>> found = list.getIngredients().stream().filter((t) -> t.hashCode() == lookupContext.getIngredient().hashCode()).findFirst();
@@ -327,13 +331,16 @@ public class ScreenTMBRecipe extends Screen {
 							new DrawableIngredient<>(ingredient.getIngredient(), renderer).draw(TMB.getRuntime().getGuiHelper());
 							drawnIngredients.add(Pair.of(ingredient, Pair.of(X, Y)));
 							recipeIngredients.add(new RecipeIngredient(ingredient, recipe, category, slot.getRole()));
-							if (mx >= X && mx < X + 18 && my >= Y && my < Y + 18) {
+							if (isItemGroup) {
+								drawStringNoShadow(mc.font, "*", 1, 10, 0xFFFFFF);
+							}
+							if (mx >= X && mx < X + 16 && my >= Y && my < Y + 16) {
 								int mouseX = mx - ((this.width - this.xSize) / 2) - 4;
 								int mouseY = my - ((this.height - this.ySize) / 2) - 14 - ((category.getBackground().getHeight() + 4) * i);
 								renderer.getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
 								slot.getTooltips(tooltipBuilder, ingredient.getIngredient(), mouseX, mouseY, isCtrl, isShift);
 								tooltipBuilder.addAll(category.getTooltips(recipe, slot, mouseX, mouseY));
-								if (list instanceof IngredientList && ((IngredientList) list).itemGroup != null) {
+								if (isItemGroup) {
 									tooltipBuilder.add(TextFormatting.formatted(I18n.getInstance().translateKeyAndFormat("tmb.tooltip.itemGroup", ((IngredientList) list).itemGroup), TextFormatting.LIGHT_GRAY));
 								}
 								if(slot.getRole() == RecipeIngredientRole.OUTPUT){
@@ -402,8 +409,10 @@ public class ScreenTMBRecipe extends Screen {
 		}
 
 		for (Pair<ITypedIngredient<?>, Pair<Integer, Integer>> drawn : drawnIngredients) {
-			if (mx >= drawn.getRight().getLeft() && my >= drawn.getRight().getRight() && mx < drawn.getRight().getLeft() + 16 && my < drawn.getRight().getRight() + 16) {
-				RenderUtil.renderItemSelected(TMB.getRuntime().getGuiHelper(), drawn.getRight().getLeft(), drawn.getRight().getRight());
+			int drawnX = drawn.getRight().getLeft();
+			int drawnY = drawn.getRight().getRight();
+			if (mx >= drawnX && my >= drawnY && mx < drawnX + 16 && my < drawnY + 16) {
+				RenderUtil.renderItemSelected(TMB.getRuntime().getGuiHelper(), drawnX, drawnY);
 			}
 		}
 
@@ -424,19 +433,28 @@ public class ScreenTMBRecipe extends Screen {
 		GLRenderer.setColor4f(1,1,1,1);
 
 		for (int i = 0; i < catalysts.size(); i++) {
-			this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/gui_vanilla.png").bind();
-
-			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
 			int x = ((this.width - this.xSize) / 2) - 20;
 			int y = ((this.height - this.ySize) / 2) + (4 + (22 * i));
 
-			this.drawTexturedModalRect(x, y, 0, 0, 22, 22);
+			this.mc.textureManager.loadTexture("/assets/tmb/textures/gui/catalyst.png").bind();
+			this.drawTexturedModalRect(x, (double) y, 0, 0, 24, 24, 256, 256);
 
-			new DrawableIngredient<>(ingredient.getIngredient(), ingredient.getType().getRenderer(TMB.getRuntime())).draw(TMB.getRuntime().getGuiHelper(), x + 3, y + 3);
-			drawnIngredients.add(Pair.of(ingredient, Pair.of(x + 3, y + 3)));
+			int slotX = x + 4;
+			int slotY = y + 3;
+
+			this.mc.textureManager.loadTexture("/assets/minecraft/textures/gui/container/crafting.png").bind();
+			this.drawTexturedModalRect(slotX, slotY, 7, 83, 18, 18);
+
+			ITypedIngredient<Object> ingredient = (ITypedIngredient<Object>) catalysts.get(i);
+
+			slotX++;
+			slotY++;
+
+			new DrawableIngredient<>(ingredient.getIngredient(), ingredient.getType().getRenderer(TMB.getRuntime())).draw(TMB.getRuntime().getGuiHelper(), slotX, slotY);
+			drawnIngredients.add(Pair.of(ingredient, Pair.of(slotX, slotY)));
 			recipeIngredients.add(new RecipeIngredient(ingredient,null, null, RecipeIngredientRole.CATALYST));
 
-			if (mx >= x && mx < x + 22 && my >= y && my < y + 22) {
+			if (mx >= slotX && mx < slotX + 16 && my >= slotY && my < slotY + 16) {
 				ingredient.getType().getRenderer(TMB.getRuntime()).getTooltip(tooltipBuilder, ingredient.getIngredient(), isCtrl, isShift);
 			}
 		}
