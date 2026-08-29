@@ -3,6 +3,7 @@ package turing.tmb.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.PlayerLocal;
 import net.minecraft.client.gui.ButtonElement;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.TextFieldElement;
@@ -10,6 +11,9 @@ import net.minecraft.client.gui.TooltipElement;
 import net.minecraft.client.gui.container.ScreenContainerAbstract;
 import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.player.gamemode.Gamemode;
+import net.minecraft.core.player.gamemode.Gamemodes;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.MathHelper;
 import org.jetbrains.annotations.Nullable;
@@ -248,6 +252,18 @@ public class TMBRenderer {
 			}
 
 			if (enabledRecipes && debounce <= 0) {
+				if(Mouse.isButtonDown(0)){
+					debounce = 20;
+					PlayerLocal player = Minecraft.getMinecraft().thePlayer;
+					if(hoveredItem.getItemStack().isPresent() && player.gamemode == Gamemodes.CREATIVE){
+						ItemStack stack = hoveredItem.getItemStack().get();
+						if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+							player.sendChatMessage("/give "+player.username+" "+ stack.getItem().namespaceID +" "+ stack.getMaxStackSize());
+						} else {
+							player.sendChatMessage("/give "+player.username+" "+ stack.getItem().namespaceID +" 1");
+						}
+					}
+				}
 				if (GameSettings.KEY_SHOW_RECIPE.isPressed()) {
 					debounce = 60;
 					runtime.showRecipe(hoveredItem, RecipeIngredientRole.OUTPUT);
