@@ -95,6 +95,7 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 		this.tabList.addAll(temp.values());
+		this.tabList.sort(Comparator.comparingInt((category) -> category.getNamespace().equals("minecraft") ? tabList.size() : tabList.indexOf(category)));
 
 		temp.clear();
 
