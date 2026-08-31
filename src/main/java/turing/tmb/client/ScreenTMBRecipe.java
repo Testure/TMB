@@ -95,7 +95,7 @@ public class ScreenTMBRecipe extends Screen {
 			}
 		}
 		this.tabList.addAll(temp.values());
-		this.tabList.sort(Comparator.comparingInt((category) -> category.getNamespace().equals("minecraft") ? tabList.size() : tabList.indexOf(category)));
+		this.tabList.sort(Comparator.comparingInt((category) -> category.getNamespace().equalsIgnoreCase("minecraft") ? -1 : tabList.indexOf(category)));
 
 		temp.clear();
 
@@ -274,7 +274,7 @@ public class ScreenTMBRecipe extends Screen {
 
 			GLRenderer.pushFrame();
 
-			GLRenderer.modelM4f().translate(x + 4, y + 14, 0);
+			GLRenderer.modelM4f().translate(X, Y, 0);
 			IRecipeLayout layout = category.getRecipeLayout();
 			List<IRecipeTranslator<?>> recipes = recipeList.stream().filter((p) -> p.getLeft().hashCode() == category.hashCode()).map(Pair::getRight).collect(Collectors.toList());
 			for (int i = 0; i < this.recipesPerPage; i++) {
@@ -472,7 +472,7 @@ public class ScreenTMBRecipe extends Screen {
 		if (category.getIcon() != null) {
 			category.getIcon().draw(TMB.getRuntime().getGuiHelper(), x + 10, y + 4);
 		}
-		if (mx >= x && my >= y && mx < x + 24 && my < y + 24) {
+		if (mx >= x + 8 && my >= y && mx < x + 28 && my < y + 20) {
 			tooltip = I18n.getInstance().translateKey(category.getName()) + "\n" + TextFormatting.formatted(category.getNamespace(), TextFormatting.BLUE);
 		}
 	}
