@@ -52,7 +52,7 @@ public class MobInfoCategory implements IRecipeCategory<MobInfoRecipeTranslator>
 	}
 
 	@Override
-	public String getName() {
+	public String getTitleKey() {
 		return "guidebook.section.mob";
 	}
 

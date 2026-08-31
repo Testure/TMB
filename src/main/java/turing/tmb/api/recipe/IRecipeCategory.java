@@ -15,7 +15,14 @@ public interface IRecipeCategory<R extends IRecipeTranslator<?>> {
 		return null;
 	}
 
-	String getName();
+	default String getTitleKey() {
+		return getName();
+	}
+
+	@Deprecated
+	default String getName() {
+		return getTitleKey();
+	}
 
 	String getNamespace();
 

@@ -43,7 +43,7 @@ public class RecipeIndex implements IRecipeIndex {
 
 		List<Pair<IRecipeCategory<?>, IRecipeTranslator<?>>> list = context.getRole() == RecipeIngredientRole.INPUT ? getRecipesCatalyst(context.getIngredient(), false) : new ArrayList<>();
 		for (Map.Entry<IRecipeCategory<?>, List<IRecipeTranslator<?>>> entry : recipeLists.entrySet()) {
-			if (!hiddenCategories.contains(entry.getKey().getName())) {
+			if (!hiddenCategories.contains(entry.getKey().getTitleKey())) {
 				for (IRecipeTranslator<?> translator : entry.getValue()) {
 					boolean isIn = false;
 					switch (context.getRole()) {
@@ -99,7 +99,7 @@ public class RecipeIndex implements IRecipeIndex {
 		List<IRecipeCategory<?>> categoryList = getCategoriesForCatalyst(ingredient);
 
 		for (IRecipeCategory<?> category : categoryList) {
-			if (!hiddenCategories.contains(category.getName())) {
+			if (!hiddenCategories.contains(category.getTitleKey())) {
 				for (IRecipeTranslator<?> translator : recipeLists.get(category)) {
 					pairList.add(Pair.of(category, translator));
 				}

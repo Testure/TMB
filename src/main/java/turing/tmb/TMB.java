@@ -137,7 +137,7 @@ public class TMB implements ClientModInitializer, TMBEntrypoint {
 			ingredientTag.putString("uid", key.ingredient.getUid());
 			defaultRecipeTag.put("ingredient", ingredientTag);
 			categoryTag.putString("namespace", key.category.getNamespace());
-			categoryTag.putString("name", key.category.getName());
+			categoryTag.putString("name", key.category.getTitleKey());
 			defaultRecipeTag.put("category", categoryTag);
 			defaultRecipes.put(String.valueOf(i), defaultRecipeTag);
 			i++;
@@ -184,7 +184,7 @@ public class TMB implements ClientModInitializer, TMBEntrypoint {
 
 				Optional<IRecipeCategory<?>> category = TMB.getRuntime().getRecipeIndex().getAllCategories().stream()
 					.filter(it ->
-						it.getName().equals(categoryTag.getString("name"))
+						it.getTitleKey().equals(categoryTag.getString("name"))
 							&& it.getNamespace().equals(categoryTag.getString("namespace"))).findFirst();
 
 				Optional<IRecipeTranslator<?>> recipe = category

@@ -44,7 +44,7 @@ public class FurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol, ItemS
 	}
 
 	@Override
-	public String getName() {
+	public String getTitleKey() {
 		return title;
 	}
 

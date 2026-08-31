@@ -44,7 +44,7 @@ public class BlastFurnaceRecipeCategory<R extends RecipeEntryBase<RecipeSymbol[]
 	}
 
 	@Override
-	public String getName() {
+	public String getTitleKey() {
 		return title;
 	}
 

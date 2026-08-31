@@ -44,7 +44,7 @@ public class ShapelessCraftingRecipeCategory extends AbstractCraftingRecipeCateg
 	}
 
 	@Override
-	public String getName() {
+	public String getTitleKey() {
 		return "tmb.category.shapelessCrafting";
 	}
 }

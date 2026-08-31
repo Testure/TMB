@@ -29,7 +29,7 @@ public class InfoRecipeCategory implements IRecipeCategory<InfoRecipeTranslator>
 	}
 
 	@Override
-	public String getName() {
+	public String getTitleKey() {
 		return "tmb.category.info";
 	}
 

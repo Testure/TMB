@@ -42,7 +42,7 @@ public class TrommelRecipeCategory implements IRecipeCategory<TrommelRecipeTrans
 	}
 
 	@Override
-	public String getName() {
+	public String getTitleKey() {
 		return "guidebook.section.trommel";
 	}
 

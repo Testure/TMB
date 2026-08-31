@@ -370,7 +370,7 @@ public class ScreenTMBRecipe extends Screen {
 			GLRenderer.popFrame();
 
 			GLRenderer.modelM4f().translate(x, y + 4, 0);
-			String text = I18n.getInstance().translateKey(category.getName());
+			String text = I18n.getInstance().translateKey(category.getTitleKey());
 			int textX = ((xSize / 2) - mc.font.stringWidth(text) / 2);
 			drawStringShadow(mc.font, text, textX + 1, 1, 0xFFFFFF);
 			if (mx >= x && mx < x + xSize && my >= y && my < y + mc.font.getFont().fontHeight()) {
@@ -473,7 +473,7 @@ public class ScreenTMBRecipe extends Screen {
 			category.getIcon().draw(TMB.getRuntime().getGuiHelper(), x + 10, y + 4);
 		}
 		if (mx >= x + 8 && my >= y && mx < x + 28 && my < y + 20) {
-			tooltip = I18n.getInstance().translateKey(category.getName()) + "\n" + TextFormatting.formatted(category.getNamespace(), TextFormatting.BLUE);
+			tooltip = I18n.getInstance().translateKey(category.getTitleKey()) + "\n" + TextFormatting.formatted(category.getNamespace(), TextFormatting.BLUE);
 		}
 	}
 
